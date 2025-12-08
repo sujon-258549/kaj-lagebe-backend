@@ -1,0 +1,13 @@
+import path from "path";
+import { defineConfig } from "@prisma/cli";
+
+export default defineConfig({
+  // Path to your Prisma schema
+  schema: path.join(__dirname, "prisma/schema.prisma"),
+
+  // Database connection
+  adapter: {
+    provider: "postgresql",
+    url: process.env.DATABASE_URL, // Prisma will read your .env file
+  },
+});

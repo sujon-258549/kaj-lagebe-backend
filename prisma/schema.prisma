@@ -1,0 +1,109 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  mobile    String   @unique
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile  Profile?
+  address  Address?
+  workInfo WorkInfo?
+}
+
+model Profile {
+  id     String @id @default(uuid())
+  mobile String @unique
+  user   User   @relation(fields: [mobile], references: [mobile])
+
+  name       String?
+  gender     Gender?
+  age        Int?
+  dob        DateTime?
+  bloodGroup BloodGroup?
+  photo      String?
+  nid        String?
+  nidPhoto   String[]    @default([])
+
+  emailVerified Boolean @default(false)
+  phoneVerified Boolean @default(false)
+  nidVerified   Boolean @default(false)
+}
+
+model Address {
+  id     String @id @default(uuid())
+  mobile String @unique
+  user   User   @relation(fields: [mobile], references: [mobile])
+  division String?
+  district String?
+  upazila  String?
+  address  String?
+}
+
+model WorkInfo {
+  id     String @id @default(uuid())
+  mobile String @unique
+  user   User   @relation(fields: [mobile], references: [mobile])
+
+  categories    String[] @default([])
+  experience    String?
+  workType      String?
+  availableTime String?
+
+
+}
+
+model Category {
+  id          String       @id @default(uuid())
+  name        CategoryType
+  icon        String?
+  description String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MAINTAINER
+  OWNER
+  USER
+  WORKER
+  EMPLOYEE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum BloodGroup {
+  A_POSITIVE
+  A_NEGATIVE
+  B_POSITIVE
+  B_NEGATIVE
+  AB_POSITIVE
+  AB_NEGATIVE
+  O_POSITIVE
+  O_NEGATIVE
+}
+
+enum CategoryType {
+  ELECTRICIAN
+  PLUMBER
+  CARPENTER
+  PAINTER
+  MECHANIC
+  CLEANER
+  OTHER
+}

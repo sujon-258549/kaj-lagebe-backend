@@ -4,18 +4,90 @@ import sendResponse from "../../utils/response.js";
 import status from "http-status";
 import catchAsync from "../../shared/catchAsync.js";
 
+const createUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const payload = req.body;
+    const result = await UserServices.createUserIntoDB(payload);
+    sendResponse(res, {
+      success: true,
+      statusCode: status.CREATED,
+      message: "User created successfully",
+      data: result,
+      meta: undefined,
+    });
+  }
+);
 
+const getUserById = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const result = await UserServices.getUserById(id as string);
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "User fetched successfully",
+      data: result,
+    });
+  }
+);
 
-const createUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const payload = req.body;
-  const result = await UserServices.createUserIntoDB(payload);
-  sendResponse(res, {
-    success: true,
-    statusCode: status.CREATED,
-    message: "User created successfully",
-    data: result,
-    meta: undefined,
-  });
-});
+const getAllUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await UserServices.getAllUsers();
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "All users fetched successfully",
+      data: result,
+    });
+  }
+);
 
-export const UserController = { createUser };
+const updateUser = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const payload = req.body;
+    const result = await UserServices.updateUser(id as string, payload);
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "User updated successfully",
+      data: result,
+    });
+  }
+);
+
+const getMyData = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await UserServices.getMyData(req.user?.id as string);
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "My data fetched successfully",
+      data: result,
+    });
+  }
+);
+
+const changePassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const payload = req.body;
+    const result = await UserServices.changePassword(id as string, payload);
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "Password changed successfully",
+      data: result,
+    });
+  }
+);
+
+export const UserController = {
+  createUser,
+  getUserById,
+  getAllUsers,
+  updateUser,
+  getMyData,
+  changePassword,
+};

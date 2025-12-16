@@ -1,5 +1,6 @@
 datasource db {
   provider = "postgresql"
+  
 }
 
 generator client {
@@ -7,42 +8,48 @@ generator client {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String     @id @default(uuid())
+  email     String     @unique
   password  String
-  mobile    String   @unique
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  mobile    String     @unique
+  role      Role       @default(USER)
+  isBlocked Boolean    @default(false)
+  isDeleted Boolean    @default(false)
+  isVerified Boolean    @default(false)
+  isActive Boolean    @default(true)
+  passwordChanged Boolean    @default(false)
+  passwordChangeTime DateTime?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
-  profile  Profile?
-  address  Address?
-  workInfo WorkInfo?
+  profile   Profile?
+  address   Address?
+  workInfo  WorkInfo?
 }
 
 model Profile {
-  id     String @id @default(uuid())
-  mobile String @unique
-  user   User   @relation(fields: [mobile], references: [mobile])
+  id            String       @id @default(uuid())
+  mobile        String       @unique
+  user          User        @relation(fields: [mobile], references: [mobile])
 
-  name       String?
-  gender     Gender?
-  age        Int?
-  dob        DateTime?
-  bloodGroup BloodGroup?
-  photo      String?
-  nid        String?
-  nidPhoto   String[]    @default([])
+  name          String?
+  gender        Gender?
+  age           Int?
+  dob           DateTime?
+  bloodGroup    BloodGroup?
+  photo         String?
+  nid           String?
+  nidPhoto      String[]     @default([])
 
-  emailVerified Boolean @default(false)
-  phoneVerified Boolean @default(false)
-  nidVerified   Boolean @default(false)
+  emailVerified Boolean      @default(false)
+  phoneVerified Boolean      @default(false)
+  nidVerified   Boolean      @default(false)
 }
 
 model Address {
-  id     String @id @default(uuid())
-  mobile String @unique
-  user   User   @relation(fields: [mobile], references: [mobile])
+  id       String   @id @default(uuid())
+  mobile   String   @unique
+  user     User    @relation(fields: [mobile], references: [mobile])
   division String?
   district String?
   upazila  String?
@@ -50,25 +57,27 @@ model Address {
 }
 
 model WorkInfo {
-  id     String @id @default(uuid())
-  mobile String @unique
-  user   User   @relation(fields: [mobile], references: [mobile])
-
-  categories    String[] @default([])
-  experience    String?
-  workType      String?
-  availableTime String?
-
-
+  id                 String     @id @default(uuid())
+  mobile             String     @unique
+  user               User      @relation(fields: [mobile], references: [mobile])
+  idDeleted          Boolean    @default(false)
+  isBlocked          Boolean    @default(false)
+  passwordChanged    Boolean    @default(false)
+  verified           Boolean    @default(false)
+  passwordChangeTime DateTime?
+  categories         String[]   @default([])
+  experience         String?
+  workType           String?
+  availableTime      String?
 }
 
 model Category {
-  id          String       @id @default(uuid())
+  id          String        @id @default(uuid())
   name        CategoryType
   icon        String?
   description String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 enum Role {

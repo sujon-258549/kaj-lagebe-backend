@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { UserRouter } from "../modules/users/user.router.js";
-import { CategoryRouter } from "../modules/category/category.router.ts";
-import { authRouter } from "../modules/login/login.router.ts";
+import { CategoryRouter } from "../modules/category/category.router.js";
+import { authRouter } from "../modules/auth/login.router.js";
 
 const router = Router()
 

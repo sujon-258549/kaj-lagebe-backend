@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "supper_admin": "tsx src/app/modules/supperAdmin/supper_admin.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
@@ -17,9 +17,11 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.9.2",
     "@types/uuid": "^10.0.0",
     "dotenv-cli": "^11.0.0",
+    "jsonwebtoken": "^9.0.3",
     "prisma": "^7.1.0",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.20.6",
@@ -34,6 +36,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "http-status": "^2.1.0",
+    "jwt-decode": "^4.0.0",
     "pg": "^8.16.3",
     "uuid": "^13.0.0"
   }

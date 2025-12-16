@@ -12,7 +12,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Kaj lagbe ");
 });
 
-app.use(router);
+app.use("/api",router);
 
 // Not Found - catch all unmatched routes (must be last)
 app.use(notFound);

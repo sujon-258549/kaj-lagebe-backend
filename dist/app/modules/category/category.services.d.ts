@@ -3,7 +3,7 @@ export declare const CategoryServices: {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        name: string;
+        name: import("@prisma/client").$Enums.CategoryType;
         icon: string | null;
         description: string | null;
     }>;

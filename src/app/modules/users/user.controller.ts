@@ -58,7 +58,7 @@ const updateUser = catchAsync(
 );
 
 const getMyData = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const result = await UserServices.getMyData(req.user?.id as string);
     sendResponse(res, {
       success: true,
@@ -70,14 +70,40 @@ const getMyData = catchAsync(
 );
 
 const changePassword = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
+  async (req: Request, res: Response,) => {
+    
     const payload = req.body;
-    const result = await UserServices.changePassword(id as string, payload);
+    const result = await UserServices.changePassword( payload, req.user?.id as string);
     sendResponse(res, {
       success: true,
       statusCode: status.OK,
       message: "Password changed successfully",
+      data: result,
+    });
+  }
+);
+
+const varifyOtp = catchAsync(
+  async (req: Request, res: Response,) => {
+    const payload = req.body;
+    const result = await UserServices.varifyOtp(payload.email, payload.otp);
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "OTP verified successfully",
+      data: result,
+    });
+  }
+);
+
+const deleteUser = catchAsync(
+  async (req: Request, res: Response,) => {
+    const { id } = req.params;
+    const result = await UserServices.deleteUser(id as string);
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "User deleted successfully",
       data: result,
     });
   }
@@ -90,4 +116,6 @@ export const UserController = {
   updateUser,
   getMyData,
   changePassword,
+  varifyOtp,
+  deleteUser,
 };

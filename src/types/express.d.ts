@@ -8,16 +8,9 @@ declare global {
         email: string;
         role: IUserRole;
         mobile?: string;
-        isBlocked: boolean;
-        isDeleted: boolean;
-        isVerified: boolean;
-        isActive: boolean;
-        passwordChanged?: Date | null;
-        passwordChangeTime?: Date | null;
       };
     }
   }
 }
 
 export {};
-

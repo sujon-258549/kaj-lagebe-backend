@@ -4,6 +4,7 @@ const generateToken = (
   secret: Secret,
   expiresIn: string
 ) => {
+  //@ts-expect-error signing with secret key
   const token = jwt.sign(
     {
       data: payload,

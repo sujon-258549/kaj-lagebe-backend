@@ -8,8 +8,10 @@ const router = Router();
 router.post("/create-employ", UserController.createUser);
 
 router.get("/", UserController.getAllUsers);
-router.get("/my-data", auth(USER_ROLE.EMPLOYEE), UserController.getMyData);
+router.get("/my-data", auth(USER_ROLE.USER,USER_ROLE.WORKER,USER_ROLE.EMPLOYEE), UserController.getMyData);
 router.get("/:id", UserController.getUserById);
+router.patch("/change-password", auth(USER_ROLE.USER,USER_ROLE.WORKER,USER_ROLE.EMPLOYEE), UserController.changePassword);
+router.post("/varify-otp", UserController.varifyOtp);
 router.patch("/:id", UserController.updateUser);
-router.patch("/change-password", auth(USER_ROLE.EMPLOYEE), UserController.changePassword);
+router.delete("/:id",  UserController.deleteUser);
 export const UserRouter = router;

@@ -5,33 +5,57 @@ import type { NextFunction, Request, Response } from "express";
 import { AuthServices } from "./login.services.ts";
 import ApiError from "../../middleware/apiError.ts";
 
-
-const loginUser = catchAsync(
-  async (req: Request, res: Response) => {
-    const payload = req.body;
-    const result = await AuthServices.loginUser(payload);
-    sendResponse(res, {
-      success: true,
-      statusCode: status.OK,
-      message: "User logged in successfully",
-      data: result,
-    });
+const loginUser = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+  const result = await AuthServices.loginUser(payload);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "User logged in successfully",
+    data: result,
+  });
+});
+const createRefreshToken = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body.refreshToken;
+  if (!payload) {
+    throw new ApiError(status.BAD_REQUEST, "Refresh token is not provided");
   }
-);
-const createRefreshToken = catchAsync(
-  async (req: Request, res: Response) => {
-    const payload = req.body.refreshToken;
-    if (!payload) {
-      throw new ApiError(status.BAD_REQUEST, "Refresh token is not provided");
-    }
-    const result = await AuthServices.refreshToken(payload);
-    sendResponse(res, {
-      success: true,
-      statusCode: status.OK,
-      message: "Refresh token generated successfully",
-      data: result,
-    });
-  }
-);
+  const result = await AuthServices.refreshToken(payload);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Refresh token generated successfully",
+    data: result,
+  });
+});
 
-export const AuthController = { loginUser, createRefreshToken };
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+  const result = await AuthServices.forgotPassword(payload);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Forgot password email sent successfully",
+    data: result,
+  });
+});
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+  const result = await AuthServices.resetPassword(
+    payload.email,
+    payload.password,
+    payload.otp
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Password reset successfully",
+    data: result,
+  });
+});
+export const AuthController = {
+  loginUser,
+  createRefreshToken,
+  forgotPassword,
+  resetPassword,
+};

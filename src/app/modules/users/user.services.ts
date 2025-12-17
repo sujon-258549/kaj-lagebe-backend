@@ -4,6 +4,8 @@ import type { Prisma } from "@prisma/client";
 import ApiError from "../../middleware/apiError.ts";
 import status from "http-status";
 import { otpEmailTemplate, sendEmail } from "../../utils/sendEmail.ts";
+import { searchText } from "./user.constant.ts";
+import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 
 // create user
 
@@ -116,6 +118,69 @@ const createUserIntoDB = async (payload: any) => {
   return result;
 };
 
+const getAllUsers = async (query: any) => {
+  const { searchTerm, page, limit, sortBy, sortOrder, ...queryFilter } = query;
+
+  const andCondition: Prisma.UserWhereInput[] = [];
+  const { pageNumber, limitNumber, skip, sortOrderValue, sortByValue } =
+    calculatePaginationOrSort(page, limit, sortBy, sortOrder);
+
+  if (query.searchTerm) {
+    andCondition.push({
+      OR: searchText.map((text: string) => ({
+        [text]: {
+          contains: query.searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  // queryFilter
+  if (Object.keys(queryFilter).length > 0) {
+    andCondition.push({
+      AND: Object.keys(queryFilter).map((key: string) => ({
+        [key]: {
+          equals: queryFilter[key as keyof typeof queryFilter],
+        },
+      })),
+    });
+  }
+
+  const whereCondition: Prisma.UserWhereInput = {
+    AND: andCondition,
+  };
+
+  const total = await prisma.user.count({
+    where: whereCondition,
+  });
+
+  const users = await prisma.user.findMany({
+    where: whereCondition,
+    skip,
+    take: limitNumber,
+    orderBy: {
+      [sortByValue]: sortOrderValue,
+    },
+    // skip: (Number(query.page) - 1) * Number(query.limit),
+    // take: Number(query.limit),
+    include: {
+      profile: true,
+      address: true,
+      workInfo: true,
+    },
+  });
+
+  return {
+    data: users.map(({ password, ...rest }) => rest),
+    meta: {
+      page: pageNumber,
+      limit: limitNumber,
+      total: total,
+    },
+  };
+};
+
 // get user by id
 const getUserById = async (id: string) => {
   const user = await prisma.user.findUnique({
@@ -130,17 +195,6 @@ const getUserById = async (id: string) => {
 };
 
 // get all users
-const getAllUsers = async () => {
-  const users = await prisma.user.findMany({
-    include: {
-      profile: true,
-      address: true,
-      workInfo: true,
-    },
-  });
-
-  return users.map(({ password, ...rest }) => rest);
-};
 
 // update user
 const updateUser = async (id: string, payload: any) => {

@@ -1,11 +1,12 @@
 export declare const UserServices: {
     createUserIntoDB: (payload: any) => Promise<{
         user: {
-            id: string;
             email: string;
-            password: string;
             mobile: string;
             role: import("@prisma/client").$Enums.Role;
+            createdAt: Date;
+            id: string;
+            password: string;
             isBlocked: boolean;
             isDeleted: boolean;
             isVerified: boolean;
@@ -13,13 +14,12 @@ export declare const UserServices: {
             passwordChanged: boolean;
             passwordChangeTime: Date | null;
             lastLogin: Date | null;
-            createdAt: Date;
             updatedAt: Date;
         };
         profile: {
             name: string | null;
-            id: string;
             mobile: string;
+            id: string;
             gender: import("@prisma/client").$Enums.Gender | null;
             age: number | null;
             dob: Date | null;
@@ -32,16 +32,16 @@ export declare const UserServices: {
             nidVerified: boolean;
         };
         address: {
+            mobile: string;
             address: string | null;
             id: string;
-            mobile: string;
             division: string | null;
             district: string | null;
             upazila: string | null;
         };
         workInfo: {
-            id: string;
             mobile: string;
+            id: string;
             isBlocked: boolean;
             passwordChanged: boolean;
             passwordChangeTime: Date | null;
@@ -58,8 +58,8 @@ export declare const UserServices: {
     getUserById: (id: string) => Promise<({
         profile: {
             name: string | null;
-            id: string;
             mobile: string;
+            id: string;
             gender: import("@prisma/client").$Enums.Gender | null;
             age: number | null;
             dob: Date | null;
@@ -72,16 +72,16 @@ export declare const UserServices: {
             nidVerified: boolean;
         } | null;
         address: {
+            mobile: string;
             address: string | null;
             id: string;
-            mobile: string;
             division: string | null;
             district: string | null;
             upazila: string | null;
         } | null;
         workInfo: {
-            id: string;
             mobile: string;
+            id: string;
             isBlocked: boolean;
             passwordChanged: boolean;
             passwordChangeTime: Date | null;
@@ -93,11 +93,12 @@ export declare const UserServices: {
             availableTime: string | null;
         } | null;
     } & {
-        id: string;
         email: string;
-        password: string;
         mobile: string;
         role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        id: string;
+        password: string;
         isBlocked: boolean;
         isDeleted: boolean;
         isVerified: boolean;
@@ -105,14 +106,13 @@ export declare const UserServices: {
         passwordChanged: boolean;
         passwordChangeTime: Date | null;
         lastLogin: Date | null;
-        createdAt: Date;
         updatedAt: Date;
     }) | {
         password: undefined;
         profile: {
             name: string | null;
-            id: string;
             mobile: string;
+            id: string;
             gender: import("@prisma/client").$Enums.Gender | null;
             age: number | null;
             dob: Date | null;
@@ -125,16 +125,16 @@ export declare const UserServices: {
             nidVerified: boolean;
         } | null;
         address: {
+            mobile: string;
             address: string | null;
             id: string;
-            mobile: string;
             division: string | null;
             district: string | null;
             upazila: string | null;
         } | null;
         workInfo: {
-            id: string;
             mobile: string;
+            id: string;
             isBlocked: boolean;
             passwordChanged: boolean;
             passwordChangeTime: Date | null;
@@ -145,10 +145,11 @@ export declare const UserServices: {
             workType: string | null;
             availableTime: string | null;
         } | null;
-        id: string;
         email: string;
         mobile: string;
         role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        id: string;
         isBlocked: boolean;
         isDeleted: boolean;
         isVerified: boolean;
@@ -156,66 +157,73 @@ export declare const UserServices: {
         passwordChanged: boolean;
         passwordChangeTime: Date | null;
         lastLogin: Date | null;
-        createdAt: Date;
         updatedAt: Date;
     } | null>;
-    getAllUsers: () => Promise<{
-        profile: {
-            name: string | null;
-            id: string;
+    getAllUsers: (query: any) => Promise<{
+        data: {
+            profile: {
+                name: string | null;
+                mobile: string;
+                id: string;
+                gender: import("@prisma/client").$Enums.Gender | null;
+                age: number | null;
+                dob: Date | null;
+                bloodGroup: import("@prisma/client").$Enums.BloodGroup | null;
+                photo: string | null;
+                nid: string | null;
+                nidPhoto: string[];
+                emailVerified: boolean;
+                phoneVerified: boolean;
+                nidVerified: boolean;
+            } | null;
+            address: {
+                mobile: string;
+                address: string | null;
+                id: string;
+                division: string | null;
+                district: string | null;
+                upazila: string | null;
+            } | null;
+            workInfo: {
+                mobile: string;
+                id: string;
+                isBlocked: boolean;
+                passwordChanged: boolean;
+                passwordChangeTime: Date | null;
+                idDeleted: boolean;
+                verified: boolean;
+                categories: string[];
+                experience: string | null;
+                workType: string | null;
+                availableTime: string | null;
+            } | null;
+            email: string;
             mobile: string;
-            gender: import("@prisma/client").$Enums.Gender | null;
-            age: number | null;
-            dob: Date | null;
-            bloodGroup: import("@prisma/client").$Enums.BloodGroup | null;
-            photo: string | null;
-            nid: string | null;
-            nidPhoto: string[];
-            emailVerified: boolean;
-            phoneVerified: boolean;
-            nidVerified: boolean;
-        } | null;
-        address: {
-            address: string | null;
+            role: import("@prisma/client").$Enums.Role;
+            createdAt: Date;
             id: string;
-            mobile: string;
-            division: string | null;
-            district: string | null;
-            upazila: string | null;
-        } | null;
-        workInfo: {
-            id: string;
-            mobile: string;
             isBlocked: boolean;
+            isDeleted: boolean;
+            isVerified: boolean;
+            isActive: boolean;
             passwordChanged: boolean;
             passwordChangeTime: Date | null;
-            idDeleted: boolean;
-            verified: boolean;
-            categories: string[];
-            experience: string | null;
-            workType: string | null;
-            availableTime: string | null;
-        } | null;
-        id: string;
-        email: string;
-        mobile: string;
-        role: import("@prisma/client").$Enums.Role;
-        isBlocked: boolean;
-        isDeleted: boolean;
-        isVerified: boolean;
-        isActive: boolean;
-        passwordChanged: boolean;
-        passwordChangeTime: Date | null;
-        lastLogin: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-    }[]>;
+            lastLogin: Date | null;
+            updatedAt: Date;
+        }[];
+        meta: {
+            page: number;
+            limit: number;
+            total: number;
+        };
+    }>;
     updateUser: (id: string, payload: any) => Promise<{
-        id: string;
         email: string;
-        password: string;
         mobile: string;
         role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        id: string;
+        password: string;
         isBlocked: boolean;
         isDeleted: boolean;
         isVerified: boolean;
@@ -223,7 +231,6 @@ export declare const UserServices: {
         passwordChanged: boolean;
         passwordChangeTime: Date | null;
         lastLogin: Date | null;
-        createdAt: Date;
         updatedAt: Date;
     }>;
     getMyData: (id: string) => Promise<({
@@ -237,16 +244,16 @@ export declare const UserServices: {
             nid: string | null;
         } | null;
         address: {
+            mobile: string;
             address: string | null;
             id: string;
-            mobile: string;
             division: string | null;
             district: string | null;
             upazila: string | null;
         } | null;
         workInfo: {
-            id: string;
             mobile: string;
+            id: string;
             isBlocked: boolean;
             passwordChanged: boolean;
             passwordChangeTime: Date | null;
@@ -258,11 +265,12 @@ export declare const UserServices: {
             availableTime: string | null;
         } | null;
     } & {
-        id: string;
         email: string;
-        password: string;
         mobile: string;
         role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        id: string;
+        password: string;
         isBlocked: boolean;
         isDeleted: boolean;
         isVerified: boolean;
@@ -270,7 +278,6 @@ export declare const UserServices: {
         passwordChanged: boolean;
         passwordChangeTime: Date | null;
         lastLogin: Date | null;
-        createdAt: Date;
         updatedAt: Date;
     }) | {
         password: undefined;
@@ -284,16 +291,16 @@ export declare const UserServices: {
             nid: string | null;
         } | null;
         address: {
+            mobile: string;
             address: string | null;
             id: string;
-            mobile: string;
             division: string | null;
             district: string | null;
             upazila: string | null;
         } | null;
         workInfo: {
-            id: string;
             mobile: string;
+            id: string;
             isBlocked: boolean;
             passwordChanged: boolean;
             passwordChangeTime: Date | null;
@@ -304,10 +311,11 @@ export declare const UserServices: {
             workType: string | null;
             availableTime: string | null;
         } | null;
-        id: string;
         email: string;
         mobile: string;
         role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        id: string;
         isBlocked: boolean;
         isDeleted: boolean;
         isVerified: boolean;
@@ -315,18 +323,18 @@ export declare const UserServices: {
         passwordChanged: boolean;
         passwordChangeTime: Date | null;
         lastLogin: Date | null;
-        createdAt: Date;
         updatedAt: Date;
     }>;
     changePassword: (payload: {
         oldPassword: string;
         newPassword: string;
     }, id: string) => Promise<{
-        id: string;
         email: string;
-        password: string;
         mobile: string;
         role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        id: string;
+        password: string;
         isBlocked: boolean;
         isDeleted: boolean;
         isVerified: boolean;
@@ -334,15 +342,15 @@ export declare const UserServices: {
         passwordChanged: boolean;
         passwordChangeTime: Date | null;
         lastLogin: Date | null;
-        createdAt: Date;
         updatedAt: Date;
     }>;
     varifyOtp: (email: string, otp: string) => Promise<{
-        id: string;
         email: string;
-        password: string;
         mobile: string;
         role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        id: string;
+        password: string;
         isBlocked: boolean;
         isDeleted: boolean;
         isVerified: boolean;
@@ -350,7 +358,6 @@ export declare const UserServices: {
         passwordChanged: boolean;
         passwordChangeTime: Date | null;
         lastLogin: Date | null;
-        createdAt: Date;
         updatedAt: Date;
     }>;
     deleteUser: (id: string) => Promise<never[]>;

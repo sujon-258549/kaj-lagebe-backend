@@ -4,10 +4,17 @@ import catchAsync from "../../shared/catchAsync.ts";
 import type { NextFunction, Request, Response } from "express";
 import { AuthServices } from "./login.services.ts";
 import ApiError from "../../middleware/apiError.ts";
+import config from "../../config/index.ts";
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const result = await AuthServices.loginUser(payload);
+  res.cookie("refreshToken", result.refreshToken, {
+    secure: config.nodeEnv === "production",
+    httpOnly: true,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
   sendResponse(res, {
     success: true,
     statusCode: status.OK,

@@ -1,8 +1,8 @@
 export declare const CategoryServices: {
     createCategoryIntoDB: (payload: any) => Promise<{
         name: import("@prisma/client").$Enums.CategoryType;
-        id: string;
         createdAt: Date;
+        id: string;
         updatedAt: Date;
         icon: string | null;
         description: string | null;

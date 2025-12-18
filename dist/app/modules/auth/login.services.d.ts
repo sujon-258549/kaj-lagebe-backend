@@ -12,11 +12,12 @@ export declare const AuthServices: {
         message: string;
     }>;
     resetPassword: (email: string, password: string, otp: string) => Promise<{
-        id: string;
         email: string;
-        password: string;
         mobile: string;
         role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        id: string;
+        password: string;
         isBlocked: boolean;
         isDeleted: boolean;
         isVerified: boolean;
@@ -24,7 +25,6 @@ export declare const AuthServices: {
         passwordChanged: boolean;
         passwordChangeTime: Date | null;
         lastLogin: Date | null;
-        createdAt: Date;
         updatedAt: Date;
     }>;
 };

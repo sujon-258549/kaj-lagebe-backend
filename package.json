@@ -7,9 +7,18 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "supper_admin": "tsx src/app/modules/supperAdmin/supper_admin.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "prod": "NODE_ENV=production node ./dist/server.js",
+    "migrate": "npx prisma migrate dev",
+    "generate": "prisma generate",
+    "studio": "npx prisma studio",
+    "validate": "npx prisma validate",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "rename-module": "npx ts-node --transpile-only src/scripts/renameModule.ts",
+    "create-module": "tsx src/scripts/createModule.ts"
   },
   "keywords": [],
   "author": "",

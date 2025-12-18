@@ -7,4 +7,6 @@ export declare const USER_ROLE: {
     readonly WORKER: "WORKER";
     readonly EMPLOYEE: "EMPLOYEE";
 };
+export declare const searchText: string[];
+export declare const filterableFields: string[];
 //# sourceMappingURL=user.constant.d.ts.map

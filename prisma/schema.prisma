@@ -80,12 +80,27 @@ model Otp {
 }
 
 model Category {
-  id          String       @id @default(uuid())
-  name        CategoryType
-  icon        String?
+  id            String        @id @default(uuid())
+  name          String
+  icon          String?
+  slug          String @unique
+  description   String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  subCategories SubCategory[]
+}
+
+model SubCategory {
+  id         String   @id @default(uuid())
+  name       String
+  categoryId String
+  slug       String @unique
+  category   Category @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
   description String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  icon String?
+  @@map("sub_categories")
 }
 
 enum Role {
@@ -115,13 +130,4 @@ enum BloodGroup {
   O_NEGATIVE
 }
 
-enum CategoryType {
-  ELECTRICIAN
-  PLUMBER
-  CARPENTER
-  PAINTER
-  MECHANIC
-  CLEANER
-  OTHER
-}
 

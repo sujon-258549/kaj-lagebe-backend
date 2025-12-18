@@ -1,7 +1,9 @@
 import { Router } from "express";
-import { UserRouter } from "../modules/users/user.router.js";
-import { CategoryRouter } from "../modules/category/category.router.js";
-import { authRouter } from "../modules/auth/login.router.js";
+import { UserRouter } from "../modules/users/user.router.ts";
+import { CategoryRouter } from "../modules/category/category.router.ts";
+import { authRouter } from "../modules/auth/login.router.ts";
+import { SubCategoryRoutes } from "../modules/subCategory/subCategory.routes.ts";
+
 
 const router = Router()
 
@@ -17,6 +19,9 @@ const allRouter = [
     {
         path:'/auth',
         router : authRouter
+    },{
+        path:'/sub-category',
+        router : SubCategoryRoutes
     }
 ]
 

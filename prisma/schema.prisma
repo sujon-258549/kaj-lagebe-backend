@@ -95,6 +95,7 @@ model SubCategory {
   name       String
   categoryId String
   slug       String @unique
+  status     Boolean @default(true)
   category   Category @relation(fields: [categoryId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

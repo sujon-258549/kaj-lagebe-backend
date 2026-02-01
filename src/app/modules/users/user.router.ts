@@ -14,4 +14,6 @@ router.patch("/change-password", auth(USER_ROLE.USER,USER_ROLE.WORKER,USER_ROLE.
 router.post("/varify-otp", UserController.varifyOtp);
 router.patch("/:id", UserController.updateUser);
 router.delete("/:id",  UserController.deleteUser);
+router.patch("/:id/soft-delete", UserController.softDeleteUser);
+router.patch("/:id/block", UserController.blockUser);
 export const UserRouter = router;

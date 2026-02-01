@@ -107,6 +107,28 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const softDeleteUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await UserServices.softDeleteUser(id as string);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "User soft deleted successfully",
+    data: result,
+  });
+});
+
+const blockUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await UserServices.blockUser(id as string);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "User blocked successfully",
+    data: result,
+  });
+});
+
 export const UserController = {
   createUser,
   getUserById,
@@ -116,4 +138,6 @@ export const UserController = {
   changePassword,
   varifyOtp,
   deleteUser,
+  softDeleteUser,
+  blockUser,
 };

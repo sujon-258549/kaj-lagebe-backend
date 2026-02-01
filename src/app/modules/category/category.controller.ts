@@ -3,6 +3,8 @@ import { CategoryServices } from "./category.services.js";
 import sendResponse from "../../utils/response.js";
 import status from "http-status";
 import catchAsync from "../../shared/catchAsync.js";
+import { pick } from "../../../shared/pick.ts";
+import { categoryFilter } from "./category.const.ts";
 
 const createCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -20,7 +22,8 @@ const createCategory = catchAsync(
 
 const getAllCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await CategoryServices.getAllCategory();
+    const query = pick(req.query, categoryFilter)
+    const result = await CategoryServices.getAllCategory(query);
     sendResponse(res, {
       success: true,
       statusCode: status.OK,
@@ -57,6 +60,19 @@ const updateCategory = catchAsync(
     });
   }
 );
+
+const updateCategoryStatus = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const result = await CategoryServices.updateCategoryStatus(id as string);
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "Category status updated successfully",
+      data: result,
+    });
+  }
+);
 const deleteCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
@@ -74,5 +90,6 @@ export const CategoryController = {
   getAllCategory,
   getCategoryById,
   updateCategory,
+  updateCategoryStatus,
   deleteCategory,
 };

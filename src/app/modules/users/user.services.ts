@@ -321,6 +321,38 @@ const deleteUser = async (id: string) => {
   return [];
 };
 
+const softDeleteUser = async (id: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id },
+  });
+  if (!user) {
+    throw new ApiError(status.NOT_FOUND, "🔍❓ User not Found");
+  }
+
+  const deletedUser = await prisma.user.update({
+    where: { id },
+    data: { isDeleted: true },
+  });
+  return deletedUser;
+};
+
+const blockUser = async (id: string) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id },
+  });
+  if (!user) {
+    throw new ApiError(status.NOT_FOUND, "🔍❓ User not Found");
+  }
+
+  const deletedUser = await prisma.user.update({
+    where: { id },
+    data: { isBlocked: !user.isBlocked },
+  });
+  return deletedUser;
+};
+
+
+
 export const UserServices = {
   createUserIntoDB,
   getUserById,
@@ -330,4 +362,6 @@ export const UserServices = {
   changePassword,
   varifyOtp,
   deleteUser,
+  softDeleteUser,
+  blockUser,
 };

@@ -16,8 +16,6 @@ const createBlog = async (payload: any) => {
 const getAllBlog = async (query: any) => {
   const { searchTerm, page, limit, sortBy, sortOrder, ...queryFilter } = query;
 
-  console.log(limit);
-
   const andCondition: Prisma.BlogWhereInput[] = [];
   const { pageNumber, limitNumber, skip, sortOrderValue, sortByValue } =
     calculatePaginationOrSort(page, limit, sortBy, sortOrder);
@@ -63,7 +61,11 @@ const getAllBlog = async (query: any) => {
 };
 
 const getBlogById = async (id: string) => {
-  const result = await prisma.blog.findUnique({ where: { id } });
+  const result = await prisma.blog.findFirst({
+    where: {
+      OR: [{ id: id }, { slug: id }],
+    },
+  });
   if (!result) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
   return result;
 };

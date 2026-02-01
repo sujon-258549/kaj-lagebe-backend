@@ -2,6 +2,8 @@ import httpStatus from "http-status";
 import { SubCategoryServices } from "./subCategory.service.ts";
 import sendResponse from "../../utils/response.ts";
 import catchAsync from "../../shared/catchAsync.ts";
+import { pick } from "../../../shared/pick.ts";
+import { subCategoryFilterableFields } from "./subCategory.constant.ts";
 
 const createSubCategory = catchAsync(async (req, res) => {
   const result = await SubCategoryServices.createSubCategory(req.body);
@@ -14,7 +16,10 @@ const createSubCategory = catchAsync(async (req, res) => {
 });
 
 const getAllSubCategory = catchAsync(async (req, res) => {
-  const result = await SubCategoryServices.getAllSubCategory();
+
+  const queryOptions = pick(req.query, subCategoryFilterableFields);
+
+  const result = await SubCategoryServices.getAllSubCategory(queryOptions);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -26,6 +31,17 @@ const getAllSubCategory = catchAsync(async (req, res) => {
 const getSubCategoryById = catchAsync(async (req, res) => {
   const id = req.params.id;
   const result = await SubCategoryServices.getSubCategoryById(id as string);
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "SubCategory retrieved successfully!",
+    data: result,
+  });
+});
+
+const getSubCategoryBySlug = catchAsync(async (req, res) => {
+  const slug = req.params.slug;
+  const result = await SubCategoryServices.getSubCategoryBySlug(slug as string);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -76,6 +92,7 @@ export const SubCategoryControllers = {
   createSubCategory,
   getAllSubCategory,
   getSubCategoryById,
+  getSubCategoryBySlug,
   updateSubCategory,
   deleteSubCategory,
   updateSubCategoryStatus,

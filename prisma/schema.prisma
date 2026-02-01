@@ -7,32 +7,33 @@ generator client {
 }
 
 model User {
-  id                 String        @id @default(uuid())
-  email              String        @unique
+  id                 String             @id @default(uuid())
+  email              String             @unique
   password           String
-  mobile             String        @unique
-  role               Role          @default(USER)
-  isBlocked          Boolean       @default(false)
-  isDeleted          Boolean       @default(false)
-  isVerified         Boolean       @default(false)
-  isActive           Boolean       @default(true)
-  passwordChanged    Boolean       @default(false)
+  mobile             String             @unique
+  role               Role               @default(USER)
+  isBlocked          Boolean            @default(false)
+  isDeleted          Boolean            @default(false)
+  isVerified         Boolean            @default(false)
+  isActive           Boolean            @default(true)
+  passwordChanged    Boolean            @default(false)
   passwordChangeTime DateTime?
-  lastLogin          DateTime?     @default(now())
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
-  subscriptionId     String?
-  subscription       Subscription? @relation(fields: [subscriptionId], references: [id])
+  lastLogin          DateTime?          @default(now())
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  subscriptionId     String? // Added for the new subscription relation
+  subscription       Subscription?      @relation(fields: [subscriptionId], references: [id])
+  subscriptionEarns  SubscriptionEarn[] // Changed to 1-to-many
   profile            Profile?
   address            Address?
   workInfo           WorkInfo?
 }
 
 model Profile {
-  id     String @id @default(uuid())
-  mobile String @unique
-  user   User   @relation(fields: [mobile], references: [mobile])
-
+  id         String      @id @default(uuid())
+  mobile     String      @unique
+  user       User        @relation(fields: [mobile], references: [mobile])
+  serialId   String?
   name       String?
   gender     Gender?
   age        Int?
@@ -70,6 +71,20 @@ model WorkInfo {
   experience         String?
   workType           String?
   availableTime      String?
+}
+
+model SubscriptionEarn {
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  subscriptionId String
+  amount         String
+  expireAt       DateTime
+  isActive       Boolean   @default(true)
+  isExpired      Boolean   @default(false)
+  renewAt        DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Otp {

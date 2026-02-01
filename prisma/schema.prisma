@@ -27,6 +27,7 @@ model User {
   profile            Profile?
   address            Address?
   workInfo           WorkInfo?
+  blogs              Blog[]
 }
 
 model Profile {
@@ -133,6 +134,7 @@ model Blog {
   tags        String[]  @default([])
   category    String?
   authorId    String?
+  author      User?     @relation(fields: [authorId], references: [id])
   authorName  String?
   authorImage String?
   isPublished Boolean   @default(false)

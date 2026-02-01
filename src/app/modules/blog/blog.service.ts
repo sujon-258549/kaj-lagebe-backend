@@ -10,7 +10,7 @@ import { blogSearchText } from "./blog.constant.ts";
 const createBlog = async (payload: any) => {
   const slug = slugCreate(payload.title);
   const data = { ...payload, slug };
-  return await prisma.blog.create({ data });
+  return await prisma.blog.create({ data, include: { author: true } });
 };
 
 const getAllBlog = async (query: any) => {
@@ -41,6 +41,9 @@ const getAllBlog = async (query: any) => {
     orderBy: {
       [sortByValue]: sortOrderValue,
     },
+    include: {
+      author: true,
+    },
   });
 
   const total = await prisma.blog.count({
@@ -65,6 +68,9 @@ const getBlogById = async (id: string) => {
     where: {
       OR: [{ id: id }, { slug: id }],
     },
+    include: {
+      author: true,
+    },
   });
   if (!result) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
   return result;
@@ -74,6 +80,9 @@ const updateBlog = async (id: string, payload: any) => {
   const result = await prisma.blog.update({
     where: { id },
     data: payload,
+    include: {
+      author: true,
+    },
   });
   return result;
 };

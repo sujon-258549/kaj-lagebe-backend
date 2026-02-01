@@ -5,12 +5,15 @@ import ApiError from "../../middleware/apiError.ts";
 import slugCreate from "../../utils/slugCreate.ts";
 import type { Prisma } from "@prisma/client";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
-import { blogSearchText } from "./blog.constant.ts";
+import { blogSearchableFields } from "./blog.constant.ts";
 
 const createBlog = async (payload: any) => {
-  const slug = slugCreate(payload.title);
-  const data = { ...payload, slug };
-  return await prisma.blog.create({ data, include: { author: true } });
+  const slug = payload.slug || slugCreate(payload.title);
+  const data: any = { ...payload, slug };
+  if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
+  if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
+
+  return await prisma.blog.create({ data });
 };
 
 const getAllBlog = async (query: any) => {
@@ -22,13 +25,17 @@ const getAllBlog = async (query: any) => {
 
   if (query.searchTerm) {
     andCondition.push({
-      OR: blogSearchText.map((text: string) => ({
+      OR: blogSearchableFields.map((text: string) => ({
         [text]: {
           contains: query.searchTerm,
           mode: "insensitive",
         },
       })),
     });
+  }
+
+  if (queryFilter.isPublished !== undefined) {
+    queryFilter.isPublished = queryFilter.isPublished === "true";
   }
 
   const result = await prisma.blog.findMany({
@@ -40,9 +47,6 @@ const getAllBlog = async (query: any) => {
     skip: skip,
     orderBy: {
       [sortByValue]: sortOrderValue,
-    },
-    include: {
-      author: true,
     },
   });
 
@@ -68,21 +72,30 @@ const getBlogById = async (id: string) => {
     where: {
       OR: [{ id: id }, { slug: id }],
     },
-    include: {
-      author: true,
-    },
   });
   if (!result) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
   return result;
 };
 
 const updateBlog = async (id: string, payload: any) => {
+  const existingBlog = await prisma.blog.findUnique({ where: { id } });
+  if (!existingBlog) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
+
+  const updateData: Partial<Prisma.BlogUpdateInput> = { ...payload };
+
+  if (payload.title) {
+    updateData.title = payload.title;
+    updateData.slug = payload.slug || slugCreate(payload.title);
+  } else if (payload.slug) {
+    updateData.slug = payload.slug;
+  }
+
+  if (payload.createdAt) updateData.createdAt = new Date(payload.createdAt);
+  if (payload.updatedAt) updateData.updatedAt = new Date(payload.updatedAt);
+
   const result = await prisma.blog.update({
     where: { id },
-    data: payload,
-    include: {
-      author: true,
-    },
+    data: updateData,
   });
   return result;
 };

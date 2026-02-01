@@ -48,6 +48,7 @@ const getCategoryById = catchAsync(
 
 const updateCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log("payload", req.body, req.params.id);
     const id = req.params.id;
     const result = await CategoryServices.updateCategory(
       id as string,

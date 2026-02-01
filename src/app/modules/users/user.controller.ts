@@ -4,7 +4,7 @@ import sendResponse from "../../utils/response.js";
 import status from "http-status";
 import catchAsync from "../../shared/catchAsync.js";
 import { pick } from "../../../shared/pick.ts";
-import { filterableFields } from "./user.constant.ts";
+import { userFilterableFields } from "./user.constant.ts";
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -17,7 +17,7 @@ const createUser = catchAsync(
       data: result,
       meta: undefined,
     });
-  }
+  },
 );
 
 const getUserById = catchAsync(
@@ -30,24 +30,20 @@ const getUserById = catchAsync(
       message: "User fetched successfully",
       data: result,
     });
-  }
+  },
 );
 
-
-
-const getAllUsers = catchAsync(
-  async (req: Request, res: Response,) => {
-    const query = pick(req.query, filterableFields);
-    const result = await UserServices.getAllUsers(query);
-    sendResponse(res, {
-      success: true,
-      statusCode: status.OK,
-      message: "All users fetched successfully",
-      data: result.data,
-      meta: result.meta,
-    });
-  }
-);
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  const query = pick(req.query, userFilterableFields);
+  const result = await UserServices.getAllUsers(query);
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "All users fetched successfully",
+    data: result.data,
+    meta: result.meta,
+  });
+});
 
 const updateUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -75,7 +71,7 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
   const result = await UserServices.changePassword(
     payload,
-    req.user?.id as string
+    req.user?.id as string,
   );
   sendResponse(res, {
     success: true,

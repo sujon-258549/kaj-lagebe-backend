@@ -4,6 +4,8 @@ import { CategoryRouter } from "../modules/category/category.router.ts";
 import { authRouter } from "../modules/auth/login.router.ts";
 import { SubCategoryRoutes } from "../modules/subCategory/subCategory.routes.ts";
 import { BlogRoutes } from "../modules/blog/blog.routes.ts";
+import { MediaRoutes } from "../modules/media/media.routes.js";
+import { FolderRoutes } from "../modules/folder/folder.routes.ts";
 
 const router = Router();
 
@@ -27,6 +29,14 @@ const allRouter = [
   {
     path: "/blog",
     router: BlogRoutes,
+  },
+  {
+    path: "/media",
+    router: MediaRoutes,
+  },
+  {
+    path: "/folder",
+    router: FolderRoutes,
   },
 ];
 

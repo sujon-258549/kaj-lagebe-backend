@@ -8,7 +8,21 @@ export const USER_ROLE = {
   EMPLOYEE: "EMPLOYEE",
 } as const;
 
+export const userSearchableFields = ["email", "mobile"];
 
-export const searchText = ["email", "mobile"];
-
-export const  filterableFields = ["email", "mobile", "sort", "page", "limit", "searchTerm", "role", "sortBy", "sortOrder"];
+export const userFilterableFields = [
+  "email",
+  "mobile",
+  "searchTerm",
+  "role",
+  "isBlocked",
+  "isDeleted",
+  "isVerified",
+  "isActive",
+  "createdAt",
+  "updatedAt",
+  "page",
+  "limit",
+  "sortBy",
+  "sortOrder",
+];

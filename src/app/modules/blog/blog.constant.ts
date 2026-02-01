@@ -3,7 +3,25 @@ export const BlogConstants = {
   DEFAULT_SORT: "desc",
 };
 
+export const blogSearchableFields = [
+  "title",
+  "description",
+  "excerpt",
+  "authorName",
+  "slug",
+  "tags",
+];
 
-export const blogFilterableFields = ["searchTerm", "category", "isPublished", "slug", "title", "authorName", "authorImage", "coverImage", "tags", "description", "excerpt", "authorId", "publishedAt", "createdAt", "updatedAt","limit","page","sortBy","sortOrder"]; 
-
-export const blogSearchText = ["searchTerm", "title", "description", "excerpt", "authorName", "authorImage", "coverImage", "tags", "description", "excerpt", "authorId", "publishedAt", "createdAt", "updatedAt"];
+export const blogFilterableFields = [
+  "searchTerm",
+  "category",
+  "isPublished",
+  "slug",
+  "authorId",
+  "createdAt",
+  "updatedAt",
+  "page",
+  "limit",
+  "sortBy",
+  "sortOrder",
+];

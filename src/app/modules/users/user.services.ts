@@ -4,7 +4,7 @@ import type { Prisma } from "@prisma/client";
 import ApiError from "../../middleware/apiError.ts";
 import status from "http-status";
 import { otpEmailTemplate, sendEmail } from "../../utils/sendEmail.ts";
-import { searchText } from "./user.constant.ts";
+import { userSearchableFields } from "./user.constant.ts";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 
 // create user
@@ -34,7 +34,7 @@ const createUserIntoDB = async (payload: any) => {
     await sendEmail(
       payload.email,
       otpEmailTemplate({ otp: generateOtp }),
-      "Your OTP Code"
+      "Your OTP Code",
     );
     return { message: "OTP sent to your email" };
   }
@@ -50,15 +50,20 @@ const createUserIntoDB = async (payload: any) => {
         | "$transaction"
         | "$use"
         | "$extends"
-      >
+      >,
     ) => {
+      const userData: any = {
+        email: payload.email,
+        password: hashedPassword,
+        mobile: payload.mobile,
+        role: payload.role,
+      };
+
+      if (payload.createdAt) userData.createdAt = new Date(payload.createdAt);
+      if (payload.updatedAt) userData.updatedAt = new Date(payload.updatedAt);
+
       const user = await tc.user.create({
-        data: {
-          email: payload.email,
-          password: hashedPassword,
-          mobile: payload.mobile,
-          role: payload.role,
-        },
+        data: userData,
       });
       const profile = await tc.profile.create({
         data: {
@@ -92,7 +97,7 @@ const createUserIntoDB = async (payload: any) => {
         },
       });
       return { user, profile, address, workInfo };
-    }
+    },
   );
 
   const generateOtp = Math.floor(100000 + Math.random() * 900000);
@@ -111,7 +116,7 @@ const createUserIntoDB = async (payload: any) => {
   await sendEmail(
     payload.email,
     otpEmailTemplate({ otp: generateOtp }),
-    "Your OTP Code"
+    "Your OTP Code",
   );
   console.log(hashedPassword);
   // console.log(payload);
@@ -127,7 +132,7 @@ const getAllUsers = async (query: any) => {
 
   if (query.searchTerm) {
     andCondition.push({
-      OR: searchText.map((text: string) => ({
+      OR: userSearchableFields.map((text: string) => ({
         [text]: {
           contains: query.searchTerm,
           mode: "insensitive",
@@ -135,6 +140,13 @@ const getAllUsers = async (query: any) => {
       })),
     });
   }
+
+  const booleanFields = ["isBlocked", "isDeleted", "isVerified", "isActive"];
+  booleanFields.forEach((field) => {
+    if (queryFilter[field]) {
+      queryFilter[field] = queryFilter[field] === "true";
+    }
+  });
 
   // queryFilter
   if (Object.keys(queryFilter).length > 0) {
@@ -198,9 +210,13 @@ const getUserById = async (id: string) => {
 
 // update user
 const updateUser = async (id: string, payload: any) => {
+  const data: any = { ...payload };
+  if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
+  if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
+
   const user = await prisma.user.update({
     where: { id },
-    data: payload,
+    data,
   });
   return user;
 };
@@ -232,7 +248,7 @@ const getMyData = async (id: string) => {
 // change password
 const changePassword = async (
   payload: { oldPassword: string; newPassword: string },
-  id: string
+  id: string,
 ) => {
   console.log(payload, id);
 
@@ -247,13 +263,13 @@ const changePassword = async (
   if (payload.oldPassword === payload.newPassword) {
     throw new ApiError(
       status.BAD_REQUEST,
-      "🔍❓ Old Password and New Password cannot be the same"
+      "🔍❓ Old Password and New Password cannot be the same",
     );
   }
 
   const isPasswordCorrect = await argon2.verify(
     user.password,
-    payload.oldPassword
+    payload.oldPassword,
   );
   if (!isPasswordCorrect) {
     throw new ApiError(status.UNAUTHORIZED, "🔍❓ Old Password is incorrect");
@@ -350,8 +366,6 @@ const blockUser = async (id: string) => {
   });
   return deletedUser;
 };
-
-
 
 export const UserServices = {
   createUserIntoDB,

@@ -4,9 +4,17 @@ import prisma from "../../utils/prismaClient.ts";
 import type { Prisma } from "@prisma/client";
 import { subCategorySearchableFields } from "./subCategory.constant.ts";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
+import slugCreate from "../../utils/slugCreate.ts";
 
 const createSubCategory = async (payload: any) => {
-  const result = await prisma.subCategory.create({ data: payload });
+  const slug = payload.slug || slugCreate(payload.name);
+  const data: any = { ...payload, slug };
+  if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
+  if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
+
+  const result = await prisma.subCategory.create({
+    data,
+  });
   return result;
 };
 
@@ -18,15 +26,20 @@ const getAllSubCategory = async (query: any) => {
 
   const andCondition: Prisma.SubCategoryWhereInput[] = [];
 
-  if (query.searchTerm) {
+  if (searchTerm) {
     andCondition.push({
       OR: subCategorySearchableFields.map((text: string) => ({
         [text]: {
-          contains: query.searchTerm,
+          contains: searchTerm,
           mode: "insensitive",
         },
       })),
     });
+  }
+
+  // Handle Boolean filter for status
+  if (queryFilter.status) {
+    queryFilter.status = queryFilter.status === "true";
   }
 
   // queryFilter
@@ -86,9 +99,38 @@ const getSubCategoryBySlug = async (slug: string) => {
 };
 
 const updateSubCategory = async (id: string, payload: any) => {
+  const existingSubCategory = await prisma.subCategory.findUnique({
+    where: { id },
+  });
+  if (!existingSubCategory) {
+    throw new ApiError(httpStatus.NOT_FOUND, "SubCategory not found");
+  }
+
+  const updateData: Partial<Prisma.SubCategoryUpdateInput> = {};
+
+  if (payload.name) {
+    updateData.name = payload.name;
+    updateData.slug = payload.slug || slugCreate(payload.name);
+  } else if (payload.slug) {
+    updateData.slug = payload.slug;
+  }
+
+  if (payload.categoryId) {
+    updateData.category = {
+      connect: { id: payload.categoryId },
+    };
+  }
+  if (payload.icon) updateData.icon = payload.icon;
+  if (payload.description) updateData.description = payload.description;
+  if (payload.status !== undefined) {
+    updateData.status = payload.status === true || payload.status === "true";
+  }
+  if (payload.createdAt) updateData.createdAt = new Date(payload.createdAt);
+  if (payload.updatedAt) updateData.updatedAt = new Date(payload.updatedAt);
+
   const result = await prisma.subCategory.update({
     where: { id },
-    data: payload,
+    data: updateData,
   });
   return result;
 };

@@ -1,9 +1,9 @@
-datasource db {
-  provider = "postgresql"
-}
-
 generator client {
   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
 }
 
 model User {
@@ -12,72 +12,69 @@ model User {
   password           String
   mobile             String             @unique
   role               Role               @default(USER)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  isActive           Boolean            @default(true)
   isBlocked          Boolean            @default(false)
   isDeleted          Boolean            @default(false)
   isVerified         Boolean            @default(false)
-  isActive           Boolean            @default(true)
-  passwordChanged    Boolean            @default(false)
   passwordChangeTime DateTime?
+  passwordChanged    Boolean            @default(false)
   lastLogin          DateTime?          @default(now())
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-  subscriptionId     String? // Added for the new subscription relation
-  subscription       Subscription?      @relation(fields: [subscriptionId], references: [id])
-  subscriptionEarns  SubscriptionEarn[] // Changed to 1-to-many
-  profile            Profile?
+  subscriptionId     String?
   address            Address?
+  profile            Profile?
+  subscriptionEarns  SubscriptionEarn[]
+  subscription       Subscription?      @relation(fields: [subscriptionId], references: [id])
   workInfo           WorkInfo?
-  blogs              Blog[]
 }
 
 model Profile {
-  id         String      @id @default(uuid())
-  mobile     String      @unique
-  user       User        @relation(fields: [mobile], references: [mobile])
-  serialId   String?
-  name       String?
-  gender     Gender?
-  age        Int?
-  dob        DateTime?
-  bloodGroup BloodGroup?
-  photo      String?
-  nid        String?
-  nidPhoto   String[]    @default([])
-
-  emailVerified Boolean @default(false)
-  phoneVerified Boolean @default(false)
-  nidVerified   Boolean @default(false)
+  id            String      @id @default(uuid())
+  mobile        String      @unique
+  name          String?
+  gender        Gender?
+  age           Int?
+  dob           DateTime?
+  bloodGroup    BloodGroup?
+  photo         String?
+  nid           String?
+  nidPhoto      String[]    @default([])
+  emailVerified Boolean     @default(false)
+  phoneVerified Boolean     @default(false)
+  nidVerified   Boolean     @default(false)
+  serialId      String?
+  user          User        @relation(fields: [mobile], references: [mobile])
 }
 
 model Address {
   id       String  @id @default(uuid())
   mobile   String  @unique
-  user     User    @relation(fields: [mobile], references: [mobile])
   division String?
   district String?
   upazila  String?
   address  String?
+  user     User    @relation(fields: [mobile], references: [mobile])
 }
 
 model WorkInfo {
   id                 String    @id @default(uuid())
   mobile             String    @unique
-  user               User      @relation(fields: [mobile], references: [mobile])
-  idDeleted          Boolean   @default(false)
-  isBlocked          Boolean   @default(false)
-  passwordChanged    Boolean   @default(false)
-  verified           Boolean   @default(false)
-  passwordChangeTime DateTime?
   categories         String[]  @default([])
   experience         String?
   workType           String?
   availableTime      String?
+  idDeleted          Boolean   @default(false)
+  isBlocked          Boolean   @default(false)
+  passwordChangeTime DateTime?
+  passwordChanged    Boolean   @default(false)
+  verified           Boolean   @default(false)
+  user               User      @relation(fields: [mobile], references: [mobile])
 }
 
 model SubscriptionEarn {
   id             String    @id @default(uuid())
   userId         String
-  user           User      @relation(fields: [userId], references: [id])
   subscriptionId String
   amount         String
   expireAt       DateTime
@@ -86,6 +83,7 @@ model SubscriptionEarn {
   renewAt        DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  user           User      @relation(fields: [userId], references: [id])
 }
 
 model Otp {
@@ -98,13 +96,13 @@ model Otp {
 
 model Category {
   id            String        @id @default(uuid())
-  name          String
   icon          String?
-  slug          String        @unique
-  status        Boolean       @default(true)
   description   String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  name          String
+  slug          String        @unique
+  status        Boolean       @default(true)
   subCategories SubCategory[]
 }
 
@@ -112,13 +110,13 @@ model SubCategory {
   id          String   @id @default(uuid())
   name        String
   categoryId  String
-  slug        String   @unique
-  status      Boolean  @default(true)
-  category    Category @relation(fields: [categoryId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   description String?
   icon        String?
+  slug        String   @unique
+  status      Boolean  @default(true)
+  category    Category @relation(fields: [categoryId], references: [id])
 
   @@map("sub_categories")
 }
@@ -134,7 +132,6 @@ model Blog {
   tags        String[]  @default([])
   category    String?
   authorId    String?
-  author      User?     @relation(fields: [authorId], references: [id])
   authorName  String?
   authorImage String?
   isPublished Boolean   @default(false)
@@ -147,7 +144,6 @@ model Subscription {
   id           String   @id @default(uuid())
   name         String
   price        String
-  slug         String   @unique
   discount     String
   isRecomended Boolean  @default(false)
   featured     String[] @default([])
@@ -158,7 +154,33 @@ model Subscription {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   duration     String
+  slug         String   @unique
   users        User[]
+}
+
+model Folder {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  parentId  String?
+  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
+  children  Folder[] @relation("FolderToFolder")
+  status    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  images    Image[]
+}
+
+model Image {
+  id        String   @id @default(uuid())
+  name      String
+  url       String
+  folderId  String?
+  folder    Folder?  @relation(fields: [folderId], references: [id])
+  slug      String   @unique
+  status    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {

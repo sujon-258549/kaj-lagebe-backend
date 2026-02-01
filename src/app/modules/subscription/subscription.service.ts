@@ -66,6 +66,7 @@ const getSubscriptionById = async (id: string) => {
 };
 
 const updateSubscription = async (id: string, payload: any) => {
+    console.log("payload", payload, id);
   const result = await prisma.subscription.update({
     where: { id },
     data: payload,

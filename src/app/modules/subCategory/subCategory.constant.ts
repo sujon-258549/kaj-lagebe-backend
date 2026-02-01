@@ -3,5 +3,21 @@ export const SubCategoryConstants = {
   DEFAULT_SORT: "desc",
 };
 
-export const subCategoryFilterableFields = ["searchTerm", "slug", "status", "createdAt", "updatedAt","page","limit","sortBy","sortOrder","categoryId"];
-export const subCategorySearchableFields = ["slug", "name", "description", "icon", "categoryId"];
+export const subCategoryFilterableFields = [
+  "searchTerm",
+  "slug",
+  "status",
+  "createdAt",
+  "updatedAt",
+  "page",
+  "limit",
+  "sortBy",
+  "sortOrder",
+  "categoryId",
+];
+export const subCategorySearchableFields = [
+  "slug",
+  "name",
+  "description",
+  "icon",
+];

@@ -4,7 +4,8 @@ import sendResponse from "../../utils/response.js";
 import status from "http-status";
 import catchAsync from "../../shared/catchAsync.js";
 import { pick } from "../../../shared/pick.ts";
-import { categoryFilter } from "./category.const.ts";
+import { categoryFilterableFields } from "./category.const.ts";
+
 
 const createCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -22,7 +23,7 @@ const createCategory = catchAsync(
 
 const getAllCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const query = pick(req.query, categoryFilter)
+    const query = pick(req.query, categoryFilterableFields)
     const result = await CategoryServices.getAllCategory(query);
     sendResponse(res, {
       success: true,

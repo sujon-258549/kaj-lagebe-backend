@@ -130,6 +130,7 @@ model Subscription {
   id           String   @id @default(uuid())
   name         String
   price        String
+  slug         String   @unique
   discount     String
   isRecomended Boolean  @default(false)
   featured     String[] @default([])

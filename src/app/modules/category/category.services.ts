@@ -3,8 +3,9 @@ import ApiError from "../../middleware/apiError.ts";
 import prisma from "../../utils/prismaClient.js";
 import slugCreate from "../../utils/slugCreate.ts";
 import httpStatus from "http-status";
-import { categorySearchText } from "./category.const.ts";
+
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
+import { categorySearchableFields } from "./category.const.ts";
 
 const createCategoryIntoDB = async (payload: any) => {
 
@@ -28,7 +29,7 @@ const getAllCategory = async (query: any) => {
 
   if(searchTerm){
     andCondition.push({
-      OR: categorySearchText.map((text: string) => ({
+      OR: categorySearchableFields.map((text: string) => ({
         [text]: {
           contains: searchTerm,
           mode: "insensitive",

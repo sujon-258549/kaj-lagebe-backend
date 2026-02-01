@@ -65,7 +65,7 @@ const getAll${capName} = catchAsync(async (req, res) => {
 const get${capName}ById = catchAsync(async (req, res) => {
   const result = await ${capName}Services.get${capName}ById(req.params.id);
  return sendResponse(res, {
-    status: httpStatus.OK,
+    statusCode: httpStatus.OK,
     success: true,
     message: "${capName} retrieved successfully!",
     data: result,
@@ -75,7 +75,7 @@ const get${capName}ById = catchAsync(async (req, res) => {
 const update${capName} = catchAsync(async (req, res) => {
   const result = await ${capName}Services.update${capName}(req.params.id, req.body);
  return sendResponse(res, {
-    status: httpStatus.OK,
+    statusCode: httpStatus.OK,
     success: true,
     message: "${capName} updated successfully!",
     data: result,
@@ -85,7 +85,7 @@ const update${capName} = catchAsync(async (req, res) => {
 const delete${capName} = catchAsync(async (req, res) => {
   const result = await ${capName}Services.delete${capName}(req.params.id);
  return sendResponse(res, {
-    status: httpStatus.OK,
+    statusCode: httpStatus.OK,
     success: true,
     message: "${capName} deleted successfully!",
     data: result,

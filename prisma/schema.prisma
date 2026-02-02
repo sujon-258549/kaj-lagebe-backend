@@ -145,6 +145,7 @@ model Subscription {
   name         String
   price        String
   discount     String
+  activeDays   Int
   isRecomended Boolean  @default(false)
   featured     String[] @default([])
   isActive     Boolean  @default(true)

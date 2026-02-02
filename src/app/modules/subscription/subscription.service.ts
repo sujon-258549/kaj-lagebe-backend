@@ -1,22 +1,29 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import httpStatus from "http-status";
 import ApiError from "../../middleware/apiError.ts";
 import { subscriptionSearchableFields } from "./subscription.constant.ts";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 
+import slugCreate from "../../utils/slugCreate.ts";
+import prisma from "../../utils/prismaClient.ts";
 
-const prisma = new PrismaClient();
+
+//create subscription
 
 const createSubscription = async (payload: any) => {
-  return await prisma.subscription.create({ data: payload });
+  const slug = payload.slug || slugCreate(payload.name);
+  const data = { ...payload, slug };
+  return await prisma.subscription.create({ data });
 };
 
+//get all subscription
+
 const getAllSubscription = async (query: any) => {
-  const {page,limit,searchTerm,sortBy,sortOrder , ...filter}= query
+  const { page, limit, searchTerm, sortBy, sortOrder, ...filter } = query;
 
-  const andCondition: Prisma.SubscriptionWhereInput[] = []
+  const andCondition: Prisma.SubscriptionWhereInput[] = [];
 
-  if(searchTerm){
+  if (searchTerm) {
     andCondition.push({
       OR: subscriptionSearchableFields.map((text: string) => ({
         [text]: {
@@ -24,7 +31,7 @@ const getAllSubscription = async (query: any) => {
           mode: "insensitive",
         },
       })),
-    })
+    });
   }
 
   const { pageNumber, limitNumber, skip, sortOrderValue, sortByValue } =
@@ -59,31 +66,61 @@ const getAllSubscription = async (query: any) => {
   };
 };
 
+//get subscription by id
+
 const getSubscriptionById = async (id: string) => {
-  const result = await prisma.subscription.findFirst({ where: { OR: [{ id: id }, { slug: id }] } });
-  if (!result) throw new ApiError(httpStatus.NOT_FOUND, "Subscription not found");
+  const result = await prisma.subscription.findFirst({
+    where: { OR: [{ id: id }, { slug: id }] },
+  });
+  if (!result)
+    throw new ApiError(httpStatus.NOT_FOUND, "Subscription not found");
   return result;
 };
 
+//update subscription
+
 const updateSubscription = async (id: string, payload: any) => {
-    console.log("payload", payload, id);
+  const existingSubscription = await prisma.subscription.findUnique({
+    where: { id },
+  });
+  if (!existingSubscription)
+    throw new ApiError(httpStatus.NOT_FOUND, "Subscription not found");
+
+  const updateData = { ...payload };
+
+  if (payload.name) {
+    updateData.slug = payload.slug || slugCreate(payload.name);
+  } else if (payload.slug) {
+    updateData.slug = payload.slug;
+  }
+
   const result = await prisma.subscription.update({
     where: { id },
-    data: payload,
+    data: updateData,
   });
   return result;
 };
+
+//delete subscription
 
 const deleteSubscription = async (id: string) => {
   await prisma.subscription.delete({ where: { id } });
   return { message: "Subscription deleted successfully" };
 };
 
-const updateSubscriptionStatus = async (id: string) => {
-  const existingSubscription = await prisma.subscription.findUnique({ where: { id } });
-  if (!existingSubscription) throw new ApiError(httpStatus.NOT_FOUND, "Subscription not found");
 
-  const result = await prisma.subscription.update({ where: { id }, data: { status: !existingSubscription.status } });
+//update subscription status
+const updateSubscriptionStatus = async (id: string) => {
+  const existingSubscription = await prisma.subscription.findUnique({
+    where: { id },
+  });
+  if (!existingSubscription)
+    throw new ApiError(httpStatus.NOT_FOUND, "Subscription not found");
+
+  const result = await prisma.subscription.update({
+    where: { id },
+    data: { status: !existingSubscription.status },
+  });
   return result;
 };
 

@@ -6,6 +6,7 @@ import { SubCategoryRoutes } from "../modules/subCategory/subCategory.routes.ts"
 import { BlogRoutes } from "../modules/blog/blog.routes.ts";
 import { MediaRoutes } from "../modules/media/media.routes.js";
 import { FolderRoutes } from "../modules/folder/folder.routes.ts";
+import { SubscriptionRoutes } from "../modules/subscription/subscription.routes.ts";
 
 const router = Router();
 
@@ -25,6 +26,10 @@ const allRouter = [
   {
     path: "/sub-category",
     router: SubCategoryRoutes,
+  },
+  {
+    path: "/subscription",
+    router: SubscriptionRoutes,
   },
   {
     path: "/blog",

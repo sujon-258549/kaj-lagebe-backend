@@ -23,7 +23,7 @@ const loginUser = async (payload: any) => {
     throw new ApiError(status.UNAUTHORIZED, "🔍❓ User is deleted");
   }
 
-  if (user.isActive) {
+  if (!user.isActive) {
     throw new ApiError(status.UNAUTHORIZED, "🔍❓ User is not active");
   }
 
@@ -84,6 +84,10 @@ const loginUser = async (payload: any) => {
     isActive: user.isActive,
     passwordChanged: user.passwordChanged,
     passwordChangeTime: user.passwordChangeTime,
+    loginTryCount: user.loginTryCount,
+    loginTryTime: user.loginTryTime,
+    lastLogin: user.lastLogin,
+    loginCount: user.loginCount,
   };
 
   const accessToken = JwtHelpers.generateToken(
@@ -131,6 +135,10 @@ const refreshToken = async (token: string) => {
     isActive: user.isActive,
     passwordChanged: user.passwordChanged,
     passwordChangeTime: user.passwordChangeTime,
+    loginTryCount: user.loginTryCount,
+    loginTryTime: user.loginTryTime,
+    lastLogin: user.lastLogin,
+    loginCount: user.loginCount,
   };
 
   const accessToken = JwtHelpers.generateToken(

@@ -145,7 +145,6 @@ model Subscription {
   name         String
   price        String
   discount     String
-  activeDays   Int
   isRecomended Boolean  @default(false)
   featured     String[] @default([])
   isActive     Boolean  @default(true)
@@ -156,6 +155,7 @@ model Subscription {
   updatedAt    DateTime @updatedAt
   duration     String
   slug         String   @unique
+  activeDays   Int
   users        User[]
 }
 
@@ -164,11 +164,11 @@ model Folder {
   name      String
   slug      String   @unique
   parentId  String?
-  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
-  children  Folder[] @relation("FolderToFolder")
   status    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
+  children  Folder[] @relation("FolderToFolder")
   images    Image[]
 }
 
@@ -177,11 +177,11 @@ model Image {
   name      String
   url       String
   folderId  String?
-  folder    Folder?  @relation(fields: [folderId], references: [id])
   slug      String   @unique
   status    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  folder    Folder?  @relation(fields: [folderId], references: [id])
 }
 
 enum Role {

@@ -15,6 +15,18 @@ const loginUser = async (payload: any) => {
     throw new ApiError(status.NOT_FOUND, "User not found");
   }
 
+  if (user.isBlocked) {
+    throw new ApiError(status.UNAUTHORIZED, "🔍❓ User is blocked");
+  }
+
+  if (user.isDeleted) {
+    throw new ApiError(status.UNAUTHORIZED, "🔍❓ User is deleted");
+  }
+
+  if (user.isActive) {
+    throw new ApiError(status.UNAUTHORIZED, "🔍❓ User is not active");
+  }
+
   if (user.loginTryCount >= 5) {
     const lastTryTime = user.loginTryTime
       ? new Date(user.loginTryTime).getTime()

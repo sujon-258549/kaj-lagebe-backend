@@ -1,0 +1,180 @@
+import httpStatus from "http-status";
+import prisma from "../../utils/prismaClient.ts";
+import ApiError from "../../middleware/apiError.ts";
+import type { Prisma } from "@prisma/client";
+import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
+import { applicationSearchableFields } from "./application.constant.ts";
+
+const createApplication = async (userId: string, payload: any) => {
+  const isJobExist = await prisma.job.findUnique({
+    where: { id: payload.jobId },
+  });
+
+  if (!isJobExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Job not found");
+  }
+
+  const isAlreadyApplied = await prisma.application.findFirst({
+    where: {
+      jobId: payload.jobId,
+      userId: userId,
+    },
+  });
+
+  if (isAlreadyApplied) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Already applied for this job");
+  }
+
+  const result = await prisma.application.create({
+    data: {
+      ...payload,
+      userId,
+    },
+    include: {
+      job: true,
+      user: {
+        include: {
+          profile: true,
+        },
+      },
+    },
+  });
+
+  // Increment applicants count
+  await prisma.job.update({
+    where: { id: payload.jobId },
+    data: {
+      applicantsCount: {
+        increment: 1,
+      },
+    },
+  });
+
+  return result;
+};
+
+const getAllApplications = async (query: any) => {
+  const { searchTerm, page, limit, sortBy, sortOrder, ...queryFilter } = query;
+
+  const andCondition: Prisma.ApplicationWhereInput[] = [];
+  const { pageNumber, limitNumber, skip, sortOrderValue, sortByValue } =
+    calculatePaginationOrSort(page, limit, sortBy, sortOrder);
+
+  if (searchTerm) {
+    andCondition.push({
+      OR: applicationSearchableFields.map((text: string) => ({
+        [text]: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  const result = await prisma.application.findMany({
+    where: {
+      AND: andCondition,
+      ...queryFilter,
+      isDeleted: false,
+    },
+    take: limitNumber,
+    skip: skip,
+    orderBy: {
+      [sortByValue]: sortOrderValue,
+    },
+    include: {
+      job: true,
+      user: {
+        include: {
+          profile: true,
+        },
+      },
+    },
+  });
+
+  const total = await prisma.application.count({
+    where: {
+      AND: andCondition,
+      ...queryFilter,
+      isDeleted: false,
+    },
+  });
+
+  return {
+    data: result,
+    meta: {
+      page: pageNumber,
+      limit: limitNumber,
+      total: total,
+    },
+  };
+};
+
+const getApplicationById = async (id: string) => {
+  const result = await prisma.application.findUnique({
+    where: { id },
+    include: {
+      job: true,
+      user: {
+        include: {
+          profile: true,
+        },
+      },
+      comments: {
+        include: {
+          user: {
+            include: {
+              profile: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!result)
+    throw new ApiError(httpStatus.NOT_FOUND, "Application not found");
+  return result;
+};
+
+const updateApplication = async (id: string, payload: any) => {
+  const isExist = await prisma.application.findUnique({ where: { id } });
+  if (!isExist)
+    throw new ApiError(httpStatus.NOT_FOUND, "Application not found");
+
+  const result = await prisma.application.update({
+    where: { id },
+    data: payload,
+  });
+  return result;
+};
+
+const deleteApplication = async (id: string) => {
+  const isExist = await prisma.application.findUnique({ where: { id } });
+  if (!isExist)
+    throw new ApiError(httpStatus.NOT_FOUND, "Application not found");
+
+  await prisma.application.update({
+    where: { id },
+    data: { isDeleted: true },
+  });
+
+  // Decrement applicants count
+  await prisma.job.update({
+    where: { id: isExist.jobId },
+    data: {
+      applicantsCount: {
+        decrement: 1,
+      },
+    },
+  });
+
+  return { message: "Application deleted successfully" };
+};
+
+export const ApplicationServices = {
+  createApplication,
+  getAllApplications,
+  getApplicationById,
+  updateApplication,
+  deleteApplication,
+};

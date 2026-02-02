@@ -21,15 +21,21 @@ model User {
   passwordChangeTime DateTime?
   passwordChanged    Boolean            @default(false)
   lastLogin          DateTime?          @default(now())
+  subscriptionId     String?
   loginCount         Int                @default(0)
   loginTryCount      Int                @default(0)
   loginTryTime       DateTime?          @default(now())
-  subscriptionId     String?
   address            Address?
   profile            Profile?
   subscriptionEarns  SubscriptionEarn[]
   subscription       Subscription?      @relation(fields: [subscriptionId], references: [id])
   workInfo           WorkInfo?
+  jobs               Job[]
+  applications       Application[]
+  comments           Comment[]
+  notifications      Notification[]
+
+  @@map("users")
 }
 
 model Profile {
@@ -58,6 +64,8 @@ model Address {
   upazila  String?
   address  String?
   user     User    @relation(fields: [mobile], references: [mobile])
+
+  @@map("addresses")
 }
 
 model WorkInfo {
@@ -67,12 +75,14 @@ model WorkInfo {
   experience         String?
   workType           String?
   availableTime      String?
-  idDeleted          Boolean   @default(false)
+  isDeleted          Boolean   @default(false)
   isBlocked          Boolean   @default(false)
   passwordChangeTime DateTime?
   passwordChanged    Boolean   @default(false)
   verified           Boolean   @default(false)
   user               User      @relation(fields: [mobile], references: [mobile])
+
+  @@map("work_infos")
 }
 
 model SubscriptionEarn {
@@ -87,6 +97,8 @@ model SubscriptionEarn {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   user           User      @relation(fields: [userId], references: [id])
+
+  @@map("subscription_earns")
 }
 
 model Otp {
@@ -95,6 +107,8 @@ model Otp {
   otpToken  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("otps")
 }
 
 model Category {
@@ -107,6 +121,9 @@ model Category {
   slug          String        @unique
   status        Boolean       @default(true)
   subCategories SubCategory[]
+  jobs          Job[]
+
+  @@map("categories")
 }
 
 model SubCategory {
@@ -120,6 +137,7 @@ model SubCategory {
   slug        String   @unique
   status      Boolean  @default(true)
   category    Category @relation(fields: [categoryId], references: [id])
+  jobs        Job[]
 
   @@map("sub_categories")
 }
@@ -141,6 +159,8 @@ model Blog {
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@map("blogs")
 }
 
 model Subscription {
@@ -160,6 +180,8 @@ model Subscription {
   slug         String   @unique
   activeDays   Int
   users        User[]
+
+  @@map("subscriptions")
 }
 
 model Folder {
@@ -173,6 +195,8 @@ model Folder {
   parent    Folder?  @relation("FolderToFolder", fields: [parentId], references: [id])
   children  Folder[] @relation("FolderToFolder")
   images    Image[]
+
+  @@map("folders")
 }
 
 model Image {
@@ -185,6 +209,8 @@ model Image {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   folder    Folder?  @relation(fields: [folderId], references: [id])
+
+  @@map("images")
 }
 
 enum Role {
@@ -212,4 +238,136 @@ enum BloodGroup {
   AB_NEGATIVE
   O_POSITIVE
   O_NEGATIVE
+}
+
+model Job {
+  id                   String        @id @default(uuid())
+  title                String
+  slug                 String        @unique
+  company              String?
+  location             String
+  type                 String?
+  salary               String?
+  salaryMin            Float?
+  salaryMax            Float?
+  negotiable           Boolean?      @default(false)
+  logo                 String?
+  tags                 String[]      @default([])
+  categoryId           String?
+  subCategoryId        String?
+  categoryName         String?
+  shortDescription     String?
+  description          String
+  responsibilities     String[]      @default([])
+  requirements         String[]      @default([])
+  benefits             String[]      @default([])
+  education            String?
+  experience           String?
+  vacancy              Int?
+  deadline             String?
+  jobNature            String?
+  gender               String?
+  ageRange             String?
+  salaryReview         String?
+  lunchFacility        String?
+  festivalBonus        String?
+  workingHours         String?
+  weekend              String?
+  address              String?
+  website              String?
+  email                String?
+  phone                String?
+  founded              String?
+  companySize          String?
+  industry             String?
+  skills               String[]      @default([])
+  tools                String[]      @default([])
+  languages            String[]      @default([])
+  visaSponsorship      Boolean?      @default(false)
+  relocationAssistance Boolean?      @default(false)
+  remotePolicy         String?
+  department           String?
+  reportingTo          String?
+  teamSize             Int?
+  performanceBonus     Boolean?      @default(false)
+  healthInsurance      Boolean?      @default(false)
+  contactPerson        String?
+  mapCoordinates       Json?
+  socialMedia          Json?
+  ceoName              String?
+  applicationLink      String?
+  internalId           String?
+  referenceCode        String?
+  keywords             String[]      @default([])
+  metaDescription      String?
+  applicationDeadline  String?
+  isUrgent             Boolean       @default(false)
+  workStartTime        String?
+  workTimeLimit        String?
+  jobAmount            String?
+  jobLocation          Json?
+  isPublished          Boolean       @default(false)
+  status               Boolean       @default(true)
+  isDeleted            Boolean       @default(false)
+  applicantsCount      Int           @default(0)
+  userId               String
+  user                 User          @relation(fields: [userId], references: [id])
+  category             Category?     @relation(fields: [categoryId], references: [id])
+  subCategory          SubCategory?  @relation(fields: [subCategoryId], references: [id])
+  applications         Application[]
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  @@map("jobs")
+}
+
+model Application {
+  id           String    @id @default(uuid())
+  jobId        String
+  userId       String
+  resume       String?
+  coverLetter  String?
+  applyNote    String?
+  applyComment String?
+  applyStatus  String    @default("PENDING")
+  isRead       Boolean   @default(false)
+  isDeleted    Boolean   @default(false)
+  status       Boolean   @default(true)
+  job          Job       @relation(fields: [jobId], references: [id])
+  user         User      @relation(fields: [userId], references: [id])
+  comments     Comment[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("applications")
+}
+
+model Comment {
+  id            String      @id @default(uuid())
+  applicationId String
+  userId        String
+  comment       String
+  isDeleted     Boolean     @default(false)
+  application   Application @relation(fields: [applicationId], references: [id])
+  user          User        @relation(fields: [userId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@map("comments")
+}
+
+model Notification {
+  id            String   @id @default(uuid())
+  userId        String
+  type          String
+  message       String
+  jobId         String?
+  applicationId String?
+  isRead        Boolean  @default(false)
+  isDeleted     Boolean  @default(false)
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("notifications")
 }

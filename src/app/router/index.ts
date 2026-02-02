@@ -7,6 +7,10 @@ import { BlogRoutes } from "../modules/blog/blog.routes.ts";
 import { MediaRoutes } from "../modules/media/media.routes.js";
 import { FolderRoutes } from "../modules/folder/folder.routes.ts";
 import { SubscriptionRoutes } from "../modules/subscription/subscription.routes.ts";
+import { ApplicationRoutes } from "../modules/application/application.routes.ts";
+import { CommentRoutes } from "../modules/comment/comment.routes.ts";
+import { NotificationRoutes } from "../modules/notification/notification.routes.ts";
+import { JobRoutes } from "../modules/job/job.routes.ts";
 
 const router = Router();
 
@@ -42,6 +46,22 @@ const allRouter = [
   {
     path: "/folder",
     router: FolderRoutes,
+  },
+  {
+    path: "/application",
+    router: ApplicationRoutes,
+  },
+  {
+    path: "/comment",
+    router: CommentRoutes,
+  },
+  {
+    path: "/notification",
+    router: NotificationRoutes,
+  },
+  {
+    path: "/job",
+    router: JobRoutes,
   },
 ];
 

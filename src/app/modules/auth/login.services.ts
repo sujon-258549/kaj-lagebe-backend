@@ -10,18 +10,56 @@ const loginUser = async (payload: any) => {
   const user = await prisma.user.findUnique({
     where: { email: payload.email },
   });
+
   if (!user) {
     throw new ApiError(status.NOT_FOUND, "User not found");
   }
 
+  if (user.loginTryCount >= 5) {
+    const lastTryTime = user.loginTryTime
+      ? new Date(user.loginTryTime).getTime()
+      : 0;
+    const currentTime = new Date().getTime();
+    const timeDiff = (currentTime - lastTryTime) / (1000 * 60); // minutes
+
+    if (timeDiff < 5) {
+      const remainingTime = Math.ceil(5 - timeDiff);
+      throw new ApiError(
+        status.UNAUTHORIZED,
+        `🔍❓ You have exceeded the maximum number of login attempts. Please try again after ${remainingTime} minutes or Forgot Password.`,
+      );
+    } else {
+      // Reset the count if 5 minutes have passed
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { loginTryCount: 0 },
+      });
+      user.loginTryCount = 0;
+    }
+  }
+
   const isPasswordCorrect = await argon2.verify(
     user.password,
-    payload.password
+    payload.password,
   );
 
   if (!isPasswordCorrect) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { loginTryCount: { increment: 1 }, loginTryTime: new Date() },
+    });
     throw new ApiError(status.UNAUTHORIZED, "🔍❓ Password is incorrect");
   }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      lastLogin: new Date(),
+      loginCount: { increment: 1 },
+      loginTryCount: 0,
+      loginTryTime: null,
+    },
+  });
 
   const payloadData = {
     id: user.id,
@@ -39,12 +77,12 @@ const loginUser = async (payload: any) => {
   const accessToken = JwtHelpers.generateToken(
     payloadData,
     config.accessSecret,
-    config.accessExpire
+    config.accessExpire,
   );
   const refreshToken = JwtHelpers.generateToken(
     payloadData,
     config.refreshSecret,
-    config.refreshExpire
+    config.refreshExpire,
   );
 
   return {
@@ -86,7 +124,7 @@ const refreshToken = async (token: string) => {
   const accessToken = JwtHelpers.generateToken(
     payloadData,
     config.accessSecret,
-    config.accessExpire
+    config.accessExpire,
   );
   return {
     accessToken,
@@ -114,7 +152,7 @@ const forgotPassword = async (payload: { email: string }) => {
   const otpSent = await sendEmail(
     user.email,
     otpEmailTemplate(emailData),
-    "Your OTP Code"
+    "Your OTP Code",
   );
 
   await prisma.otp.upsert({

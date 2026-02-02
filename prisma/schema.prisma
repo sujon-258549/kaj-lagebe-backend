@@ -21,6 +21,9 @@ model User {
   passwordChangeTime DateTime?
   passwordChanged    Boolean            @default(false)
   lastLogin          DateTime?          @default(now())
+  loginCount         Int                @default(0)
+  loginTryCount      Int                @default(0)
+  loginTryTime       DateTime?          @default(now())
   subscriptionId     String?
   address            Address?
   profile            Profile?

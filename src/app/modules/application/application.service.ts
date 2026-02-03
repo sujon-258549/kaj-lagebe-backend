@@ -25,6 +25,14 @@ const createApplication = async (userId: string, payload: any) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "Already applied for this job");
   }
 
+  // Parse fields if they are strings (Booleans)
+  if (typeof payload.isRead === "string")
+    payload.isRead = payload.isRead === "true";
+  if (typeof payload.status === "string")
+    payload.status = payload.status === "true";
+  if (typeof payload.isDeleted === "string")
+    payload.isDeleted = payload.isDeleted === "true";
+
   const result = await prisma.application.create({
     data: {
       ...payload,
@@ -33,8 +41,15 @@ const createApplication = async (userId: string, payload: any) => {
     include: {
       job: true,
       user: {
-        include: {
-          profile: true,
+        select: {
+          email: true,
+          mobile: true,
+          profile: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
         },
       },
     },
@@ -85,8 +100,15 @@ const getAllApplications = async (query: any) => {
     include: {
       job: true,
       user: {
-        include: {
-          profile: true,
+        select: {
+          email: true,
+          mobile: true,
+          profile: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
         },
       },
     },
@@ -116,15 +138,29 @@ const getApplicationById = async (id: string) => {
     include: {
       job: true,
       user: {
-        include: {
-          profile: true,
+        select: {
+          email: true,
+          mobile: true,
+          profile: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
         },
       },
       comments: {
         include: {
           user: {
-            include: {
-              profile: true,
+            select: {
+              email: true,
+              mobile: true,
+              profile: {
+                select: {
+                  name: true,
+                  photo: true,
+                },
+              },
             },
           },
         },
@@ -141,9 +177,32 @@ const updateApplication = async (id: string, payload: any) => {
   if (!isExist)
     throw new ApiError(httpStatus.NOT_FOUND, "Application not found");
 
+  // Parse fields if they are strings (Booleans)
+  if (typeof payload.isRead === "string")
+    payload.isRead = payload.isRead === "true";
+  if (typeof payload.status === "string")
+    payload.status = payload.status === "true";
+  if (typeof payload.isDeleted === "string")
+    payload.isDeleted = payload.isDeleted === "true";
+
   const result = await prisma.application.update({
     where: { id },
     data: payload,
+    include: {
+      job: true,
+      user: {
+        select: {
+          email: true,
+          mobile: true,
+          profile: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
+        },
+      },
+    },
   });
   return result;
 };

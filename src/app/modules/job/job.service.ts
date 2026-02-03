@@ -7,13 +7,87 @@ import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOr
 import { jobSearchableFields } from "./job.constant.ts";
 
 const createJob = async (userId: string, payload: any) => {
-  const slug = payload.slug || slugCreate(payload.title);
+  // Parse fields if they are strings (JSON, Arrays, Booleans)
+  if (typeof payload.isUrgent === "string")
+    payload.isUrgent = payload.isUrgent === "true";
+  if (typeof payload.isPublished === "string")
+    payload.isPublished = payload.isPublished === "true";
+  if (typeof payload.status === "string")
+    payload.status = payload.status === "true";
+  if (typeof payload.negotiable === "string")
+    payload.negotiable = payload.negotiable === "true";
+  if (typeof payload.visaSponsorship === "string")
+    payload.visaSponsorship = payload.visaSponsorship === "true";
+  if (typeof payload.relocationAssistance === "string")
+    payload.relocationAssistance = payload.relocationAssistance === "true";
+  if (typeof payload.performanceBonus === "string")
+    payload.performanceBonus = payload.performanceBonus === "true";
+  if (typeof payload.healthInsurance === "string")
+    payload.healthInsurance = payload.healthInsurance === "true";
+
+  // Parse JSON fields
+  if (typeof payload.mapCoordinates === "string")
+    payload.mapCoordinates = JSON.parse(payload.mapCoordinates);
+  if (typeof payload.socialMedia === "string")
+    payload.socialMedia = JSON.parse(payload.socialMedia);
+  if (typeof payload.jobLocation === "string")
+    payload.jobLocation = JSON.parse(payload.jobLocation);
+
+  // Parse String Arrays
+  const arrayFields = [
+    "tags",
+    "responsibilities",
+    "requirements",
+    "benefits",
+    "skills",
+    "tools",
+    "languages",
+    "keywords",
+  ];
+  arrayFields.forEach((field) => {
+    if (typeof payload[field] === "string") {
+      try {
+        payload[field] = JSON.parse(payload[field]);
+      } catch (e) {
+        payload[field] = payload[field].split(",").map((s: string) => s.trim());
+      }
+    }
+  });
+
+  const slug =
+    payload.slug || slugCreate(payload.title + " " + (payload.location || ""));
 
   const result = await prisma.job.create({
     data: {
       ...payload,
       slug,
       userId,
+    },
+    include: {
+      category: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      subCategory: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      user: {
+        select: {
+          email: true,
+          mobile: true,
+          profile: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
+        },
+      },
     },
   });
 
@@ -61,11 +135,28 @@ const getAllJobs = async (query: any) => {
       [sortByValue]: sortOrderValue,
     },
     include: {
-      category: true,
-      subCategory: true,
+      category: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      subCategory: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
       user: {
-        include: {
-          profile: true,
+        select: {
+          email: true,
+          mobile: true,
+          profile: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
         },
       },
     },
@@ -123,6 +214,53 @@ const updateJob = async (id: string, payload: any) => {
   const isExist = await prisma.job.findUnique({ where: { id } });
   if (!isExist) throw new ApiError(httpStatus.NOT_FOUND, "Job not found");
 
+  // Parse fields if they are strings (JSON, Arrays, Booleans)
+  if (typeof payload.isUrgent === "string")
+    payload.isUrgent = payload.isUrgent === "true";
+  if (typeof payload.isPublished === "string")
+    payload.isPublished = payload.isPublished === "true";
+  if (typeof payload.status === "string")
+    payload.status = payload.status === "true";
+  if (typeof payload.negotiable === "string")
+    payload.negotiable = payload.negotiable === "true";
+  if (typeof payload.visaSponsorship === "string")
+    payload.visaSponsorship = payload.visaSponsorship === "true";
+  if (typeof payload.relocationAssistance === "string")
+    payload.relocationAssistance = payload.relocationAssistance === "true";
+  if (typeof payload.performanceBonus === "string")
+    payload.performanceBonus = payload.performanceBonus === "true";
+  if (typeof payload.healthInsurance === "string")
+    payload.healthInsurance = payload.healthInsurance === "true";
+
+  // Parse JSON fields
+  if (typeof payload.mapCoordinates === "string")
+    payload.mapCoordinates = JSON.parse(payload.mapCoordinates);
+  if (typeof payload.socialMedia === "string")
+    payload.socialMedia = JSON.parse(payload.socialMedia);
+  if (typeof payload.jobLocation === "string")
+    payload.jobLocation = JSON.parse(payload.jobLocation);
+
+  // Parse String Arrays
+  const arrayFields = [
+    "tags",
+    "responsibilities",
+    "requirements",
+    "benefits",
+    "skills",
+    "tools",
+    "languages",
+    "keywords",
+  ];
+  arrayFields.forEach((field) => {
+    if (typeof payload[field] === "string") {
+      try {
+        payload[field] = JSON.parse(payload[field]);
+      } catch (e) {
+        payload[field] = payload[field].split(",").map((s: string) => s.trim());
+      }
+    }
+  });
+
   if (payload.title) {
     payload.slug = payload.slug || slugCreate(payload.title);
   }
@@ -130,6 +268,32 @@ const updateJob = async (id: string, payload: any) => {
   const result = await prisma.job.update({
     where: { id },
     data: payload,
+    include: {
+      category: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      subCategory: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+      user: {
+        select: {
+          email: true,
+          mobile: true,
+          profile: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
+        },
+      },
+    },
   });
   return result;
 };

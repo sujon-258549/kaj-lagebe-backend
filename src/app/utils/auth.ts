@@ -13,6 +13,7 @@ type UserRoleValue = (typeof USER_ROLE)[keyof typeof USER_ROLE];
 const auth = (...requiredRoles: UserRoleValue[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req?.headers?.authorization;
+  
     if (!token) {
       throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized");
     }
@@ -20,6 +21,8 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
       token,
       config.accessSecret as string
     );
+
+    console.log(decoded.data);
 
     const { role, email } = decoded?.data;
     const { iat, exp } = decoded as { iat: number; exp: number };

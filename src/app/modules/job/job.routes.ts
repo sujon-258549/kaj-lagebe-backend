@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post(
   "/",
-  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.EMPLOYEE),
+  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.EMPLOYEE, USER_ROLE.USER ),
   JobControllers.createJob,
 );
 
@@ -15,7 +15,7 @@ router.get("/", JobControllers.getAllJobs);
 
 router.get("/:id", JobControllers.getJobById);
 
-router.patch(
+router.put(
   "/:id",
   auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.EMPLOYEE),
   JobControllers.updateJob,

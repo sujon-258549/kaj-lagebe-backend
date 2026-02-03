@@ -4,7 +4,7 @@ import prisma from "../../utils/prismaClient.js";
 import { Role } from "@prisma/client";
 
 async function main() {
-  const superAdminEmail = "superadmin@hospital.com";
+  const superAdminEmail = "superadmin@kajlagbe.com";
   const superAdminPassword = "superadmin";
 
   // Check if Super Admin already exists

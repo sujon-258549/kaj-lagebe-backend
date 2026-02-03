@@ -34,9 +34,11 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
       },
     });
 
-    if(existingUser.isVerified === false) {
-      throw new ApiError(status.UNAUTHORIZED, "🔍❓ User not verified");
-    }
+ if(existingUser.role !== USER_ROLE.SUPER_ADMIN) {
+  if(existingUser.isVerified === false) {
+    throw new ApiError(status.UNAUTHORIZED, "🔍❓ User not verified");
+  }
+ }
 
     if (existingUser.passwordChangeTime) {
       // Date → milliseconds → seconds → number

@@ -34,6 +34,7 @@ model User {
   applications       Application[]
   comments           Comment[]
   notifications      Notification[]
+  payments           Payment[]
 
   @@map("users")
 }
@@ -86,19 +87,37 @@ model WorkInfo {
 }
 
 model SubscriptionEarn {
-  id             String    @id @default(uuid())
+  id             String       @id @default(uuid())
   userId         String
   subscriptionId String
   amount         String
   expireAt       DateTime
-  isActive       Boolean   @default(true)
-  isExpired      Boolean   @default(false)
+  isActive       Boolean      @default(true)
+  isExpired      Boolean      @default(false)
   renewAt        DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  user           User      @relation(fields: [userId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  user           User         @relation(fields: [userId], references: [id])
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
 
   @@map("subscription_earns")
+}
+
+model Payment {
+  id                 String        @id @default(cuid())
+  transactionId      String        @unique
+  amount             Float
+  status             PaymentStatus @default(PENDING)
+  paymentMethod      String?
+  userId             String
+  subscriptionId     String
+  user               User          @relation(fields: [userId], references: [id])
+  subscription       Subscription  @relation(fields: [subscriptionId], references: [id])
+  paymentGatewayData Json?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@map("payments")
 }
 
 model Otp {
@@ -164,22 +183,24 @@ model Blog {
 }
 
 model Subscription {
-  id           String   @id @default(uuid())
-  name         String
-  price        String
-  discount     String
-  isRecomended Boolean  @default(false)
-  featured     String[] @default([])
-  isActive     Boolean  @default(true)
-  status       Boolean  @default(true)
-  description  String?
-  isDeleted    Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  duration     String
-  slug         String   @unique
-  activeDays   Int
-  users        User[]
+  id                String             @id @default(uuid())
+  name              String
+  price             String
+  discount          String
+  isRecomended      Boolean            @default(false)
+  featured          String[]           @default([])
+  isActive          Boolean            @default(true)
+  status            Boolean            @default(true)
+  description       String?
+  isDeleted         Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  duration          String
+  slug              String             @unique
+  activeDays        Int
+  users             User[]
+  payments          Payment[]
+  subscriptionEarns SubscriptionEarn[]
 
   @@map("subscriptions")
 }
@@ -238,6 +259,13 @@ enum BloodGroup {
   AB_NEGATIVE
   O_POSITIVE
   O_NEGATIVE
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  CANCELLED
 }
 
 model Job {

@@ -11,6 +11,7 @@ import { ApplicationRoutes } from "../modules/application/application.routes.ts"
 import { CommentRoutes } from "../modules/comment/comment.routes.ts";
 import { NotificationRoutes } from "../modules/notification/notification.routes.ts";
 import { JobRoutes } from "../modules/job/job.routes.ts";
+import { PaymentRoutes } from "../modules/payment/payment.routes.ts";
 
 const router = Router();
 
@@ -62,6 +63,10 @@ const allRouter = [
   {
     path: "/job",
     router: JobRoutes,
+  },
+  {
+    path: "/payment",
+    router: PaymentRoutes,
   },
 ];
 

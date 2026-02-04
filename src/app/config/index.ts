@@ -12,4 +12,9 @@ export default {
   refreshSecret: process.env.REFRESH_SECRET!,
   refreshExpire: process.env.REFRESH_EXPIRE!,
   databaseUrl: process.env.DATABASE_URL!,
+  ssl: {
+    storeId: process.env.STORE_ID!,
+    storePassword: process.env.STORE_PASSWORD!,
+    storeName: process.env.STORE_NAME!
+  },
 };

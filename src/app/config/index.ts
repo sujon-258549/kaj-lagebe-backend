@@ -21,5 +21,6 @@ export default {
     cancelUrl: process.env.CANCEL_URL!,
     ipnUrl: process.env.IPN_URL!,
     ssl_payment_url: process.env.SSL_PAYMENT_URL!,
+    validate_api: process.env.VALIDATE_API!,
   },
 };

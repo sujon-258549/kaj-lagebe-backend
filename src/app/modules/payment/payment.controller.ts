@@ -5,15 +5,28 @@ import { PaymentServices } from "./payment.service.ts";
 
 const createPayment = catchAsync(async (req, res) => {
   // Ensure user is authenticated (middleware should guarantee this)
-  console.log("user", req.user);
 
-  const userId = req.user?.id;
-  const result = await PaymentServices.createPayment(userId!, req.body);
+  const user = req.user;
+  const { id } = req.params;
 
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const result = await PaymentServices.createPayment(user.id, id!);
   return sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
     message: "Payment created successfully!",
+    data: result,
+  });
+});
+
+const validatePayment = catchAsync(async (req, res) => {
+  const result = await PaymentServices.validatePayment(req.query as any);
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Payment validated successfully!",
     data: result,
   });
 });
@@ -64,4 +77,5 @@ export const PaymentControllers = {
   getPaymentById,
   updatePayment,
   deletePayment,
+  validatePayment,
 };

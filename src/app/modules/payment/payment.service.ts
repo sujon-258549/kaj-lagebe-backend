@@ -1,19 +1,95 @@
-import axios from "axios";
-import config from "../../config/index.ts";
+import ApiError from "../../middleware/apiError.ts";
 import prisma from "../../utils/prismaClient.js";
 import { sslServices } from "../ssl/sslservises.ts";
+import status from "http-status";
 
+const createPayment = async (userId: string, id: string) => {
+  const existUser = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: userId,
+    },
+    include: {
+      profile: true,
+      address: true,
+    },
+  });
 
+  if (!existUser) {
+    throw new ApiError(status.UNAUTHORIZED, "User not found");
+  }
 
-const createPayment = async (userId: string, payload: any) => {
-  const result = await sslServices.createPayment(payload)
-  return result
+  const existService = await prisma.subscription.findUniqueOrThrow({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!existService) {
+    throw new ApiError(status.UNAUTHORIZED, "Service not found");
+  }
+
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const lastPayment = await prisma.payment.findFirst({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  let incrementId = 0;
+
+  if (lastPayment?.transactionId) {
+    const lastId = lastPayment.transactionId.split("-").pop();
+    if (lastId) {
+      incrementId = parseInt(lastId);
+    }
+  }
+
+  const createTranId = `TRAN-${year}${month}-${incrementId + 1}`;
+
+  const data = {
+    total_amount: existService.price,
+    currency: "BDT",
+    tran_id: createTranId, // use unique tran_id for each api call,
+    shipping_method: "Courier",
+    product_name: existService.name,
+    product_category: existService.name,
+    product_profile: "general",
+    cus_name: existUser?.profile?.name,
+    cus_email: existUser.email,
+    cus_phone: existUser?.mobile,
+    cus_fax: existUser?.mobile,
+    ship_name: existUser?.profile?.name,
+    cus_add1: existUser?.address?.address,
+    cus_add2: existUser?.address?.district,
+    cus_city: existUser?.address?.district,
+    cus_state: existUser?.address?.division,
+    cus_postcode: "1000",
+    cus_country: "Bangladesh",
+  };
+
+  const result = await sslServices.createPayment(data);
+  return result;
+};
+
+const validatePayment = async (payload: any) => {
+  if (!payload || !payload.status || payload.status !== "VALID") {
+    // throw new ApiError(status.UNAUTHORIZED, "Payment validation failed");
+    return {
+      message: "Payment validation failed",
+      data: payload,
+    };
+  }
+
+  console.log("validatePayment", payload);
+  return payload;
 };
 
 const getAllPayment = async () => {
   const result = await prisma.payment.findMany({});
   return {
-    data:result
+    data: result,
   };
 };
 
@@ -45,4 +121,5 @@ export const PaymentServices = {
   getPaymentById,
   updatePayment,
   deletePayment,
+  validatePayment,
 };

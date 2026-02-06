@@ -7,9 +7,15 @@ const router = express.Router();
 
 // Protected routes - require authentication
 router.post(
-  "/init-payment",
+  "/init-payment/:id",
   auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER),
   PaymentControllers.createPayment,
+);
+
+router.post(
+  "/validate-payment",
+  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.USER),
+  PaymentControllers.validatePayment,
 );
 router.get(
   "/",

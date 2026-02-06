@@ -71,8 +71,25 @@ const createPayment = async (userId: string, id: string) => {
     cus_country: "Bangladesh",
   };
 
-  const result = await sslServices.createPayment(data);
-  return result;
+  const createPayment = await prisma.payment.create({
+    data: {
+      transactionId: createTranId,
+      amount: Number(existService.price),
+      status: "PENDING",
+      userId: existUser.id,
+      subscriptionId: existService.id,
+      paymentGatewayData: data,
+      paymentMethod: "SSL",
+      
+    },
+  });
+
+  const paymentUrl = await sslServices.createPayment(data);
+
+  return {
+    paymentUrl,
+    createPayment,
+  };
 };
 
 const validatePayment = async (payload: any) => {

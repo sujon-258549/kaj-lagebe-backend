@@ -46,3 +46,18 @@ export const sslServices = {
     return result.data.GatewayPageURL;
   },
 };
+
+
+export const sslValidatePayment = async (payload: any) => {
+  const result = await axios({
+    method: "GET",
+    url: `${config.ssl.validate_api}?val_id=${payload.val_id}&store_id=${config.ssl.storeId}&store_pass=${config.ssl.storePassword}&format=json`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return result.data;
+};
+
+
+

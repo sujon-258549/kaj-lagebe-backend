@@ -1,7 +1,9 @@
+import axios from "axios";
 import ApiError from "../../middleware/apiError.ts";
 import prisma from "../../utils/prismaClient.js";
-import { sslServices } from "../ssl/sslservises.ts";
+import { sslServices, sslValidatePayment } from "../ssl/sslservises.ts";
 import status from "http-status";
+import config from "../../config/index.ts";
 
 const createPayment = async (userId: string, id: string) => {
   const existUser = await prisma.user.findUniqueOrThrow({
@@ -82,8 +84,19 @@ const validatePayment = async (payload: any) => {
     };
   }
 
-  console.log("validatePayment", payload);
-  return payload;
+  const response = await sslValidatePayment(payload);
+
+  if (response.data.status !== "VALID") {
+    return {
+      message: "Payment validation failed",
+      data: response.data,
+    };
+  }
+
+  return {
+    message: "Payment validation successful",
+    data: response.data,
+  };
 };
 
 const getAllPayment = async () => {

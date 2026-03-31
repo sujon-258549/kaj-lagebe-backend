@@ -1,11 +1,12 @@
 import type { Prisma } from "@prisma/client";
 import ApiError from "../../middleware/apiError.ts";
-import prisma from "../../utils/prismaClient.js";
+
 import slugCreate from "../../utils/slugCreate.ts";
 import httpStatus from "http-status";
 
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 import { categorySearchableFields } from "./category.const.ts";
+import prisma from "../../utils/prismaClient.ts";
 
 const createCategoryIntoDB = async (payload: any) => {
   const slug = payload.slug || slugCreate(payload.name);

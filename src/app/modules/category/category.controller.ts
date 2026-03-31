@@ -1,10 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
-import { CategoryServices } from "./category.services.js";
-import sendResponse from "../../utils/response.js";
 import status from "http-status";
-import catchAsync from "../../shared/catchAsync.js";
 import { pick } from "../../../shared/pick.ts";
 import { categoryFilterableFields } from "./category.const.ts";
+import catchAsync from "../../shared/catchAsync.ts";
+import { CategoryServices } from "./category.services.ts";
+import sendResponse from "../../utils/response.ts";
 
 
 const createCategory = catchAsync(

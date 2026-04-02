@@ -59,6 +59,14 @@ const getAllSubCategory = async (query: any) => {
 
   const result = await prisma.subCategory.findMany({
     where: whereCondition,
+    include: {
+      category: {
+        select: {
+          name: true,
+          slug: true,
+        },
+      },
+    },
     orderBy: {
       [sortByValue]: sortOrderValue,
     },
@@ -85,6 +93,15 @@ const getSubCategoryById = async (id: string) => {
     where: {
       OR: [{ id: id }, { slug: id }],
     },
+    include: {
+      category: {
+        select: {
+          name: true,
+          id: true,
+          slug: true,
+        },
+      },
+    },
   });
   if (!result)
     throw new ApiError(httpStatus.NOT_FOUND, "SubCategory not found");
@@ -92,7 +109,18 @@ const getSubCategoryById = async (id: string) => {
 };
 
 const getSubCategoryBySlug = async (slug: string) => {
-  const result = await prisma.subCategory.findUnique({ where: { slug } });
+  const result = await prisma.subCategory.findUnique({
+    where: { slug },
+    include: {
+      category: {
+        select: {
+          name: true,
+          id: true,
+          slug: true,
+        },
+      },
+    },
+  });
   if (!result)
     throw new ApiError(httpStatus.NOT_FOUND, "SubCategory not found");
   return result;

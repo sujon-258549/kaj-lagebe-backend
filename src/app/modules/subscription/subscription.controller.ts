@@ -22,7 +22,8 @@ const getAllSubscription = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: "All Subscriptions retrieved successfully!",
-    data: result,
+    data: result.data,
+    meta: result.meta,
   });
 });
 

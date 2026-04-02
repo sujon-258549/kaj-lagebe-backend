@@ -29,7 +29,8 @@ const getAllCategory = catchAsync(
       success: true,
       statusCode: status.OK,
       message: "Category retrieved successfully",
-      data: result,
+      data: result.data,
+      meta: result.meta,
     });
   }
 );

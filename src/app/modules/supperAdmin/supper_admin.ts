@@ -17,6 +17,15 @@ async function main() {
     return;
   }
 
+  const createRole = await prisma.allRole.create({
+    data: {
+      role: "supper_admin",
+    },
+  });
+
+
+
+
   // Hash password
   const hashedPassword = await argon2.hash(superAdminPassword as string);
   const superAdminMobile = "01717171717" as string;
@@ -26,7 +35,7 @@ async function main() {
       id: superAdminMobile,
       email: superAdminEmail,
       password: hashedPassword,
-      role: Role.SUPER_ADMIN as Role,
+      roleId: createRole.id,
       mobile: superAdminMobile,
     },
   });

@@ -45,7 +45,7 @@ import { ${capName}Services } from "./${moduleBase}.service";
 const create${capName} = catchAsync(async (req, res) => {
   const result = await ${capName}Services.create${capName}(req.body);
  return sendResponse(res, {
-    status: httpStatus.CREATED,
+    statusCode: httpStatus.CREATED,
     success: true,
     message: "${capName} created successfully!",
     data: result,
@@ -55,7 +55,7 @@ const create${capName} = catchAsync(async (req, res) => {
 const getAll${capName} = catchAsync(async (req, res) => {
   const result = await ${capName}Services.getAll${capName}();
  return sendResponse(res, {
-    status: httpStatus.OK,
+    statusCode: httpStatus.OK,
     success: true,
     message: "All ${capName}s retrieved successfully!",
     data: result,

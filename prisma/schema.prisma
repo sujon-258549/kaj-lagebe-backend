@@ -6,12 +6,34 @@ datasource db {
   provider = "postgresql"
 }
 
+model AllRole {
+  id        String   @id @default(uuid())
+  role      String
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+
+  @@map("all_roles")
+}
+
+model Department {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+
+  @@map("departments")
+}
+
 model User {
   id                 String             @id @default(uuid())
   email              String             @unique
   password           String
   mobile             String             @unique
-  role               Role               @default(USER)
+  role               AllRole?            @relation(fields: [roleId], references: [id])
+  roleId             String?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   isActive           Boolean            @default(true)
@@ -22,6 +44,7 @@ model User {
   passwordChanged    Boolean            @default(false)
   lastLogin          DateTime?          @default(now())
   subscriptionId     String?
+  departmentId       String?
   loginCount         Int                @default(0)
   loginTryCount      Int                @default(0)
   loginTryTime       DateTime?          @default(now())
@@ -29,6 +52,7 @@ model User {
   profile            Profile?
   subscriptionEarns  SubscriptionEarn[]
   subscription       Subscription?      @relation(fields: [subscriptionId], references: [id])
+  department         Department?        @relation(fields: [departmentId], references: [id])
   workInfo           WorkInfo?
   jobs               Job[]
   applications       Application[]

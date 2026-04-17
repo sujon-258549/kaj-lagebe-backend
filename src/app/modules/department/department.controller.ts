@@ -76,10 +76,26 @@ const deleteDepartment = catchAsync(
   }
 );
 
+const updateDepartmentStatus = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const result = await DepartmentServices.updateDepartmentStatus(
+      id as string
+    );
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "Department status updated successfully",
+      data: result,
+    });
+  }
+);
+
 export const DepartmentController = {
   createDepartment,
   getAllDepartment,
   getDepartmentById,
   updateDepartment,
   deleteDepartment,
+  updateDepartmentStatus,
 };

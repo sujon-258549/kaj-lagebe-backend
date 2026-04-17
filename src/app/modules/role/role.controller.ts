@@ -30,7 +30,7 @@ const getAllRole = catchAsync(async (req, res) => {
 const getRoleById = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await RoleServices.getRoleById(id as string);
- return sendResponse(res, {
+  return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Role retrieved successfully!",
@@ -39,10 +39,9 @@ const getRoleById = catchAsync(async (req, res) => {
 });
 
 const updateRole = catchAsync(async (req, res) => {
-
   const { id } = req.params;
   const result = await RoleServices.updateRole(id as string, req.body);
- return sendResponse(res, {
+  return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Role updated successfully!",
@@ -53,10 +52,21 @@ const updateRole = catchAsync(async (req, res) => {
 const deleteRole = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await RoleServices.deleteRole(id as string);
- return sendResponse(res, {
+  return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Role deleted successfully!",
+    data: result,
+  });
+});
+
+const updateRoleStatus = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await RoleServices.updateRoleStatus(id as string);
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Role status updated successfully!",
     data: result,
   });
 });
@@ -67,4 +77,5 @@ export const RoleControllers = {
   getRoleById,
   updateRole,
   deleteRole,
+  updateRoleStatus,
 };

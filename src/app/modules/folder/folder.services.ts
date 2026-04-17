@@ -19,6 +19,15 @@ const createFolder = async (payload: any) => {
   return result;
 };
 
+const buildFolderTree = (folders: any[], parentId: string | null = null): any[] => {
+  return folders
+    .filter((folder) => folder.parentId === parentId)
+    .map((folder) => ({
+      ...folder,
+      children: buildFolderTree(folders, folder.id),
+    }));
+};
+
 const getAllFolders = async (query: any) => {
   const { searchTerm, page, limit, sortBy, sortOrder, ...filter } = query;
 
@@ -40,64 +49,53 @@ const getAllFolders = async (query: any) => {
   }
 
   // Handle parentId grouping logic
-  const parentId = filter.parentId === "root" ? null : filter.parentId || null;
+  const rootParentId = filter.parentId === "root" ? null : filter.parentId || null;
   delete filter.parentId;
 
   const { pageNumber, limitNumber, skip, sortOrderValue, sortByValue } =
     calculatePaginationOrSort(page, limit, sortBy, sortOrder);
 
-  // Get folders in this parent
-  const folders = await prisma.folder.findMany({
+  // Fetch ALL folders matching the condition to build the tree
+  const allFolders = await prisma.folder.findMany({
     where: {
-      AND: andCondition,
+      AND: andCondition.length > 0 ? andCondition : undefined,
       ...filter,
-      parentId: parentId,
     },
     include: {
-      children: {
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          parentId: true,
-        },
-      }, // গেট চাইল্ড ফোল্ডারস
       images: {
         select: {
           name: true,
           slug: true,
           folderId: true,
         },
-      }, // গেট ফোল্ডার ইমেজ
+      },
     },
-    take: limitNumber,
-    skip: skip,
     orderBy: {
       [sortByValue]: sortOrderValue,
     },
   });
 
+  // Build the tree
+  const folderTree = buildFolderTree(allFolders, rootParentId);
+
+  // Apply pagination to the root level of the tree
+  const paginatedFolders = folderTree.slice(skip, skip + limitNumber);
+
   // Get images in this parent
   const images = await prisma.image.findMany({
     where: {
-      folderId: parentId,
+      folderId: rootParentId,
     },
     orderBy: {
       createdAt: "desc",
     },
   });
 
-  const total = await prisma.folder.count({
-    where: {
-      AND: andCondition,
-      ...filter,
-      parentId: parentId,
-    },
-  });
+  const total = folderTree.length;
 
   return {
     data: {
-      folders,
+      folders: paginatedFolders,
       images,
     },
     meta: {
@@ -112,12 +110,22 @@ const getFolderById = async (id: string) => {
   const result = await prisma.folder.findFirst({
     where: { OR: [{ id: id }, { slug: id }] },
     include: {
-      children: true,
       images: true,
     },
   });
   if (!result) throw new ApiError(httpStatus.NOT_FOUND, "Folder not found");
-  return result;
+
+  // Fetch all folders to build the tree for this parent
+  const allFolders = await prisma.folder.findMany({
+    include: { images: true }
+  });
+  
+  const folderWithTree = {
+    ...result,
+    children: buildFolderTree(allFolders, result.id)
+  };
+
+  return folderWithTree;
 };
 
 const updateFolder = async (id: string, payload: any) => {

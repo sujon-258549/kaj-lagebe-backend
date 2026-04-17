@@ -9,6 +9,8 @@ const createDepartmentIntoDB = async (payload: any) => {
   const result = await prisma.department.create({
     data: {
       name: payload.name,
+      description: payload.description,
+      isActive: payload.isActive,
     },
   });
   return result;
@@ -50,9 +52,9 @@ const getAllDepartment = async (query: any) => {
           email: true,
           mobile: true,
           roleId: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
 
   const total = await prisma.department.count({
@@ -82,15 +84,17 @@ const getDepartmentById = async (id: string) => {
           email: true,
           mobile: true,
           roleId: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
   return result;
 };
 
 const updateDepartment = async (id: string, payload: any) => {
-  const existingDepartment = await prisma.department.findUnique({ where: { id } });
+  const existingDepartment = await prisma.department.findUnique({
+    where: { id },
+  });
   if (!existingDepartment)
     throw new ApiError(httpStatus.NOT_FOUND, "Department not found");
 
@@ -98,17 +102,38 @@ const updateDepartment = async (id: string, payload: any) => {
     where: { id },
     data: {
       name: payload.name,
+      description: payload.description,
+      isActive: payload.isActive,
     },
   });
   return result;
 };
 
 const deleteDepartment = async (id: string) => {
-  const existingDepartment = await prisma.department.findUnique({ where: { id } });
+  const existingDepartment = await prisma.department.findUnique({
+    where: { id },
+  });
   if (!existingDepartment)
     throw new ApiError(httpStatus.NOT_FOUND, "Department not found");
 
   const result = await prisma.department.delete({ where: { id } });
+  return result;
+};
+
+const updateDepartmentStatus = async (id: string) => {
+  const existingDepartment = await prisma.department.findUnique({
+    where: { id },
+  });
+
+  if (!existingDepartment)
+    throw new ApiError(httpStatus.NOT_FOUND, "Department not found");
+
+  const result = await prisma.department.update({
+    where: { id },
+    data: {
+      isActive: !existingDepartment.isActive,
+    },
+  });
   return result;
 };
 
@@ -118,4 +143,5 @@ export const DepartmentServices = {
   getDepartmentById,
   updateDepartment,
   deleteDepartment,
+  updateDepartmentStatus,
 };

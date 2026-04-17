@@ -12,6 +12,8 @@ import { CommentRoutes } from "../modules/comment/comment.routes.ts";
 import { NotificationRoutes } from "../modules/notification/notification.routes.ts";
 import { JobRoutes } from "../modules/job/job.routes.ts";
 import { PaymentRoutes } from "../modules/payment/payment.routes.ts";
+import { DepartmentRouter } from "../modules/department/department.router.ts";
+import { RoleRoutes } from "../modules/role/role.routes.ts";
 
 const router = Router();
 
@@ -23,6 +25,14 @@ const allRouter = [
   {
     path: "/category",
     router: CategoryRouter,
+  },
+  {
+    path: "/department",
+    router: DepartmentRouter,
+  },
+  {
+    path:"/role",
+    router:RoleRoutes
   },
   {
     path: "/auth",

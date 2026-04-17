@@ -6,7 +6,9 @@ import { roleSearchableFields } from "./role.constant.ts";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 
 const createRole = async (payload: any) => {
-  const isExist = await prisma.allRole.findFirst({ where: { role: payload.role } });
+  const isExist = await prisma.allRole.findFirst({
+    where: { role: payload.role },
+  });
   if (isExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Role already exists");
   }
@@ -88,10 +90,23 @@ const deleteRole = async (id: string) => {
   return { message: "Role deleted successfully" };
 };
 
+const updateRoleStatus = async (id: string) => {
+  const isExist = await prisma.allRole.findUnique({ where: { id } });
+  if (!isExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Role not found");
+  }
+  const result = await prisma.allRole.update({
+    where: { id },
+    data: { isActive: !isExist.isActive },
+  });
+  return result;
+};
+
 export const RoleServices = {
   createRole,
   getAllRole,
   getRoleById,
   updateRole,
   deleteRole,
+  updateRoleStatus,
 };

@@ -11,5 +11,8 @@ router.delete("/folder/:id", MediaControllers.deleteFolder);
 
 router.post("/upload-image", MediaControllers.createImage);
 router.get("/images", MediaControllers.getImages);
+router.patch("/image/:id", MediaControllers.updateImage);
+router.delete("/image/:id", MediaControllers.deleteImage);
+
 
 export const MediaRoutes = router;

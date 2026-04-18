@@ -15,13 +15,13 @@ const createFolder = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllFolders = catchAsync(async (req: Request, res: Response) => {
-  const parentId = (req.query.parentId as string) || "root";
-  const result = await MediaServices.getAllFolders(parentId);
+  const result = await MediaServices.getAllFolders(req.query);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "Folders fetched successfully",
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 
@@ -58,6 +58,8 @@ const deleteFolder = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+
+// create image============================================
 const createImage = catchAsync(async (req: Request, res: Response) => {
   const result = await MediaServices.createImage(req.body);
   sendResponse(res, {
@@ -79,6 +81,29 @@ const getImages = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteImage = catchAsync(async (req: Request, res: Response) => {
+  const result = await MediaServices.deleteImage(req.params.id as string);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Image deleted successfully",
+    data: result,
+  });
+});
+
+const updateImage = catchAsync(async (req: Request, res: Response) => {
+  const result = await MediaServices.updateImage(
+    req.params.id as string,
+    req.body,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Image name updated successfully",
+    data: result,
+  });
+});
+
 export const MediaControllers = {
   createFolder,
   getAllFolders,
@@ -87,4 +112,6 @@ export const MediaControllers = {
   deleteFolder,
   createImage,
   getImages,
+  deleteImage,
+  updateImage,
 };

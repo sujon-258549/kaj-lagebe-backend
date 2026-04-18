@@ -23,7 +23,7 @@ const getAllFolders = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: httpStatus.OK,
     message: "Folders retrieved successfully",
-    data: result,
+    data: result.data,
   });
 });
 

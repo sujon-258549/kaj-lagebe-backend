@@ -19,7 +19,10 @@ const createFolder = async (payload: any) => {
   return result;
 };
 
-const buildFolderTree = (folders: any[], parentId: string | null = null): any[] => {
+const buildFolderTree = (
+  folders: any[],
+  parentId: string | null = null,
+): any[] => {
   return folders
     .filter((folder) => folder.parentId === parentId)
     .map((folder) => ({
@@ -49,7 +52,8 @@ const getAllFolders = async (query: any) => {
   }
 
   // Handle parentId grouping logic
-  const rootParentId = filter.parentId === "root" ? null : filter.parentId || null;
+  const rootParentId =
+    filter.parentId === "root" ? null : filter.parentId || null;
   delete filter.parentId;
 
   const { pageNumber, limitNumber, skip, sortOrderValue, sortByValue } =
@@ -64,8 +68,9 @@ const getAllFolders = async (query: any) => {
     include: {
       images: {
         select: {
+          id: true,
           name: true,
-          slug: true,
+          url: true,
           folderId: true,
         },
       },
@@ -86,22 +91,20 @@ const getAllFolders = async (query: any) => {
     where: {
       folderId: rootParentId,
     },
+    select: {
+      url: true,
+      name: true,
+      id: true,
+    },
     orderBy: {
       createdAt: "desc",
     },
   });
 
-  const total = folderTree.length;
-
   return {
     data: {
       folders: paginatedFolders,
       images,
-    },
-    meta: {
-      page: pageNumber,
-      limit: limitNumber,
-      total: total,
     },
   };
 };
@@ -117,12 +120,12 @@ const getFolderById = async (id: string) => {
 
   // Fetch all folders to build the tree for this parent
   const allFolders = await prisma.folder.findMany({
-    include: { images: true }
+    include: { images: true },
   });
-  
+
   const folderWithTree = {
     ...result,
-    children: buildFolderTree(allFolders, result.id)
+    children: buildFolderTree(allFolders, result.id),
   };
 
   return folderWithTree;

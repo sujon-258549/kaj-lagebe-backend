@@ -82,7 +82,11 @@ const createUserIntoDB = async (payload: any) => {
     return await tc.user.findUnique({
       where: { id: newUser.id },
       include: {
-        profile: true,
+        profile: {
+          include: {
+            profilePhoto: true,
+          },
+        },
         address: true,
         workInfo: {
           include: {
@@ -156,7 +160,11 @@ const getAllUsers = async (query: any) => {
     // skip: (Number(query.page) - 1) * Number(query.limit),
     // take: Number(query.limit),
     include: {
-      profile: true,
+      profile: {
+        include: {
+          profilePhoto: true,
+        },
+      },
       address: true,
       workInfo: {
         include: {
@@ -290,9 +298,17 @@ const updateUser = async (id: string, payload: any) => {
     where: { id },
     data: finalUpdateData,
     include: {
-      profile: true,
+      profile: {
+        include: {
+          profilePhoto: true,
+        },
+      },
       address: true,
-      workInfo: true,
+      workInfo: {
+        include: {
+          subCategories: true,
+        },
+      },
     },
   });
   return result;

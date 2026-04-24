@@ -7,6 +7,7 @@ export const USER_ROLE = {
   WORKER: "WORKER",
   EMPLOYEE: "EMPLOYEE",
 } as const;
+export const ALL_ROLES = Object.values(USER_ROLE);
 
 export const userSearchableFields = ["email", "mobile"];
 

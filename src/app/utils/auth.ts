@@ -13,20 +13,26 @@ type UserRoleValue = (typeof USER_ROLE)[keyof typeof USER_ROLE];
 const auth = (...requiredRoles: UserRoleValue[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req?.headers?.authorization;
-  
+
+    console.log("token============================", token);
+
     if (!token) {
       throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized");
     }
+
+    let actualToken = token;
+    if (token.startsWith("Bearer ")) {
+      actualToken = token.split(" ")[1] || "";
+    }
     const decoded = JwtHelpers.verifyToken(
-      token,
-      config.accessSecret as string
+      actualToken,
+      config.accessSecret as string,
     );
 
     console.log(decoded.data);
 
-    const { role, email } = decoded?.data;
+    const email = decoded?.data?.email || "";
     const { iat, exp } = decoded as { iat: number; exp: number };
-
 
     const existingUser = await prisma.user.findFirstOrThrow({
       where: {
@@ -39,22 +45,22 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
 
     const userRoleString = existingUser.role?.role;
 
-//  if(userRoleString !== USER_ROLE.SUPER_ADMIN) {
-//   if(existingUser.isVerified === false) {
-//     throw new ApiError(status.UNAUTHORIZED, "🔍❓ User not verified");
-//   }
-//  }
+    //  if(userRoleString !== USER_ROLE.SUPER_ADMIN) {
+    //   if(existingUser.isVerified === false) {
+    //     throw new ApiError(status.UNAUTHORIZED, "🔍❓ User not verified");
+    //   }
+    //  }
 
     if (existingUser.passwordChangeTime) {
       // Date → milliseconds → seconds → number
       const passwordChangeTimestamp: number = Math.floor(
-        new Date(existingUser.passwordChangeTime).getTime() / 1000
+        new Date(existingUser.passwordChangeTime).getTime() / 1000,
       );
 
       if (Number(passwordChangeTimestamp) > Number(iat)) {
         throw new ApiError(
           status.UNAUTHORIZED,
-          "User recently changed password. Please login again."
+          "User recently changed password. Please login again.",
         );
       }
     }
@@ -63,8 +69,10 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
       throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized");
     }
 
-
-    if (!userRoleString || !requiredRoles.includes(userRoleString as any)) {
+    if (
+      requiredRoles.length > 0 &&
+      (!userRoleString || !requiredRoles.includes(userRoleString as any))
+    ) {
       throw new ApiError(status.FORBIDDEN, "🔍❓ Forbidden");
     }
 

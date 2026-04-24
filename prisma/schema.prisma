@@ -78,6 +78,7 @@ model Profile {
   profilePhoto  Image?      @relation("ProfilePhoto", fields: [photoId], references: [id])
   photo         String?
   nid           String?
+  nidPhoto      String[]    @default([])
   nidPhotos     Image[]     @relation("NidPhotos")
   emailVerified Boolean     @default(false)
   phoneVerified Boolean     @default(false)
@@ -105,6 +106,9 @@ model WorkInfo {
   subCategories      SubCategory[]
   experience         String?
   workType           String?
+  workTypes          WorkType[]
+  workStartTime      String?
+  workTimeLimit        String?
   availableTime      String?
   isDeleted          Boolean   @default(false)
   isBlocked          Boolean   @default(false)
@@ -190,6 +194,18 @@ model SubCategory {
   workInfos   WorkInfo[]
 
   @@map("sub_categories")
+}
+
+model WorkType {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  workInfos   WorkInfo[]
+
+  @@map("work_types")
 }
 
 model Blog {

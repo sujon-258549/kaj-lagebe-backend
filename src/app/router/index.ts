@@ -14,6 +14,7 @@ import { JobRoutes } from "../modules/job/job.routes.ts";
 import { PaymentRoutes } from "../modules/payment/payment.routes.ts";
 import { DepartmentRouter } from "../modules/department/department.router.ts";
 import { RoleRoutes } from "../modules/role/role.routes.ts";
+import { WorkTypeRouter } from "../modules/workType/workType.router.ts";
 
 const router = Router();
 
@@ -31,8 +32,8 @@ const allRouter = [
     router: DepartmentRouter,
   },
   {
-    path:"/role",
-    router:RoleRoutes
+    path: "/role",
+    router: RoleRoutes,
   },
   {
     path: "/auth",
@@ -77,6 +78,10 @@ const allRouter = [
   {
     path: "/payment",
     router: PaymentRoutes,
+  },
+  {
+    path: "/work-types",
+    router: WorkTypeRouter,
   },
 ];
 

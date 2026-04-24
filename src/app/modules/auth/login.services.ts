@@ -11,6 +11,19 @@ const loginUser = async (payload: any) => {
     where: { email: payload.email },
     include: {
       role: true,
+      profile: {
+        include: {
+          profilePhoto: true,
+        },
+      },
+      workInfo: {
+        include: {
+          subCategories: true,
+          workTypes: true,
+        },
+      },
+      department: true,
+      address: true,
     },
   });
 
@@ -107,6 +120,30 @@ const loginUser = async (payload: any) => {
   return {
     accessToken,
     refreshToken,
+    user: {
+      id: user.id,
+      email: user.email,
+      mobile: user.mobile,
+      name: user.profile?.name,
+      photo: user.profile?.profilePhoto?.url,
+      role: user.role?.role,
+      gender: user.profile?.gender,
+      bloodGroup: user.profile?.bloodGroup,
+      age: user.profile?.age,
+      designation: user.workInfo?.experience,
+      department: user.department?.name,
+      address: user.address,
+      workInfo: {
+        ...user.workInfo,
+        subCategories: user.workInfo?.subCategories?.map((s) => s.name),
+        workTypes: user.workInfo?.workTypes?.map((w) => w.name),
+      },
+      isActive: user.isActive,
+      isVerified: user.isVerified,
+      isBlocked: user.isBlocked,
+      isDeleted: user.isDeleted,
+    },
+    isLogin: true,
   };
 };
 
@@ -121,6 +158,19 @@ const refreshToken = async (token: string) => {
     where: { email: email },
     include: {
       role: true,
+      profile: {
+        include: {
+          profilePhoto: true,
+        },
+      },
+      workInfo: {
+        include: {
+          subCategories: true,
+          workTypes: true,
+        },
+      },
+      department: true,
+      address: true,
     },
   });
 
@@ -154,6 +204,29 @@ const refreshToken = async (token: string) => {
   );
   return {
     accessToken,
+    user: {
+      id: user.id,
+      email: user.email,
+      mobile: user.mobile,
+      name: user.profile?.name,
+      photo: user.profile?.profilePhoto?.url,
+      role: user.role?.role,
+      gender: user.profile?.gender,
+      bloodGroup: user.profile?.bloodGroup,
+      age: user.profile?.age,
+      designation: user.workInfo?.experience,
+      department: user.department?.name,
+      address: user.address,
+      workInfo: {
+        ...user.workInfo,
+        subCategories: user.workInfo?.subCategories?.map((s) => s.name),
+        workTypes: user.workInfo?.workTypes?.map((w) => w.name),
+      },
+      isActive: user.isActive,
+      isVerified: user.isVerified,
+      isBlocked: user.isBlocked,
+      isDeleted: user.isDeleted,
+    },
   };
 };
 

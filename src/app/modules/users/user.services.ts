@@ -41,18 +41,20 @@ const createUserIntoDB = async (payload: any) => {
 
     // Create Profile
     if (profile) {
-      const { dob, age, nidPhotoId, nidPhotoUrl, ...profileRest } = profile;
+      const { dob, age, nidPhotoIds, nidPhotoUrls, ...profileRest } = profile;
       await tc.profile.create({
         data: {
           ...profileRest,
           dob: dob ? new Date(dob) : undefined,
           age: age ? Number(age) : undefined,
           mobile: user.mobile,
-          nidPhotos: nidPhotoId
-            ? {
-                connect: [{ id: nidPhotoId }],
-              }
-            : undefined,
+          nidPhoto: nidPhotoUrls || [],
+          nidPhotos:
+            nidPhotoIds && nidPhotoIds.length > 0
+              ? {
+                  connect: nidPhotoIds.map((id: string) => ({ id })),
+                }
+              : undefined,
         },
       });
     }
@@ -69,15 +71,21 @@ const createUserIntoDB = async (payload: any) => {
 
     // Create WorkInfo
     if (workInfo) {
-      const { categories, ...workInfoRest } = workInfo;
+      const { subCategoryIds, workTypeIds, ...workInfoRest } = workInfo;
       await tc.workInfo.create({
         data: {
           ...workInfoRest,
           mobile: user.mobile,
           subCategories:
-            categories && categories.length > 0
+            subCategoryIds && subCategoryIds.length > 0
               ? {
-                  connect: categories.map((id: string) => ({ id })),
+                  connect: subCategoryIds.map((id: string) => ({ id })),
+                }
+              : undefined,
+          workTypes:
+            workTypeIds && workTypeIds.length > 0
+              ? {
+                  connect: workTypeIds.map((id: string) => ({ id })),
                 }
               : undefined,
         },
@@ -89,11 +97,13 @@ const createUserIntoDB = async (payload: any) => {
       include: {
         role: {
           select: {
+            id: true,
             role: true,
           },
         },
         department: {
           select: {
+            id: true,
             name: true,
           },
         },
@@ -116,7 +126,18 @@ const createUserIntoDB = async (payload: any) => {
         address: true,
         workInfo: {
           include: {
-            subCategories: true,
+            subCategories: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            workTypes: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
       },
@@ -188,11 +209,13 @@ const getAllUsers = async (query: any) => {
     include: {
       role: {
         select: {
+          id: true,
           role: true,
         },
       },
       department: {
         select: {
+          id: true,
           name: true,
         },
       },
@@ -215,7 +238,18 @@ const getAllUsers = async (query: any) => {
       address: true,
       workInfo: {
         include: {
-          subCategories: true,
+          subCategories: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          workTypes: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       },
     },
@@ -238,11 +272,13 @@ const getUserById = async (id: string) => {
     include: {
       role: {
         select: {
+          id: true,
           role: true,
         },
       },
       department: {
         select: {
+          id: true,
           name: true,
         },
       },
@@ -265,7 +301,18 @@ const getUserById = async (id: string) => {
       address: true,
       workInfo: {
         include: {
-          subCategories: true,
+          subCategories: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          workTypes: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       },
     },
@@ -320,13 +367,19 @@ const updateUser = async (id: string, payload: any) => {
   // Prepare workInfo update
   let workInfoUpdate = undefined;
   if (workInfo) {
-    const { categories, ...workInfoRest } = workInfo;
+    const { subCategoryIds, workTypeIds, ...workInfoRest } = workInfo;
     workInfoUpdate = {
       update: {
         ...workInfoRest,
-        subCategories: categories
+        subCategories:
+          subCategoryIds && subCategoryIds.length > 0
+            ? {
+                set: subCategoryIds.map((id: string) => ({ id })),
+              }
+            : undefined,
+        workTypes: workTypeIds
           ? {
-              set: categories.map((id: string) => ({ id })),
+              set: workTypeIds.map((id: string) => ({ id })),
             }
           : undefined,
       },
@@ -336,17 +389,19 @@ const updateUser = async (id: string, payload: any) => {
   // Prepare profile update
   let profileUpdate = undefined;
   if (profile) {
-    const { dob, age, nidPhotoId, nidPhotoUrl, ...profileRest } = profile;
+    const { dob, age, nidPhotoIds, nidPhotoUrls, ...profileRest } = profile;
     profileUpdate = {
       update: {
         ...profileRest,
         dob: dob ? new Date(dob) : undefined,
         age: age ? Number(age) : undefined,
-        nidPhotos: nidPhotoId
-          ? {
-              set: [{ id: nidPhotoId }],
-            }
-          : undefined,
+        nidPhoto: nidPhotoUrls || [],
+        nidPhotos:
+          nidPhotoIds && nidPhotoIds.length > 0
+            ? {
+                set: nidPhotoIds.map((id: string) => ({ id })),
+              }
+            : undefined,
       },
     };
   }
@@ -373,11 +428,13 @@ const updateUser = async (id: string, payload: any) => {
     include: {
       role: {
         select: {
+          id: true,
           role: true,
         },
       },
       department: {
         select: {
+          id: true,
           name: true,
         },
       },
@@ -400,7 +457,18 @@ const updateUser = async (id: string, payload: any) => {
       address: true,
       workInfo: {
         include: {
-          subCategories: true,
+          subCategories: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          workTypes: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       },
     },
@@ -416,11 +484,13 @@ const getMyData = async (id: string) => {
     include: {
       role: {
         select: {
+          id: true,
           role: true,
         },
       },
       department: {
         select: {
+          id: true,
           name: true,
         },
       },
@@ -443,7 +513,18 @@ const getMyData = async (id: string) => {
       address: true,
       workInfo: {
         include: {
-          subCategories: true,
+          subCategories: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          workTypes: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
         },
       },
     },

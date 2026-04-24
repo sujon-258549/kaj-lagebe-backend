@@ -7,12 +7,24 @@ const globalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+  let statusCode = err.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
+  let message = err.message || "Something went wrong!";
+
+  // Handle JWT errors specifically if they reach here
+  if (err.name === "TokenExpiredError" || err.name === "JsonWebTokenError") {
+    statusCode = httpStatus.UNAUTHORIZED;
+    message = "Unauthorized: Token expired or invalid";
+  }
+
+  res.status(statusCode).json({
     success: false,
-    message: err.message || "Something went wrong!",
-    error: err,
+    message,
+    error: {
+      statusCode,
+      message,
+      ...(process.env.NODE_ENV === "development" ? { stack: err.stack } : {}),
+    },
   });
 };
 
 export default globalErrorHandler;
-

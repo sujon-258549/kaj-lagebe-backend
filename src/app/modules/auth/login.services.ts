@@ -150,10 +150,9 @@ const loginUser = async (payload: any) => {
 const refreshToken = async (token: string) => {
   const decoded = JwtHelpers.verifyToken(token, config.refreshSecret as string);
 
-  const { email } = decoded?.data;
-  console.log(email);
-
-  //check if user is exist
+  const { email, iat } = decoded?.data || (decoded as any);
+  
+  // check if user exist
   const user = await prisma.user.findUniqueOrThrow({
     where: { email: email },
     include: {
@@ -173,6 +172,16 @@ const refreshToken = async (token: string) => {
       address: true,
     },
   });
+
+  if (
+    user.passwordChangeTime &&
+    Math.floor(new Date(user.passwordChangeTime).getTime() / 1000) > iat
+  ) {
+    throw new ApiError(
+      status.UNAUTHORIZED,
+      "🔍❓ Password recently changed. Please login again.",
+    );
+  }
 
   console.log(user);
 
@@ -269,7 +278,7 @@ const forgotPassword = async (payload: { email: string }) => {
 };
 
 const resetPassword = async (email: string, password: string, otp: string) => {
-  console.log("email and password", email, password, otp);
+  
 
   const user = await prisma.user.findUniqueOrThrow({
     where: { email: email },

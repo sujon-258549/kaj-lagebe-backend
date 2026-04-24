@@ -12,7 +12,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   res.cookie("refreshToken", result.refreshToken, {
     secure: config.nodeEnv === "production",
     httpOnly: true,
-    sameSite: "none",
+    sameSite: config.nodeEnv === "production" ? "none" : "lax",
     maxAge: 1000 * 60 * 60 * 24 * 365,
   });
   sendResponse(res, {
@@ -23,7 +23,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const createRefreshToken = catchAsync(async (req: Request, res: Response) => {
-  const payload = req.body.refreshToken;
+  const payload = req.cookies.refreshToken || req.body.refreshToken;
   if (!payload) {
     throw new ApiError(status.BAD_REQUEST, "Refresh token is not provided");
   }

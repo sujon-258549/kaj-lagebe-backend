@@ -7,13 +7,13 @@ const router = Router();
 
 router.post("/create-employ", UserController.createUser);
 
-router.get("/", auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN), UserController.getAllUsers);
+router.get("/", auth(), UserController.getAllUsers);
 router.get("/my-data", auth(), UserController.getMyData);
-router.get("/:id", UserController.getUserById);
+router.get("/:id", auth(), UserController.getUserById);
 router.patch("/change-password", auth(), UserController.changePassword);
 router.post("/varify-otp", UserController.varifyOtp);
-router.patch("/:id", auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN), UserController.updateUser);
-router.delete("/:id", auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN), UserController.deleteUser);
-router.patch("/:id/soft-delete", auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN), UserController.softDeleteUser);
-router.patch("/:id/block", auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN), UserController.blockUser);
+router.patch("/:id", auth(), UserController.updateUser);
+router.delete("/:id", auth(), UserController.deleteUser);
+router.patch("/:id/soft-delete", auth(), UserController.softDeleteUser);
+router.patch("/:id/block", auth(), UserController.blockUser);
 export const UserRouter = router;

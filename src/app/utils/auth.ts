@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from "express";
-
 import { USER_ROLE } from "../modules/users/user.constant.ts";
 import catchAsync from "../shared/catchAsync.ts";
 import ApiError from "../middleware/apiError.ts";
@@ -14,45 +13,45 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req?.headers?.authorization;
 
-    console.log("token============================", token);
-
     if (!token) {
-      throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized");
+      throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized: Token missing");
     }
 
     let actualToken = token;
     if (token.startsWith("Bearer ")) {
       actualToken = token.split(" ")[1] || "";
     }
-    const decoded = JwtHelpers.verifyToken(
-      actualToken,
-      config.accessSecret as string,
-    );
 
-    console.log(decoded.data);
+    let decoded;
+    try {
+      decoded = JwtHelpers.verifyToken(
+        actualToken,
+        config.accessSecret as string,
+      );
+    } catch (error: any) {
+      // Specifically throw 401 for JWT errors (expired, invalid)
+      throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized: Token expired or invalid");
+    }
 
     const email = decoded?.data?.email || "";
-    const { iat, exp } = decoded as { iat: number; exp: number };
+    const { iat } = decoded as { iat: number };
 
-    const existingUser = await prisma.user.findFirstOrThrow({
-      where: {
-        email,
-      },
-      include: {
-        role: true,
-      },
+    const existingUser = await prisma.user.findFirst({
+      where: { email },
+      include: { role: true },
     });
+
+    if (!existingUser) {
+      throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized: User not found");
+    }
+
+    if (existingUser.isBlocked) {
+      throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized: User is blocked");
+    }
 
     const userRoleString = existingUser.role?.role;
 
-    //  if(userRoleString !== USER_ROLE.SUPER_ADMIN) {
-    //   if(existingUser.isVerified === false) {
-    //     throw new ApiError(status.UNAUTHORIZED, "🔍❓ User not verified");
-    //   }
-    //  }
-
     if (existingUser.passwordChangeTime) {
-      // Date → milliseconds → seconds → number
       const passwordChangeTimestamp: number = Math.floor(
         new Date(existingUser.passwordChangeTime).getTime() / 1000,
       );
@@ -65,15 +64,11 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
       }
     }
 
-    if (!email) {
-      throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized");
-    }
-
     if (
       requiredRoles.length > 0 &&
       (!userRoleString || !requiredRoles.includes(userRoleString as any))
     ) {
-      throw new ApiError(status.FORBIDDEN, "🔍❓ Forbidden");
+      throw new ApiError(status.FORBIDDEN, "🔍❓ Forbidden: Access denied");
     }
 
     req.user = {

@@ -366,57 +366,75 @@ const updateUser = async (id: string, payload: any) => {
     if (r) updateData.roleId = r.id;
   }
 
-  // Prepare workInfo update
+  // Prepare workInfo update/create
   let workInfoUpdate = undefined;
   if (workInfo) {
     const { subCategoryIds, workTypeIds, ...workInfoRest } = workInfo;
     workInfoUpdate = {
       update: {
         ...workInfoRest,
-        subCategories:
-          subCategoryIds && subCategoryIds.length > 0
-            ? {
-                set: subCategoryIds.map((id: string) => ({ id })),
-              }
-            : undefined,
-        workTypes: workTypeIds
-          ? {
-              set: workTypeIds.map((id: string) => ({ id })),
-            }
-          : undefined,
+        subCategories: subCategoryIds ? { set: subCategoryIds.map((id: string) => ({ id })) } : undefined,
+        workTypes: workTypeIds ? { set: workTypeIds.map((id: string) => ({ id })) } : undefined,
       },
+      create: {
+        ...workInfoRest,
+        subCategories: subCategoryIds ? { connect: subCategoryIds.map((id: string) => ({ id })) } : undefined,
+        workTypes: workTypeIds ? { connect: workTypeIds.map((id: string) => ({ id })) } : undefined,
+      }
     };
   }
 
-  // Prepare profile update
+  // Prepare profile update/create
   let profileUpdate = undefined;
   if (profile) {
-    const { dob, age, nidPhotoIds, nidPhotoUrls, ...profileRest } = profile;
+    const { dob, age, photoId, nidPhotoIds, nidPhotoUrls, ...profileRest } = profile;
+    
+    const commonData = {
+      ...profileRest,
+      dob: dob ? new Date(dob) : undefined,
+      age: age ? Number(age) : undefined,
+      nidPhoto: nidPhotoUrls || [],
+      profilePhoto: photoId ? { connect: { id: photoId } } : undefined,
+    };
+
     profileUpdate = {
       update: {
-        ...profileRest,
-        dob: dob ? new Date(dob) : undefined,
-        age: age ? Number(age) : undefined,
-        nidPhoto: nidPhotoUrls || [],
-        nidPhotos:
-          nidPhotoIds && nidPhotoIds.length > 0
-            ? {
-                set: nidPhotoIds.map((id: string) => ({ id })),
-              }
-            : undefined,
+        ...commonData,
+        nidPhotos: nidPhotoIds ? { set: nidPhotoIds.map((id: string) => ({ id })) } : undefined,
       },
+      create: {
+        ...commonData,
+        nidPhotos: nidPhotoIds ? { connect: nidPhotoIds.map((id: string) => ({ id })) } : undefined,
+      }
     };
   }
 
   const finalUpdateData: any = {
     ...updateData,
-    profile: profileUpdate,
-    address: address
+    profile: profileUpdate
       ? {
-          update: address,
+          upsert: {
+            update: profileUpdate.update,
+            create: profileUpdate.create,
+          },
         }
       : undefined,
-    workInfo: workInfoUpdate,
+    address: address
+      ? {
+          upsert: {
+            update: address,
+            create: address,
+          },
+        }
+      : undefined,
+    workInfo: workInfoUpdate
+      ? {
+          upsert: {
+            update: workInfoUpdate.update,
+            create: workInfoUpdate.create,
+          },
+        }
+      : undefined,
   };
 
   // Remove undefined keys to satisfy exactOptionalPropertyTypes: true

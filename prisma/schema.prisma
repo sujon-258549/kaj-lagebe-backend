@@ -7,15 +7,28 @@ datasource db {
 }
 
 model AllRole {
-  id          String   @id @default(uuid())
-  role        String
+  id          String           @id @default(uuid())
+  role        String           @unique
   description String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
   users       User[]
+  permissions RolePermission[]
 
   @@map("all_roles")
+}
+
+model RolePermission {
+  id          String   @id @default(uuid())
+  roleId      String
+  module      String
+  permissions String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  role        AllRole  @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@map("role_permissions")
 }
 
 model Department {

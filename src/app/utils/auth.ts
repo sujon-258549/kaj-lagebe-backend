@@ -34,7 +34,9 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
     }
 
     const email = decoded?.data?.email || "";
-    const { iat } = decoded as { iat: number };
+    const { iat, exp } = decoded as { iat: number; exp: number };
+    const remainingTime = exp - Math.floor(Date.now() / 1000);
+    console.log(`🔍 [Auth] Token for ${email} expires in: ${remainingTime}s`);
 
     const existingUser = await prisma.user.findFirst({
       where: { email },

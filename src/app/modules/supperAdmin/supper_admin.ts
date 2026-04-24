@@ -1,53 +1,84 @@
-import { v4 as uuidv4 } from "uuid";
 import argon2 from "argon2";
-import prisma from "../../utils/prismaClient.js";
-import { Role } from "@prisma/client";
+import prisma from "../../utils/prismaClient.ts";
 
-async function main() {
-  const superAdminEmail = "superadmin@kajlagbe.com";
-  const superAdminPassword = "superadmin";
+export const seedSuperAdmin = async () => {
+  try {
+    console.log("🚀 Starting Super Admin Seeding Process...");
 
-  // Check if Super Admin already exists
-  const existing = await prisma.user.findUnique({
-    where: { email: superAdminEmail },
-  });
+    const superAdminEmail = "superadmin@kajlagbe.com";
+    const superAdminPassword = "superadmin";
+    const superAdminMobile = "01717171717";
 
-  if (existing) {
-    console.log("Super Admin already exists");
-    return;
+    // 1. Ensure SUPER_ADMIN Role exists
+    let superAdminRole = await prisma.allRole.findFirst({
+      where: { role: "SUPER_ADMIN" },
+    });
+
+    if (!superAdminRole) {
+      console.log("📝 Creating SUPER_ADMIN role...");
+      superAdminRole = await prisma.allRole.create({
+        data: {
+          role: "SUPER_ADMIN",
+          description: "System Overlord with full access",
+          isActive: true,
+        },
+      });
+    }
+
+    // 2. Ensure a default Department exists (e.g., Administration)
+    let adminDept = await prisma.department.findFirst({
+      where: { name: "ADMINISTRATION" },
+    });
+
+    if (!adminDept) {
+      console.log("📝 Creating ADMINISTRATION department...");
+      adminDept = await prisma.department.create({
+        data: {
+          name: "ADMINISTRATION",
+          description: "Root administrative department",
+          isActive: true,
+        },
+      });
+    }
+
+    // 3. Check if Super Admin already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email: superAdminEmail },
+    });
+
+    if (existingUser) {
+      console.log("✅ Super Admin already exists. Skipping creation.");
+      return;
+    }
+
+    // 4. Hash password
+    const hashedPassword = await argon2.hash(superAdminPassword);
+
+    // 5. Create Super Admin with all relations
+    await prisma.user.create({
+      data: {
+        id: superAdminMobile, // Using mobile as ID as per your previous logic
+        email: superAdminEmail,
+        password: hashedPassword,
+        mobile: superAdminMobile,
+        roleId: superAdminRole.id,
+        departmentId: adminDept.id,
+        isActive: true,
+        isVerified: true,
+        passwordChanged: true,
+        passwordChangeTime: new Date(),
+        // Also create a basic profile for the super admin
+        profile: {
+          create: {
+            name: "System Super Admin",
+            gender: "MALE",
+          },
+        },
+      },
+    });
+
+    console.log("✨ Super Admin and dependencies seeded successfully!");
+  } catch (error) {
+    console.error("❌ Error seeding Super Admin:", error);
   }
-
-  const createRole = await prisma.allRole.create({
-    data: {
-      role: "supper_admin",
-    },
-  });
-
-
-
-
-  // Hash password
-  const hashedPassword = await argon2.hash(superAdminPassword as string);
-  const superAdminMobile = "01717171717" as string;
-  // Create Super Admin
-  const superAdmin = await prisma.user.create({
-    data: {
-      id: superAdminMobile,
-      email: superAdminEmail,
-      password: hashedPassword,
-      roleId: createRole.id,
-      mobile: superAdminMobile,
-    },
-  });
-
-  console.log("✅ Super Admin created:", superAdmin.email);
-}
-
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+};

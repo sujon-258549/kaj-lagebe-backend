@@ -24,6 +24,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 });
 const createRefreshToken = catchAsync(async (req: Request, res: Response) => {
   const payload = req.cookies.refreshToken || req.body.refreshToken;
+  console.log("🔄 [Backend] Refresh Token Received:", payload ? "Yes (Masked)" : "No");
   if (!payload) {
     throw new ApiError(status.BAD_REQUEST, "Refresh token is not provided");
   }
@@ -51,8 +52,16 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.resetPassword(
     payload.email,
     payload.password,
-    payload.otp
+    payload.otp,
   );
+
+  res.cookie("refreshToken", result.refreshToken, {
+    secure: config.nodeEnv === "production",
+    httpOnly: true,
+    sameSite: config.nodeEnv === "production" ? "none" : "lax",
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
+
   sendResponse(res, {
     success: true,
     statusCode: status.OK,
@@ -60,9 +69,24 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const logoutUser = catchAsync(async (req: Request, res: Response) => {
+  res.clearCookie("refreshToken", {
+    secure: config.nodeEnv === "production",
+    httpOnly: true,
+    sameSite: config.nodeEnv === "production" ? "none" : "lax",
+  });
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "User logged out successfully",
+    data: null,
+  });
+});
+
 export const AuthController = {
   loginUser,
   createRefreshToken,
+  logoutUser,
   forgotPassword,
   resetPassword,
 };

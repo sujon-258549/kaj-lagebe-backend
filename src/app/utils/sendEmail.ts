@@ -22,7 +22,7 @@ export const otpEmailTemplate = (data: { name?: string; otp: number }) => {
         <div class="otp-box">
           <div class="otp-code">${data.otp}</div>
         </div>
-        <p>This OTP will expire in 10 minutes.</p>
+        <p>This OTP will expire in 5 minutes.</p>
         <p>If you didn't request this, please ignore this email.</p>
       </div>
     </body>

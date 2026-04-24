@@ -2,12 +2,16 @@ import http from "http";
 import app from "./app.js";
 import config from "./app/config/index.js";
 import { socketIO } from "./app/utils/socket.js";
+import { seedSuperAdmin } from "./app/modules/supperAdmin/supper_admin.ts";
 
 const port = config.port || 3000;
 
-const bootstrap = () => {
+const bootstrap = async () => {
   try {
     const server = http.createServer(app);
+
+    // Seed Super Admin
+    await seedSuperAdmin();
 
     // Initialize Socket.io
     socketIO(server);

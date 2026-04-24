@@ -7,6 +7,17 @@ declare const _default: {
     refreshSecret: string;
     refreshExpire: string;
     databaseUrl: string;
+    ssl: {
+        storeId: string;
+        storePassword: string;
+        storeName: string;
+        successUrl: string;
+        failUrl: string;
+        cancelUrl: string;
+        ipnUrl: string;
+        ssl_payment_url: string;
+        validate_api: string;
+    };
 };
 export default _default;
 //# sourceMappingURL=index.d.ts.map

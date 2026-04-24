@@ -312,8 +312,77 @@ const resetPassword = async (email: string, password: string, otp: string) => {
       passwordChanged: true,
       passwordChangeTime: new Date(),
     },
+    include: {
+      role: true,
+      profile: {
+        include: {
+          profilePhoto: true,
+        },
+      },
+      workInfo: {
+        include: {
+          subCategories: true,
+          workTypes: true,
+        },
+      },
+      department: true,
+      address: true,
+    },
   });
-  return updatedUser;
+
+  const payloadData = {
+    id: updatedUser.id,
+    email: updatedUser.email,
+    role: updatedUser.role?.role,
+    mobile: updatedUser.mobile,
+    isBlocked: updatedUser.isBlocked,
+    isDeleted: updatedUser.isDeleted,
+    isVerified: updatedUser.isVerified,
+    isActive: updatedUser.isActive,
+    passwordChanged: updatedUser.passwordChanged,
+    passwordChangeTime: updatedUser.passwordChangeTime,
+    lastLogin: updatedUser.lastLogin,
+  };
+
+  const accessToken = JwtHelpers.generateToken(
+    payloadData,
+    config.accessSecret as string,
+    config.accessExpire as string,
+  );
+  const refreshToken = JwtHelpers.generateToken(
+    payloadData,
+    config.refreshSecret as string,
+    config.refreshExpire as string,
+  );
+
+  return {
+    accessToken,
+    refreshToken,
+    user: {
+      id: updatedUser.id,
+      email: updatedUser.email,
+      mobile: updatedUser.mobile,
+      name: updatedUser.profile?.name,
+      photo: updatedUser.profile?.profilePhoto?.url,
+      role: updatedUser.role?.role,
+      gender: updatedUser.profile?.gender,
+      bloodGroup: updatedUser.profile?.bloodGroup,
+      age: updatedUser.profile?.age,
+      designation: updatedUser.workInfo?.experience,
+      department: updatedUser.department?.name,
+      address: updatedUser.address,
+      workInfo: {
+        ...updatedUser.workInfo,
+        subCategories: updatedUser.workInfo?.subCategories?.map((s) => s.name),
+        workTypes: updatedUser.workInfo?.workTypes?.map((w) => w.name),
+      },
+      isActive: updatedUser.isActive,
+      isVerified: updatedUser.isVerified,
+      isBlocked: updatedUser.isBlocked,
+      isDeleted: updatedUser.isDeleted,
+    },
+    isLogin: true,
+  };
 };
 export const AuthServices = {
   loginUser,

@@ -41,13 +41,18 @@ const createUserIntoDB = async (payload: any) => {
 
     // Create Profile
     if (profile) {
-      const { dob, age, ...profileRest } = profile;
+      const { dob, age, nidPhotoId, nidPhotoUrl, ...profileRest } = profile;
       await tc.profile.create({
         data: {
           ...profileRest,
           dob: dob ? new Date(dob) : undefined,
           age: age ? Number(age) : undefined,
           mobile: user.mobile,
+          nidPhotos: nidPhotoId
+            ? {
+                connect: [{ id: nidPhotoId }],
+              }
+            : undefined,
         },
       });
     }
@@ -331,12 +336,17 @@ const updateUser = async (id: string, payload: any) => {
   // Prepare profile update
   let profileUpdate = undefined;
   if (profile) {
-    const { dob, age, ...profileRest } = profile;
+    const { dob, age, nidPhotoId, nidPhotoUrl, ...profileRest } = profile;
     profileUpdate = {
       update: {
         ...profileRest,
         dob: dob ? new Date(dob) : undefined,
         age: age ? Number(age) : undefined,
+        nidPhotos: nidPhotoId
+          ? {
+              set: [{ id: nidPhotoId }],
+            }
+          : undefined,
       },
     };
   }

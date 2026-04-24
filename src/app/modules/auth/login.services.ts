@@ -9,6 +9,9 @@ import { sendEmail, otpEmailTemplate } from "../../utils/sendEmail.ts";
 const loginUser = async (payload: any) => {
   const user = await prisma.user.findUnique({
     where: { email: payload.email },
+    include: {
+      role: true,
+    },
   });
 
   if (!user) {
@@ -76,7 +79,7 @@ const loginUser = async (payload: any) => {
   const payloadData = {
     id: user.id,
     email: user.email,
-    role: user.role,
+    role: user.role?.role,
     mobile: user.mobile,
     isBlocked: user.isBlocked,
     isDeleted: user.isDeleted,
@@ -116,6 +119,9 @@ const refreshToken = async (token: string) => {
   //check if user is exist
   const user = await prisma.user.findUniqueOrThrow({
     where: { email: email },
+    include: {
+      role: true,
+    },
   });
 
   console.log(user);
@@ -127,7 +133,7 @@ const refreshToken = async (token: string) => {
   const payloadData = {
     id: user.id,
     email: user.email,
-    role: user.role,
+    role: user.role?.role,
     mobile: user.mobile,
     isBlocked: user.isBlocked,
     isDeleted: user.isDeleted,

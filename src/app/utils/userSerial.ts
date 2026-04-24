@@ -26,7 +26,9 @@ const findLastUserSerialId = async (role: Role) => {
 
   const lastUser = await prisma.user.findFirst({
     where: {
-      role: role,
+      role: {
+        role: role,
+      },
       id: {
         startsWith: prefix,
       },

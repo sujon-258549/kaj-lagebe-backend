@@ -7,13 +7,13 @@ datasource db {
 }
 
 model AllRole {
-  id   String @id @default(uuid())
-  role String
-  description String? 
-  isActive Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  users     User[]
+  id          String   @id @default(uuid())
+  role        String
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  users       User[]
 
   @@map("all_roles")
 }
@@ -74,6 +74,8 @@ model Profile {
   age           Int?
   dob           DateTime?
   bloodGroup    BloodGroup?
+  photoId       String?
+  profilePhoto  Image?      @relation(fields: [photoId], references: [id])
   photo         String?
   nid           String?
   nidPhoto      String[]    @default([])
@@ -99,7 +101,8 @@ model Address {
 model WorkInfo {
   id                 String    @id @default(uuid())
   mobile             String    @unique
-  categories         String[]  @default([])
+  // Many-to-Many relation with SubCategory
+  subCategories      SubCategory[]
   experience         String?
   workType           String?
   availableTime      String?
@@ -184,6 +187,7 @@ model SubCategory {
   status      Boolean  @default(true)
   category    Category @relation(fields: [categoryId], references: [id])
   jobs        Job[]
+  workInfos   WorkInfo[]
 
   @@map("sub_categories")
 }
@@ -248,15 +252,16 @@ model Folder {
 }
 
 model Image {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
   url       String
   folderId  String?
-  slug      String   @unique
-  status    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  folder    Folder?  @relation(fields: [folderId], references: [id])
+  slug      String    @unique
+  status    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  folder    Folder?   @relation(fields: [folderId], references: [id])
+  profiles  Profile[]
 
   @@map("images")
 }

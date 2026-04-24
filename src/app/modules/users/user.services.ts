@@ -7,122 +7,101 @@ import { otpEmailTemplate, sendEmail } from "../../utils/sendEmail.ts";
 import { userSearchableFields } from "./user.constant.ts";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 
+function normalizeCategoriesInput(raw: unknown): string[] {
+  if (Array.isArray(raw))
+    return raw
+      .map(String)
+      .map((s) => s.trim())
+      .filter(Boolean);
+  if (typeof raw === "string")
+    return raw
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+  return [];
+}
+
 // create user
 
 const createUserIntoDB = async (payload: any) => {
-  const existUser = await prisma.user.findUnique({
-    where: { mobile: payload.mobile },
-  });
-  if (
-    existUser &&
-    existUser.mobile === payload.mobile &&
-    existUser.email === payload.email
-  ) {
-    const generateOtp = Math.floor(100000 + Math.random() * 900000);
+  const { user, profile, address, workInfo } = payload;
 
-    await prisma.otp.upsert({
-      where: { email: payload.email },
-      update: {
-        otpToken: generateOtp.toString(),
-        updatedAt: new Date(),
-      },
-      create: {
-        email: payload.email,
-        otpToken: generateOtp.toString(),
+  const hashedPassword = await argon2.hash(user.password);
+
+  const result = await prisma.$transaction(async (tc) => {
+    // Create User
+    const userData = {
+      ...user,
+      password: hashedPassword,
+    };
+
+    const newUser = await tc.user.create({
+      data: userData,
+    });
+
+    // Create Profile
+    if (profile) {
+      const { dob, age, ...profileRest } = profile;
+      await tc.profile.create({
+        data: {
+          ...profileRest,
+          dob: dob ? new Date(dob) : undefined,
+          age: age ? Number(age) : undefined,
+          mobile: user.mobile,
+        },
+      });
+    }
+
+    // Create Address
+    if (address) {
+      await tc.address.create({
+        data: {
+          ...address,
+          mobile: user.mobile,
+        },
+      });
+    }
+
+    // Create WorkInfo
+    if (workInfo) {
+      const { categories, ...workInfoRest } = workInfo;
+      await tc.workInfo.create({
+        data: {
+          ...workInfoRest,
+          mobile: user.mobile,
+          subCategories:
+            categories && categories.length > 0
+              ? {
+                  connect: categories.map((id: string) => ({ id })),
+                }
+              : undefined,
+        },
+      });
+    }
+
+    return await tc.user.findUnique({
+      where: { id: newUser.id },
+      include: {
+        profile: true,
+        address: true,
+        workInfo: {
+          include: {
+            subCategories: true,
+          },
+        },
       },
     });
-    await sendEmail(
-      payload.email,
-      otpEmailTemplate({ otp: generateOtp }),
-      "Your OTP Code",
-    );
-    return { message: "OTP sent to your email" };
+  });
+
+  if (result) {
+    const { password, ...userWithoutPassword } = result as any;
+    return userWithoutPassword;
   }
 
-  const hashedPassword = await argon2.hash(payload.password);
-  const result = await prisma.$transaction(
-    async (
-      tc: Omit<
-        Prisma.TransactionClient,
-        | "$connect"
-        | "$disconnect"
-        | "$on"
-        | "$transaction"
-        | "$use"
-        | "$extends"
-      >,
-    ) => {
-      const userData: any = {
-        email: payload.email,
-        password: hashedPassword,
-        mobile: payload.mobile,
-        role: payload.role,
-      };
-
-      if (payload.createdAt) userData.createdAt = new Date(payload.createdAt);
-      if (payload.updatedAt) userData.updatedAt = new Date(payload.updatedAt);
-
-      const user = await tc.user.create({
-        data: userData,
-      });
-      const profile = await tc.profile.create({
-        data: {
-          mobile: payload.mobile,
-          name: payload.name,
-          gender: payload.gender,
-          age: payload.age,
-          dob: payload.dob,
-          bloodGroup: payload.bloodGroup,
-          photo: payload.photo,
-          nid: payload.nid,
-          nidPhoto: payload.nidPhoto,
-        },
-      });
-      const address = await tc.address.create({
-        data: {
-          mobile: payload.mobile,
-          division: payload.division,
-          district: payload.district,
-          upazila: payload.upazila,
-          address: payload.address,
-        },
-      });
-      const workInfo = await tc.workInfo.create({
-        data: {
-          mobile: payload.mobile,
-          categories: payload.categories,
-          experience: payload.experience,
-          workType: payload.workType,
-          availableTime: payload.availableTime,
-        },
-      });
-      return { user, profile, address, workInfo };
-    },
-  );
-
-  const generateOtp = Math.floor(100000 + Math.random() * 900000);
-
-  await prisma.otp.upsert({
-    where: { email: payload.email },
-    update: {
-      otpToken: generateOtp.toString(),
-      updatedAt: new Date(),
-    },
-    create: {
-      email: payload.email,
-      otpToken: generateOtp.toString(),
-    },
-  });
-  await sendEmail(
-    payload.email,
-    otpEmailTemplate({ otp: generateOtp }),
-    "Your OTP Code",
-  );
-  console.log(hashedPassword);
-  // console.log(payload);
   return result;
 };
 
+// get all users
 const getAllUsers = async (query: any) => {
   const { searchTerm, page, limit, sortBy, sortOrder, ...queryFilter } = query;
 
@@ -179,7 +158,11 @@ const getAllUsers = async (query: any) => {
     include: {
       profile: true,
       address: true,
-      workInfo: true,
+      workInfo: {
+        include: {
+          subCategories: true,
+        },
+      },
     },
   });
 
@@ -198,9 +181,17 @@ const getUserById = async (id: string) => {
   const user = await prisma.user.findUnique({
     where: { id },
     include: {
-      profile: true,
+      profile: {
+        include: {
+          profilePhoto: true,
+        },
+      },
       address: true,
-      workInfo: true,
+      workInfo: {
+        include: {
+          subCategories: true,
+        },
+      },
     },
   });
   return user?.password ? { ...user, password: undefined } : user;
@@ -210,15 +201,101 @@ const getUserById = async (id: string) => {
 
 // update user
 const updateUser = async (id: string, payload: any) => {
-  const data: any = { ...payload };
-  if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
-  if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
+  const { user, profile, address, workInfo } = payload;
+  const { password, role, ...rest } = user || {};
 
-  const user = await prisma.user.update({
+  const updateData: Record<string, unknown> = {};
+  const userScalarKeys = [
+    "email",
+    "mobile",
+    "isActive",
+    "isBlocked",
+    "isDeleted",
+    "isVerified",
+    "departmentId",
+    "subscriptionId",
+  ] as const;
+  for (const k of userScalarKeys) {
+    if (rest[k] !== undefined) updateData[k] = rest[k];
+  }
+  if (rest.createdAt) updateData.createdAt = new Date(rest.createdAt);
+  if (rest.updatedAt) updateData.updatedAt = new Date(rest.updatedAt);
+
+  // Handle case where fields might be directly in payload instead of user object
+  if (!user) {
+    for (const k of userScalarKeys) {
+      if (payload[k] !== undefined) updateData[k] = payload[k];
+    }
+  }
+
+  if (password) {
+    updateData.password = await argon2.hash(password);
+    updateData.passwordChanged = true;
+    updateData.passwordChangeTime = new Date();
+  }
+
+  if (role) {
+    const r = await prisma.allRole.findFirst({
+      where: { role: String(role) },
+    });
+    if (r) updateData.roleId = r.id;
+  }
+
+  // Prepare workInfo update
+  let workInfoUpdate = undefined;
+  if (workInfo) {
+    const { categories, ...workInfoRest } = workInfo;
+    workInfoUpdate = {
+      update: {
+        ...workInfoRest,
+        subCategories: categories
+          ? {
+              set: categories.map((id: string) => ({ id })),
+            }
+          : undefined,
+      },
+    };
+  }
+
+  // Prepare profile update
+  let profileUpdate = undefined;
+  if (profile) {
+    const { dob, age, ...profileRest } = profile;
+    profileUpdate = {
+      update: {
+        ...profileRest,
+        dob: dob ? new Date(dob) : undefined,
+        age: age ? Number(age) : undefined,
+      },
+    };
+  }
+
+  const finalUpdateData: any = {
+    ...updateData,
+    profile: profileUpdate,
+    address: address
+      ? {
+          update: address,
+        }
+      : undefined,
+    workInfo: workInfoUpdate,
+  };
+
+  // Remove undefined keys to satisfy exactOptionalPropertyTypes: true
+  Object.keys(finalUpdateData).forEach(
+    (key) => finalUpdateData[key] === undefined && delete finalUpdateData[key],
+  );
+
+  const result = await prisma.user.update({
     where: { id },
-    data,
+    data: finalUpdateData,
+    include: {
+      profile: true,
+      address: true,
+      workInfo: true,
+    },
   });
-  return user;
+  return result;
 };
 
 // get my data
@@ -228,18 +305,20 @@ const getMyData = async (id: string) => {
     where: { id },
     include: {
       profile: {
-        select: {
-          name: true,
-          gender: true,
-          age: true,
-          dob: true,
-          bloodGroup: true,
-          photo: true,
-          nid: true,
+        include: {
+          profilePhoto: {
+            select: {
+              url: true,
+            },
+          },
         },
       },
       address: true,
-      workInfo: true,
+      workInfo: {
+        include: {
+          subCategories: true,
+        },
+      },
     },
   });
   return user?.password ? { ...user, password: undefined } : user;
@@ -366,8 +445,6 @@ const blockUser = async (id: string) => {
   });
   return deletedUser;
 };
-
-
 
 export const UserServices = {
   createUserIntoDB,

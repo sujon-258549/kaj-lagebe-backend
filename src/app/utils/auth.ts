@@ -32,9 +32,14 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
       where: {
         email,
       },
+      include: {
+        role: true,
+      },
     });
 
-//  if(existingUser.role !== USER_ROLE.SUPER_ADMIN) {
+    const userRoleString = existingUser.role?.role;
+
+//  if(userRoleString !== USER_ROLE.SUPER_ADMIN) {
 //   if(existingUser.isVerified === false) {
 //     throw new ApiError(status.UNAUTHORIZED, "🔍❓ User not verified");
 //   }
@@ -59,14 +64,14 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
     }
 
 
-    if (!requiredRoles.includes(role)) {
+    if (!userRoleString || !requiredRoles.includes(userRoleString as any)) {
       throw new ApiError(status.FORBIDDEN, "🔍❓ Forbidden");
     }
 
     req.user = {
       id: existingUser.id,
       email: existingUser.email,
-      role: existingUser.role,
+      role: userRoleString,
       mobile: existingUser.mobile,
     };
 

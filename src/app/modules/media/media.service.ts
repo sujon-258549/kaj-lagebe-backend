@@ -185,7 +185,7 @@ const createImage = async (payload: {
   url: string;
   folderId?: string;
 }) => {
-  const slug = slugCreate(payload.name);
+  const slug = slugCreate(payload.name + "-" + Math.floor(Math.random() * 10000));
   const result = await prisma.image.create({
     data: {
       name: payload.name,

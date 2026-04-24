@@ -82,9 +82,30 @@ const createUserIntoDB = async (payload: any) => {
     return await tc.user.findUnique({
       where: { id: newUser.id },
       include: {
+        role: {
+          select: {
+            role: true,
+          },
+        },
+        department: {
+          select: {
+            name: true,
+          },
+        },
         profile: {
           include: {
-            profilePhoto: true,
+            profilePhoto: {
+              select: {
+                id: true,
+                url: true,
+              },
+            },
+            nidPhotos: {
+              select: {
+                id: true,
+                url: true,
+              },
+            },
           },
         },
         address: true,
@@ -160,9 +181,30 @@ const getAllUsers = async (query: any) => {
     // skip: (Number(query.page) - 1) * Number(query.limit),
     // take: Number(query.limit),
     include: {
+      role: {
+        select: {
+          role: true,
+        },
+      },
+      department: {
+        select: {
+          name: true,
+        },
+      },
       profile: {
         include: {
-          profilePhoto: true,
+          profilePhoto: {
+            select: {
+              id: true,
+              url: true,
+            },
+          },
+          nidPhotos: {
+            select: {
+              id: true,
+              url: true,
+            },
+          },
         },
       },
       address: true,
@@ -189,9 +231,30 @@ const getUserById = async (id: string) => {
   const user = await prisma.user.findUnique({
     where: { id },
     include: {
+      role: {
+        select: {
+          role: true,
+        },
+      },
+      department: {
+        select: {
+          name: true,
+        },
+      },
       profile: {
         include: {
-          profilePhoto: true,
+          profilePhoto: {
+            select: {
+              id: true,
+              url: true,
+            },
+          },
+          nidPhotos: {
+            select: {
+              id: true,
+              url: true,
+            },
+          },
         },
       },
       address: true,
@@ -298,9 +361,30 @@ const updateUser = async (id: string, payload: any) => {
     where: { id },
     data: finalUpdateData,
     include: {
+      role: {
+        select: {
+          role: true,
+        },
+      },
+      department: {
+        select: {
+          name: true,
+        },
+      },
       profile: {
         include: {
-          profilePhoto: true,
+          profilePhoto: {
+            select: {
+              id: true,
+              url: true,
+            },
+          },
+          nidPhotos: {
+            select: {
+              id: true,
+              url: true,
+            },
+          },
         },
       },
       address: true,
@@ -320,10 +404,27 @@ const getMyData = async (id: string) => {
   const user = await prisma.user.findUniqueOrThrow({
     where: { id },
     include: {
+      role: {
+        select: {
+          role: true,
+        },
+      },
+      department: {
+        select: {
+          name: true,
+        },
+      },
       profile: {
         include: {
           profilePhoto: {
             select: {
+              id: true,
+              url: true,
+            },
+          },
+          nidPhotos: {
+            select: {
+              id: true,
               url: true,
             },
           },

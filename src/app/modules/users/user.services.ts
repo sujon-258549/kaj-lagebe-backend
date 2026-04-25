@@ -31,9 +31,22 @@ const createUserIntoDB = async (payload: any) => {
   const hashedPassword = await argon2.hash(user.password);
 
   const result = await prisma.$transaction(async (tc) => {
+    // Check if role is provided, if not default to "USER"
+    let targetRoleId = user.roleId;
+
+    if (!targetRoleId) {
+      const defaultRole = await tc.allRole.upsert({
+        where: { role: "USER" },
+        update: {},
+        create: { role: "USER" },
+      });
+      targetRoleId = defaultRole.id;
+    }
+
     // Create User
     const userData = {
       ...user,
+      roleId: targetRoleId,
       password: hashedPassword,
     };
 
@@ -179,6 +192,28 @@ const getAllUsers = async (query: any) => {
       queryFilter[field] = queryFilter[field] === "true";
     }
   });
+
+  // Role filtering logic
+  if (queryFilter.role) {
+    andCondition.push({
+      role: {
+        role: {
+          equals: String(queryFilter.role),
+          mode: "insensitive"
+        }
+      },
+    });
+  } else {
+    // If NO role is specified, exclude USER role by default (e.g. for Employee List)
+    andCondition.push({
+      role: {
+        role: {
+          not: "USER",
+        },
+      },
+    });
+  }
+  delete queryFilter.role;
 
   // queryFilter
   if (Object.keys(queryFilter).length > 0) {

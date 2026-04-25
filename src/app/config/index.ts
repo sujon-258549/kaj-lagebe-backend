@@ -23,4 +23,10 @@ export default {
     ssl_payment_url: process.env.SSL_PAYMENT_URL!,
     validate_api: process.env.VALIDATE_API!,
   },
+  openRouter: {
+    apiKey: process.env.OPENROUTER_API_KEY!,
+    baseUrl: "https://openrouter.ai/api/v1",
+    siteUrl: process.env.YOUR_SITE_URL || "",
+    siteName: process.env.YOUR_SITE_NAME || "",
+  },
 };

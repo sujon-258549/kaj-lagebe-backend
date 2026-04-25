@@ -1,9 +1,5 @@
 export declare const RolePermissionService: {
     getRolePermissions: (roleId: string) => Promise<{
-        createdAt: Date;
-        updatedAt: Date;
-        id: string;
-        roleId: string;
         permissions: string[];
         module: string;
     }[]>;

@@ -1,10 +1,19 @@
 export declare const UserServices: {
     createUserIntoDB: (payload: any) => Promise<any>;
     getUserById: (id: string) => Promise<({
-        role: {
+        role: ({
+            permissions: {
+                permissions: string[];
+                module: string;
+            }[];
+        } & {
             role: string;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
             id: string;
-        } | null;
+            description: string | null;
+        }) | null;
         department: {
             name: string;
             id: string;
@@ -88,10 +97,19 @@ export declare const UserServices: {
         loginTryTime: Date | null;
     }) | {
         password: undefined;
-        role: {
+        role: ({
+            permissions: {
+                permissions: string[];
+                module: string;
+            }[];
+        } & {
             role: string;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
             id: string;
-        } | null;
+            description: string | null;
+        }) | null;
         department: {
             name: string;
             id: string;
@@ -351,178 +369,7 @@ export declare const UserServices: {
         loginTryCount: number;
         loginTryTime: Date | null;
     }>;
-    getMyData: (id: string) => Promise<({
-        role: {
-            role: string;
-            id: string;
-        } | null;
-        department: {
-            name: string;
-            id: string;
-        } | null;
-        profile: ({
-            profilePhoto: {
-                url: string;
-                id: string;
-            } | null;
-            nidPhotos: {
-                url: string;
-                id: string;
-            }[];
-        } & {
-            name: string | null;
-            mobile: string;
-            id: string;
-            gender: import("@prisma/client").$Enums.Gender | null;
-            age: number | null;
-            dob: Date | null;
-            bloodGroup: import("@prisma/client").$Enums.BloodGroup | null;
-            photoId: string | null;
-            photo: string | null;
-            nid: string | null;
-            nidPhoto: string[];
-            emailVerified: boolean;
-            phoneVerified: boolean;
-            nidVerified: boolean;
-            serialId: string | null;
-        }) | null;
-        address: {
-            mobile: string;
-            address: string | null;
-            id: string;
-            division: string | null;
-            district: string | null;
-            upazila: string | null;
-        } | null;
-        workInfo: ({
-            subCategories: {
-                name: string;
-                id: string;
-            }[];
-            workTypes: {
-                name: string;
-                id: string;
-            }[];
-        } & {
-            mobile: string;
-            isBlocked: boolean;
-            isDeleted: boolean;
-            workType: string | null;
-            id: string;
-            passwordChangeTime: Date | null;
-            passwordChanged: boolean;
-            experience: string | null;
-            workStartTime: string | null;
-            workTimeLimit: string | null;
-            availableTime: string | null;
-            verified: boolean;
-        }) | null;
-    } & {
-        email: string;
-        mobile: string;
-        isBlocked: boolean;
-        isDeleted: boolean;
-        isVerified: boolean;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        id: string;
-        password: string;
-        roleId: string | null;
-        passwordChangeTime: Date | null;
-        passwordChanged: boolean;
-        lastLogin: Date | null;
-        subscriptionId: string | null;
-        departmentId: string | null;
-        loginCount: number;
-        loginTryCount: number;
-        loginTryTime: Date | null;
-    }) | {
-        password: undefined;
-        role: {
-            role: string;
-            id: string;
-        } | null;
-        department: {
-            name: string;
-            id: string;
-        } | null;
-        profile: ({
-            profilePhoto: {
-                url: string;
-                id: string;
-            } | null;
-            nidPhotos: {
-                url: string;
-                id: string;
-            }[];
-        } & {
-            name: string | null;
-            mobile: string;
-            id: string;
-            gender: import("@prisma/client").$Enums.Gender | null;
-            age: number | null;
-            dob: Date | null;
-            bloodGroup: import("@prisma/client").$Enums.BloodGroup | null;
-            photoId: string | null;
-            photo: string | null;
-            nid: string | null;
-            nidPhoto: string[];
-            emailVerified: boolean;
-            phoneVerified: boolean;
-            nidVerified: boolean;
-            serialId: string | null;
-        }) | null;
-        address: {
-            mobile: string;
-            address: string | null;
-            id: string;
-            division: string | null;
-            district: string | null;
-            upazila: string | null;
-        } | null;
-        workInfo: ({
-            subCategories: {
-                name: string;
-                id: string;
-            }[];
-            workTypes: {
-                name: string;
-                id: string;
-            }[];
-        } & {
-            mobile: string;
-            isBlocked: boolean;
-            isDeleted: boolean;
-            workType: string | null;
-            id: string;
-            passwordChangeTime: Date | null;
-            passwordChanged: boolean;
-            experience: string | null;
-            workStartTime: string | null;
-            workTimeLimit: string | null;
-            availableTime: string | null;
-            verified: boolean;
-        }) | null;
-        email: string;
-        mobile: string;
-        isBlocked: boolean;
-        isDeleted: boolean;
-        isVerified: boolean;
-        isActive: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-        id: string;
-        roleId: string | null;
-        passwordChangeTime: Date | null;
-        passwordChanged: boolean;
-        lastLogin: Date | null;
-        subscriptionId: string | null;
-        departmentId: string | null;
-        loginCount: number;
-        loginTryCount: number;
-        loginTryTime: Date | null;
-    }>;
+    getMyData: (id: string) => Promise<any>;
     changePassword: (payload: {
         oldPassword: string;
         newPassword: string;

@@ -16,6 +16,7 @@ import { DepartmentRouter } from "../modules/department/department.router.ts";
 import { RoleRoutes } from "../modules/role/role.routes.ts";
 import { WorkTypeRouter } from "../modules/workType/workType.router.ts";
 import { RolePermissionRoutes } from "../modules/rolePermission/rolePermission.router.ts";
+import { AgentRouter } from "../modules/agent/agent.router.ts";
 
 const router = Router();
 
@@ -87,6 +88,10 @@ const allRouter = [
   {
     path: "/role-permission",
     router: RolePermissionRoutes,
+  },
+  {
+    path: "/agent",
+    router: AgentRouter,
   },
 ];
 

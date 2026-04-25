@@ -18,6 +18,12 @@ declare const _default: {
         ssl_payment_url: string;
         validate_api: string;
     };
+    openRouter: {
+        apiKey: string;
+        baseUrl: string;
+        siteUrl: string;
+        siteName: string;
+    };
 };
 export default _default;
 //# sourceMappingURL=index.d.ts.map

@@ -400,7 +400,7 @@ const updateUser = async (id: string, payload: any) => {
 
   if (role) {
     const r = await prisma.allRole.findFirst({
-      where: { role: String(role) },
+      where: { role: String(role).toUpperCase() },
     });
     if (r) updateData.roleId = r.id;
   }

@@ -1,0 +1,1 @@
+{"version":3,"file":"configProvider.d.ts","sourceRoot":"","sources":["../../../src/app/utils/configProvider.ts"],"names":[],"mappings":"AAEA,eAAO,MAAM,SAAS,GAAU,KAAK,MAAM,EAAE,eAAe,MAAM,KAAG,OAAO,CAAC,MAAM,GAAG,IAAI,CAKzF,CAAC;AAEF,eAAO,MAAM,SAAS,GAAU,KAAK,MAAM,EAAE,OAAO,MAAM,EAAE,cAAc,MAAM;;;;;;;EAM/E,CAAC;AAEF,eAAO,MAAM,UAAU;;;;CAItB,CAAC;AAEF,eAAO,MAAM,iBAAiB,qBAgB7B,CAAC"}

@@ -6,6 +6,9 @@ import { roleSearchableFields } from "./role.constant.ts";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 
 const createRole = async (payload: any) => {
+  if (payload.role) {
+    payload.role = payload.role.toUpperCase();
+  }
   const isExist = await prisma.allRole.findFirst({
     where: { role: payload.role },
   });
@@ -78,6 +81,9 @@ const getRoleById = async (id: string) => {
 };
 
 const updateRole = async (id: string, payload: any) => {
+  if (payload.role) {
+    payload.role = payload.role.toUpperCase();
+  }
   const result = await prisma.allRole.update({
     where: { id },
     data: payload,

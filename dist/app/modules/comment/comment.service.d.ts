@@ -38,6 +38,7 @@ export declare const CommentServices: {
             loginCount: number;
             loginTryCount: number;
             loginTryTime: Date | null;
+            lastFollowUp: Date | null;
         };
     } & {
         isDeleted: boolean;
@@ -88,6 +89,7 @@ export declare const CommentServices: {
                 loginCount: number;
                 loginTryCount: number;
                 loginTryTime: Date | null;
+                lastFollowUp: Date | null;
             };
         } & {
             isDeleted: boolean;
@@ -143,6 +145,7 @@ export declare const CommentServices: {
             loginCount: number;
             loginTryCount: number;
             loginTryTime: Date | null;
+            lastFollowUp: Date | null;
         };
     } & {
         isDeleted: boolean;

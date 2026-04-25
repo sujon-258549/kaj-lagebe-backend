@@ -95,6 +95,7 @@ export declare const UserServices: {
         loginCount: number;
         loginTryCount: number;
         loginTryTime: Date | null;
+        lastFollowUp: Date | null;
     }) | {
         password: undefined;
         role: ({
@@ -189,6 +190,7 @@ export declare const UserServices: {
         loginCount: number;
         loginTryCount: number;
         loginTryTime: Date | null;
+        lastFollowUp: Date | null;
     } | null>;
     getAllUsers: (query: any) => Promise<{
         data: {
@@ -275,6 +277,7 @@ export declare const UserServices: {
             loginCount: number;
             loginTryCount: number;
             loginTryTime: Date | null;
+            lastFollowUp: Date | null;
         }[];
         meta: {
             page: number;
@@ -368,6 +371,7 @@ export declare const UserServices: {
         loginCount: number;
         loginTryCount: number;
         loginTryTime: Date | null;
+        lastFollowUp: Date | null;
     }>;
     getMyData: (id: string) => Promise<any>;
     changePassword: (payload: {
@@ -439,6 +443,7 @@ export declare const UserServices: {
         loginCount: number;
         loginTryCount: number;
         loginTryTime: Date | null;
+        lastFollowUp: Date | null;
     }>;
     deleteUser: (id: string) => Promise<never[]>;
     softDeleteUser: (id: string) => Promise<{
@@ -461,6 +466,7 @@ export declare const UserServices: {
         loginCount: number;
         loginTryCount: number;
         loginTryTime: Date | null;
+        lastFollowUp: Date | null;
     }>;
     blockUser: (id: string) => Promise<{
         email: string;
@@ -482,6 +488,7 @@ export declare const UserServices: {
         loginCount: number;
         loginTryCount: number;
         loginTryTime: Date | null;
+        lastFollowUp: Date | null;
     }>;
 };
 //# sourceMappingURL=user.services.d.ts.map

@@ -2,7 +2,9 @@ import http from "http";
 import app from "./app.js";
 import config from "./app/config/index.js";
 import { socketIO } from "./app/utils/socket.js";
-import { seedSuperAdmin } from "./app/modules/supperAdmin/supper_admin.ts";
+import { seedSuperAdmin } from "./app/modules/supperAdmin/supper_admin.js";
+import { seedSystemConfigs } from "./app/utils/configProvider.js";
+import { AutomationCron } from "./app/modules/automation/automation.cron.js";
 
 const port = config.port || 3000;
 
@@ -10,8 +12,14 @@ const bootstrap = async () => {
   try {
     const server = http.createServer(app);
 
+    // Seed System Configurations
+    await seedSystemConfigs();
+
     // Seed Super Admin
     await seedSuperAdmin();
+
+    // Initialize Automation Cron Jobs
+    await AutomationCron.initAutomationCron();
 
     // Initialize Socket.io
     socketIO(server);

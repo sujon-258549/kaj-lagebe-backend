@@ -17,6 +17,8 @@ import { RoleRoutes } from "../modules/role/role.routes.ts";
 import { WorkTypeRouter } from "../modules/workType/workType.router.ts";
 import { RolePermissionRoutes } from "../modules/rolePermission/rolePermission.router.ts";
 import { AgentRouter } from "../modules/agent/agent.router.ts";
+import { AutomationRoutes } from "../modules/automation/automation.router.js";
+import { SystemConfigRoutes } from "../modules/systemConfig/systemConfig.router.js";
 
 const router = Router();
 
@@ -92,6 +94,14 @@ const allRouter = [
   {
     path: "/agent",
     router: AgentRouter,
+  },
+  {
+    path: "/automation",
+    router: AutomationRoutes,
+  },
+  {
+    path: "/system-config",
+    router: SystemConfigRoutes,
   },
 ];
 

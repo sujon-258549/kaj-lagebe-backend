@@ -228,6 +228,7 @@ export declare const JobServices: {
             loginCount: number;
             loginTryCount: number;
             loginTryTime: Date | null;
+            lastFollowUp: Date | null;
         };
         category: {
             name: string;
@@ -289,6 +290,7 @@ export declare const JobServices: {
                 loginCount: number;
                 loginTryCount: number;
                 loginTryTime: Date | null;
+                lastFollowUp: Date | null;
             };
         } & {
             isDeleted: boolean;

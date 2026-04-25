@@ -1,16 +1,23 @@
 import OpenAI from "openai";
-import config from "../../config/index.ts";
+import config from "../../config/index.js";
+import { getConfig, ConfigKeys } from "../../utils/configProvider.js";
 
-const openai = new OpenAI({
-  baseURL: config.openRouter.baseUrl,
-  apiKey: config.openRouter.apiKey,
-  defaultHeaders: {
-    "HTTP-Referer": config.openRouter.siteUrl,
-    "X-OpenRouter-Title": config.openRouter.siteName,
-  },
-});
+const getOpenAiClient = async () => {
+  const dbToken = await getConfig(ConfigKeys.AI_API_TOKEN);
+  const apiKey = dbToken || config.openRouter.apiKey;
+
+  return new OpenAI({
+    baseURL: config.openRouter.baseUrl,
+    apiKey: apiKey as string,
+    defaultHeaders: {
+      "HTTP-Referer": config.openRouter.siteUrl,
+      "X-OpenRouter-Title": config.openRouter.siteName,
+    },
+  });
+};
 
 const generateResponse = async (content: string) => {
+  const openai = await getOpenAiClient();
   const models = [
     "google/gemini-2.0-flash-exp:free",
     "meta-llama/llama-3.1-8b-instruct:free",

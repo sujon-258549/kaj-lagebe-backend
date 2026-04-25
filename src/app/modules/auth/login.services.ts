@@ -7,8 +7,10 @@ import argon2 from "argon2";
 import { sendEmail, otpEmailTemplate } from "../../utils/sendEmail.ts";
 
 const loginUser = async (payload: any) => {
-  const user = await prisma.user.findUnique({
-    where: { email: payload.email },
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [{ email: payload.email }, { mobile: payload.email }],
+    },
     include: {
       role: true,
       profile: {

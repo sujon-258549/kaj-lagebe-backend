@@ -15,6 +15,7 @@ import { PaymentRoutes } from "../modules/payment/payment.routes.ts";
 import { DepartmentRouter } from "../modules/department/department.router.ts";
 import { RoleRoutes } from "../modules/role/role.routes.ts";
 import { WorkTypeRouter } from "../modules/workType/workType.router.ts";
+import { RolePermissionRoutes } from "../modules/rolePermission/rolePermission.router.ts";
 
 const router = Router();
 
@@ -82,6 +83,10 @@ const allRouter = [
   {
     path: "/work-types",
     router: WorkTypeRouter,
+  },
+  {
+    path: "/role-permission",
+    router: RolePermissionRoutes,
   },
 ];
 

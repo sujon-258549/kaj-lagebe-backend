@@ -273,9 +273,13 @@ const getUserById = async (id: string) => {
     where: { id },
     include: {
       role: {
+        include: {
+          permissions: {
         select: {
-          id: true,
-          role: true,
+              module: true,
+              permissions: true,
+            },
+          },
         },
       },
       department: {
@@ -503,9 +507,13 @@ const getMyData = async (id: string) => {
     where: { id },
     include: {
       role: {
-        select: {
-          id: true,
-          role: true,
+        include: {
+          permissions: {
+            select: {
+              module: true,
+              permissions: true,
+            },
+          },
         },
       },
       department: {
@@ -549,7 +557,15 @@ const getMyData = async (id: string) => {
       },
     },
   });
-  return user?.password ? { ...user, password: undefined } : user;
+  const result: any = user?.password ? { ...user, password: undefined } : user;
+
+  if (result?.role?.permissions) {
+    result.role.permissions = result.role.permissions.filter(
+      (p: any) => p.permissions.length > 0,
+    );
+  }
+
+  return result;
 };
 
 // change password

@@ -7,13 +7,51 @@ import type { Prisma } from "@prisma/client";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 import { blogSearchableFields } from "./blog.constant.ts";
 
+const blogInclude = {
+  cover: {
+    select: {
+      id: true,
+      url: true,
+    },
+  },
+  author: {
+    select: {
+      id: true,
+      mobile: true,
+      profile: {
+        select: {
+          name: true,
+          photo: true,
+        },
+      },
+    },
+  },
+};
+
 const createBlog = async (payload: any) => {
+  const { coverId, authorId, tags, ...rest } = payload;
   const slug = payload.slug || slugCreate(payload.title);
-  const data: any = { ...payload, slug };
+  
+  const data: Prisma.BlogCreateInput = {
+    ...rest,
+    slug,
+    tags: tags ? (Array.isArray(tags) ? tags : tags.split(",")) : [],
+  };
+
+  if (coverId) {
+    data.cover = { connect: { id: coverId } };
+  }
+  if (authorId) {
+    data.author = { connect: { id: authorId } };
+  }
+
   if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
 
-  return await prisma.blog.create({ data });
+  return await prisma.blog.create({
+    data,
+    include: blogInclude,
+  });
 };
 
 const getAllBlog = async (query: any) => {
@@ -23,11 +61,11 @@ const getAllBlog = async (query: any) => {
   const { pageNumber, limitNumber, skip, sortOrderValue, sortByValue } =
     calculatePaginationOrSort(page, limit, sortBy, sortOrder);
 
-  if (query.searchTerm) {
+  if (searchTerm) {
     andCondition.push({
       OR: blogSearchableFields.map((text: string) => ({
         [text]: {
-          contains: query.searchTerm,
+          contains: searchTerm,
           mode: "insensitive",
         },
       })),
@@ -43,6 +81,7 @@ const getAllBlog = async (query: any) => {
       AND: andCondition,
       ...queryFilter,
     },
+    include: blogInclude,
     take: limitNumber,
     skip: skip,
     orderBy: {
@@ -72,6 +111,7 @@ const getBlogById = async (id: string) => {
     where: {
       OR: [{ id: id }, { slug: id }],
     },
+    include: blogInclude,
   });
   if (!result) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
   return result;
@@ -81,7 +121,24 @@ const updateBlog = async (id: string, payload: any) => {
   const existingBlog = await prisma.blog.findUnique({ where: { id } });
   if (!existingBlog) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
 
-  const updateData: Partial<Prisma.BlogUpdateInput> = { ...payload };
+  const { tags, coverId, authorId, ...rest } = payload;
+  const updateData: Prisma.BlogUpdateInput = { ...rest };
+
+  if (tags) {
+    updateData.tags = Array.isArray(tags) ? tags : tags.split(",");
+  }
+
+  if (coverId) {
+    updateData.cover = {
+      connect: { id: coverId },
+    };
+  }
+
+  if (authorId) {
+    updateData.author = {
+      connect: { id: authorId },
+    };
+  }
 
   if (payload.title) {
     updateData.title = payload.title;
@@ -96,6 +153,7 @@ const updateBlog = async (id: string, payload: any) => {
   const result = await prisma.blog.update({
     where: { id },
     data: updateData,
+    include: blogInclude,
   });
   return result;
 };
@@ -106,12 +164,19 @@ const updateBlogStatus = async (id: string) => {
 
   const result = await prisma.blog.update({
     where: { id },
-    data: { isPublished: !isBlogExist.isPublished, publishedAt: new Date() },
+    data: { 
+      isPublished: !isBlogExist.isPublished, 
+      publishedAt: !isBlogExist.isPublished ? new Date() : isBlogExist.publishedAt 
+    },
+    include: blogInclude,
   });
   return result;
 };
 
 const deleteBlog = async (id: string) => {
+  const isBlogExist = await prisma.blog.findUnique({ where: { id } });
+  if (!isBlogExist) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
+
   await prisma.blog.delete({ where: { id } });
   return { message: "Blog deleted successfully" };
 };

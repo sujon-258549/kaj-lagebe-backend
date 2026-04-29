@@ -28,7 +28,7 @@ model RolePermission {
   updatedAt   DateTime @updatedAt
   role        AllRole  @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
-//  @@unique([roleId, module])
+  //  @@unique([roleId, module])
   @@map("role_permissions")
 }
 
@@ -78,17 +78,18 @@ model User {
   payments           Payment[]
   lastFollowUp       DateTime?
   followUpHistory    FollowUpHistory[]
+  blogs              Blog[]
 
   @@map("users")
 }
 
 model FollowUpHistory {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  subject   String
-  content   String
-  sentAt    DateTime @default(now())
+  id      String   @id @default(uuid())
+  userId  String
+  user    User     @relation(fields: [userId], references: [id])
+  subject String
+  content String
+  sentAt  DateTime @default(now())
 
   @@map("follow_up_history")
 }
@@ -138,22 +139,22 @@ model Address {
 }
 
 model WorkInfo {
-  id                 String    @id @default(uuid())
-  mobile             String    @unique
+  id                 String        @id @default(uuid())
+  mobile             String        @unique
   // Many-to-Many relation with SubCategory
   subCategories      SubCategory[]
   experience         String?
   workType           String?
   workTypes          WorkType[]
   workStartTime      String?
-  workTimeLimit        String?
+  workTimeLimit      String?
   availableTime      String?
-  isDeleted          Boolean   @default(false)
-  isBlocked          Boolean   @default(false)
+  isDeleted          Boolean       @default(false)
+  isBlocked          Boolean       @default(false)
   passwordChangeTime DateTime?
-  passwordChanged    Boolean   @default(false)
-  verified           Boolean   @default(false)
-  user               User      @relation(fields: [mobile], references: [mobile])
+  passwordChanged    Boolean       @default(false)
+  verified           Boolean       @default(false)
+  user               User          @relation(fields: [mobile], references: [mobile])
 
   @@map("work_infos")
 }
@@ -218,16 +219,16 @@ model Category {
 }
 
 model SubCategory {
-  id          String   @id @default(uuid())
+  id          String     @id @default(uuid())
   name        String
   categoryId  String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   description String?
   icon        String?
-  slug        String   @unique
-  status      Boolean  @default(true)
-  category    Category @relation(fields: [categoryId], references: [id])
+  slug        String     @unique
+  status      Boolean    @default(true)
+  category    Category   @relation(fields: [categoryId], references: [id])
   jobs        Job[]
   workInfos   WorkInfo[]
 
@@ -253,12 +254,12 @@ model Blog {
   content     String
   description String?
   excerpt     String?
-  coverImage  String?
+  coverId     String?
+  cover       Image?    @relation("CoverPhoto", fields: [coverId], references: [id])
   tags        String[]  @default([])
   category    String?
   authorId    String?
-  authorName  String?
-  authorImage String?
+  author      User?     @relation(fields: [authorId], references: [id])
   isPublished Boolean   @default(false)
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
@@ -306,17 +307,18 @@ model Folder {
 }
 
 model Image {
-  id        String    @id @default(uuid())
-  name      String
-  url       String
-  folderId  String?
-  slug      String    @unique
-  status    Boolean   @default(true)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  folder                Folder?   @relation(fields: [folderId], references: [id])
-  profilePhotoProfiles  Profile[] @relation("ProfilePhoto")
-  nidPhotoProfiles      Profile[] @relation("NidPhotos")
+  id                   String    @id @default(uuid())
+  name                 String
+  url                  String
+  folderId             String?
+  slug                 String    @unique
+  status               Boolean   @default(true)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  folder               Folder?   @relation(fields: [folderId], references: [id])
+  profilePhotoProfiles Profile[] @relation("ProfilePhoto")
+  nidPhotoProfiles     Profile[] @relation("NidPhotos")
+  blogs                Blog[]    @relation("CoverPhoto")
 
   @@map("images")
 }

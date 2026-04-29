@@ -61,7 +61,7 @@ const createJob = async (userId: string, payload: any) => {
     data: {
       ...payload,
       slug,
-      userId,
+      authorId: userId,
     },
     include: {
       category: {

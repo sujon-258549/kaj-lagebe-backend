@@ -427,8 +427,8 @@ model Job {
   status               Boolean       @default(true)
   isDeleted            Boolean       @default(false)
   applicantsCount      Int           @default(0)
-  userId               String
-  user                 User          @relation(fields: [userId], references: [id])
+  authorId             String
+  user                 User          @relation(fields: [authorId], references: [id])
   category             Category?     @relation(fields: [categoryId], references: [id])
   subCategory          SubCategory?  @relation(fields: [subCategoryId], references: [id])
   applications         Application[]

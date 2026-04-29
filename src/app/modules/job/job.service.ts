@@ -115,27 +115,28 @@ const getAllJobs = async (query: any) => {
     });
   }
 
-  // Handle boolean filters if passed as strings
-  if (queryFilter.isUrgent !== undefined) {
-    queryFilter.isUrgent = queryFilter.isUrgent === "true";
-  }
-  if (queryFilter.isPublished !== undefined) {
-    queryFilter.isPublished = queryFilter.isPublished === "true";
-  }
-  if (queryFilter.status !== undefined) {
-    queryFilter.status = queryFilter.status === "true";
-  }
+  // Filter out any fields that are not allowed for filtering
+  const filteredData: any = {};
+  Object.keys(queryFilter).forEach((key) => {
+    if (jobFilterableFields.includes(key) || key === "userId") {
+      let value = queryFilter[key];
+      // Handle boolean strings
+      if (value === "true") value = true;
+      if (value === "false") value = false;
+      filteredData[key] = value;
+    }
+  });
 
-  // Handle userId -> authorId mapping for backward compatibility or if frontend still uses userId
-  if (queryFilter.userId) {
-    queryFilter.authorId = queryFilter.userId;
-    delete queryFilter.userId;
+  // Handle userId -> authorId mapping for backward compatibility
+  if (filteredData.userId) {
+    filteredData.authorId = filteredData.userId;
+    delete filteredData.userId;
   }
 
   const result = await prisma.job.findMany({
     where: {
       AND: andCondition,
-      ...queryFilter,
+      ...filteredData,
       isDeleted: false,
     },
     take: limitNumber,
@@ -174,7 +175,7 @@ const getAllJobs = async (query: any) => {
   const total = await prisma.job.count({
     where: {
       AND: andCondition,
-      ...queryFilter,
+      ...filteredData,
       isDeleted: false,
     },
   });

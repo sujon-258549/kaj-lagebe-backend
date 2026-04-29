@@ -1,5 +1,18 @@
 export declare const BlogServices: {
     createBlog: (payload: any) => Promise<{
+        cover: {
+            url: string;
+            id: string;
+        } | null;
+        author: {
+            mobile: string;
+            profile: {
+                name: string | null;
+                photo: string | null;
+            } | null;
+            id: string;
+        } | null;
+    } & {
         createdAt: Date;
         updatedAt: Date;
         category: string | null;
@@ -9,16 +22,27 @@ export declare const BlogServices: {
         title: string;
         tags: string[];
         isPublished: boolean;
-        excerpt: string | null;
-        authorName: string | null;
         authorId: string | null;
+        excerpt: string | null;
         content: string;
-        coverImage: string | null;
-        authorImage: string | null;
         publishedAt: Date | null;
+        coverId: string | null;
     }>;
     getAllBlog: (query: any) => Promise<{
-        data: {
+        data: ({
+            cover: {
+                url: string;
+                id: string;
+            } | null;
+            author: {
+                mobile: string;
+                profile: {
+                    name: string | null;
+                    photo: string | null;
+                } | null;
+                id: string;
+            } | null;
+        } & {
             createdAt: Date;
             updatedAt: Date;
             category: string | null;
@@ -28,14 +52,12 @@ export declare const BlogServices: {
             title: string;
             tags: string[];
             isPublished: boolean;
-            excerpt: string | null;
-            authorName: string | null;
             authorId: string | null;
+            excerpt: string | null;
             content: string;
-            coverImage: string | null;
-            authorImage: string | null;
             publishedAt: Date | null;
-        }[];
+            coverId: string | null;
+        })[];
         meta: {
             page: number;
             limit: number;
@@ -43,6 +65,19 @@ export declare const BlogServices: {
         };
     }>;
     getBlogById: (id: string) => Promise<{
+        cover: {
+            url: string;
+            id: string;
+        } | null;
+        author: {
+            mobile: string;
+            profile: {
+                name: string | null;
+                photo: string | null;
+            } | null;
+            id: string;
+        } | null;
+    } & {
         createdAt: Date;
         updatedAt: Date;
         category: string | null;
@@ -52,15 +87,26 @@ export declare const BlogServices: {
         title: string;
         tags: string[];
         isPublished: boolean;
-        excerpt: string | null;
-        authorName: string | null;
         authorId: string | null;
+        excerpt: string | null;
         content: string;
-        coverImage: string | null;
-        authorImage: string | null;
         publishedAt: Date | null;
+        coverId: string | null;
     }>;
     updateBlog: (id: string, payload: any) => Promise<{
+        cover: {
+            url: string;
+            id: string;
+        } | null;
+        author: {
+            mobile: string;
+            profile: {
+                name: string | null;
+                photo: string | null;
+            } | null;
+            id: string;
+        } | null;
+    } & {
         createdAt: Date;
         updatedAt: Date;
         category: string | null;
@@ -70,18 +116,29 @@ export declare const BlogServices: {
         title: string;
         tags: string[];
         isPublished: boolean;
-        excerpt: string | null;
-        authorName: string | null;
         authorId: string | null;
+        excerpt: string | null;
         content: string;
-        coverImage: string | null;
-        authorImage: string | null;
         publishedAt: Date | null;
+        coverId: string | null;
     }>;
     deleteBlog: (id: string) => Promise<{
         message: string;
     }>;
     updateBlogStatus: (id: string) => Promise<{
+        cover: {
+            url: string;
+            id: string;
+        } | null;
+        author: {
+            mobile: string;
+            profile: {
+                name: string | null;
+                photo: string | null;
+            } | null;
+            id: string;
+        } | null;
+    } & {
         createdAt: Date;
         updatedAt: Date;
         category: string | null;
@@ -91,13 +148,11 @@ export declare const BlogServices: {
         title: string;
         tags: string[];
         isPublished: boolean;
-        excerpt: string | null;
-        authorName: string | null;
         authorId: string | null;
+        excerpt: string | null;
         content: string;
-        coverImage: string | null;
-        authorImage: string | null;
         publishedAt: Date | null;
+        coverId: string | null;
     }>;
 };
 //# sourceMappingURL=blog.service.d.ts.map

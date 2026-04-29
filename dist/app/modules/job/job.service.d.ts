@@ -89,7 +89,7 @@ export declare const JobServices: {
         isPublished: boolean;
         applicantsCount: number;
         subCategoryId: string | null;
-        userId: string;
+        authorId: string;
     }>;
     getAllJobs: (query: any) => Promise<{
         data: ({
@@ -181,7 +181,7 @@ export declare const JobServices: {
             isPublished: boolean;
             applicantsCount: number;
             subCategoryId: string | null;
-            userId: string;
+            authorId: string;
         })[];
         meta: {
             page: number;
@@ -299,11 +299,11 @@ export declare const JobServices: {
             id: string;
             status: boolean;
             resume: string | null;
-            userId: string;
             applyStatus: string;
             applyNote: string | null;
             applyComment: string | null;
             jobId: string;
+            userId: string;
             coverLetter: string | null;
             isRead: boolean;
         })[];
@@ -379,7 +379,7 @@ export declare const JobServices: {
         isPublished: boolean;
         applicantsCount: number;
         subCategoryId: string | null;
-        userId: string;
+        authorId: string;
     }>;
     updateJob: (id: string, payload: any) => Promise<{
         user: {
@@ -470,7 +470,7 @@ export declare const JobServices: {
         isPublished: boolean;
         applicantsCount: number;
         subCategoryId: string | null;
-        userId: string;
+        authorId: string;
     }>;
     updateJobStatus: (id: string, payload: any) => Promise<{
         email: string | null;
@@ -544,7 +544,7 @@ export declare const JobServices: {
         isPublished: boolean;
         applicantsCount: number;
         subCategoryId: string | null;
-        userId: string;
+        authorId: string;
     }>;
     deleteJob: (id: string) => Promise<{
         message: string;

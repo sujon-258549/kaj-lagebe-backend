@@ -5,9 +5,9 @@ export declare const NotificationServices: {
         updatedAt: Date;
         id: string;
         type: string;
-        userId: string;
         message: string;
         jobId: string | null;
+        userId: string;
         isRead: boolean;
         applicationId: string | null;
     }>;
@@ -18,9 +18,9 @@ export declare const NotificationServices: {
             updatedAt: Date;
             id: string;
             type: string;
-            userId: string;
             message: string;
             jobId: string | null;
+            userId: string;
             isRead: boolean;
             applicationId: string | null;
         }[];
@@ -36,9 +36,9 @@ export declare const NotificationServices: {
         updatedAt: Date;
         id: string;
         type: string;
-        userId: string;
         message: string;
         jobId: string | null;
+        userId: string;
         isRead: boolean;
         applicationId: string | null;
     }>;
@@ -48,9 +48,9 @@ export declare const NotificationServices: {
         updatedAt: Date;
         id: string;
         type: string;
-        userId: string;
         message: string;
         jobId: string | null;
+        userId: string;
         isRead: boolean;
         applicationId: string | null;
     }>;

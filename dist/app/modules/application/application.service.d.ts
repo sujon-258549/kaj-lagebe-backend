@@ -81,7 +81,7 @@ export declare const ApplicationServices: {
             isPublished: boolean;
             applicantsCount: number;
             subCategoryId: string | null;
-            userId: string;
+            authorId: string;
         };
     } & {
         isDeleted: boolean;
@@ -90,11 +90,11 @@ export declare const ApplicationServices: {
         id: string;
         status: boolean;
         resume: string | null;
-        userId: string;
         applyStatus: string;
         applyNote: string | null;
         applyComment: string | null;
         jobId: string;
+        userId: string;
         coverLetter: string | null;
         isRead: boolean;
     }>;
@@ -180,7 +180,7 @@ export declare const ApplicationServices: {
                 isPublished: boolean;
                 applicantsCount: number;
                 subCategoryId: string | null;
-                userId: string;
+                authorId: string;
             };
         } & {
             isDeleted: boolean;
@@ -189,11 +189,11 @@ export declare const ApplicationServices: {
             id: string;
             status: boolean;
             resume: string | null;
-            userId: string;
             applyStatus: string;
             applyNote: string | null;
             applyComment: string | null;
             jobId: string;
+            userId: string;
             coverLetter: string | null;
             isRead: boolean;
         })[];
@@ -302,7 +302,7 @@ export declare const ApplicationServices: {
             isPublished: boolean;
             applicantsCount: number;
             subCategoryId: string | null;
-            userId: string;
+            authorId: string;
         };
     } & {
         isDeleted: boolean;
@@ -311,11 +311,11 @@ export declare const ApplicationServices: {
         id: string;
         status: boolean;
         resume: string | null;
-        userId: string;
         applyStatus: string;
         applyNote: string | null;
         applyComment: string | null;
         jobId: string;
+        userId: string;
         coverLetter: string | null;
         isRead: boolean;
     }>;
@@ -400,7 +400,7 @@ export declare const ApplicationServices: {
             isPublished: boolean;
             applicantsCount: number;
             subCategoryId: string | null;
-            userId: string;
+            authorId: string;
         };
     } & {
         isDeleted: boolean;
@@ -409,11 +409,11 @@ export declare const ApplicationServices: {
         id: string;
         status: boolean;
         resume: string | null;
-        userId: string;
         applyStatus: string;
         applyNote: string | null;
         applyComment: string | null;
         jobId: string;
+        userId: string;
         coverLetter: string | null;
         isRead: boolean;
     }>;

@@ -57,11 +57,14 @@ const createJob = async (userId: string, payload: any) => {
   const slug =
     payload.slug || slugCreate(payload.title + " " + (payload.location || ""));
 
+  const { authorId, userId: payloadUserId, ...rest } = payload;
   const result = await prisma.job.create({
     data: {
-      ...payload,
+      ...rest,
       slug,
-      authorId: userId,
+      user: {
+        connect: { id: userId },
+      },
     },
     include: {
       category: {
@@ -121,6 +124,12 @@ const getAllJobs = async (query: any) => {
   }
   if (queryFilter.status !== undefined) {
     queryFilter.status = queryFilter.status === "true";
+  }
+
+  // Handle userId -> authorId mapping for backward compatibility or if frontend still uses userId
+  if (queryFilter.userId) {
+    queryFilter.authorId = queryFilter.userId;
+    delete queryFilter.userId;
   }
 
   const result = await prisma.job.findMany({

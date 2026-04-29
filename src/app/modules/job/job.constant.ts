@@ -11,7 +11,7 @@ export const jobFilterableFields = [
   "searchTerm",
   "categoryId",
   "subCategoryId",
-  "userId",
+  "authorId",
   "type",
   "isUrgent",
   "isPublished",

@@ -4,7 +4,7 @@ import ApiError from "../../middleware/apiError.ts";
 import slugCreate from "../../utils/slugCreate.ts";
 import type { Prisma } from "@prisma/client";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
-import { jobSearchableFields } from "./job.constant.ts";
+import { jobSearchableFields, jobFilterableFields } from "./job.constant.ts";
 
 const createJob = async (userId: string, payload: any) => {
   // Parse fields if they are strings (JSON, Arrays, Booleans)

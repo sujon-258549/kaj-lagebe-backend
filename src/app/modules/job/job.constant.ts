@@ -16,4 +16,8 @@ export const jobFilterableFields = [
   "isUrgent",
   "isPublished",
   "status",
+  "page",
+  "limit",
+  "sortBy",
+  "sortOrder",
 ];

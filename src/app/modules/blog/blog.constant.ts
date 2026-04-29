@@ -7,9 +7,8 @@ export const blogSearchableFields = [
   "title",
   "description",
   "excerpt",
-  "authorName",
   "slug",
-  "tags",
+  "category",
 ];
 
 export const blogFilterableFields = [

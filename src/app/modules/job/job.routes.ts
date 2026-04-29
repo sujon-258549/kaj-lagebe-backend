@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post(
   "/",
-  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.EMPLOYEE, USER_ROLE.USER ),
+  auth(),
   JobControllers.createJob,
 );
 
@@ -17,19 +17,19 @@ router.get("/:id", JobControllers.getJobById);
 
 router.put(
   "/:id",
-  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.EMPLOYEE),
+  auth(),
   JobControllers.updateJob,
 );
 
 router.patch(
   "/:id/status",
-  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.EMPLOYEE),
+  auth(),
   JobControllers.updateJobStatus,
 );
 
 router.delete(
   "/:id",
-  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN),
+  auth(),
   JobControllers.deleteJob,
 );
 

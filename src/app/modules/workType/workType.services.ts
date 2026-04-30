@@ -5,9 +5,13 @@ import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOr
 import { workTypeSearchableFields } from "./workType.const.ts";
 import prisma from "../../utils/prismaClient.ts";
 
-const createWorkTypeIntoDB = async (payload: any) => {
+const createWorkType = async (payload: any, userId?: string) => {
   const result = await prisma.workType.create({
-    data: payload,
+    data: {
+      ...payload,
+      createdById: userId ?? null,
+      updatedById: userId ?? null,
+    },
   });
   return result;
 };
@@ -45,6 +49,14 @@ const getAllWorkType = async (query: any) => {
     orderBy: {
       [sortByValue]: sortOrderValue,
     },
+    include: {
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+    },
   });
 
   const total = await prisma.workType.count({
@@ -67,18 +79,29 @@ const getAllWorkType = async (query: any) => {
 const getWorkTypeById = async (id: string) => {
   const result = await prisma.workType.findUnique({
     where: { id },
+    include: {
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+    },
   });
   return result;
 };
 
-const updateWorkType = async (id: string, payload: any) => {
+const updateWorkType = async (id: string, payload: any, userId?: string) => {
   const existingWorkType = await prisma.workType.findUnique({ where: { id } });
   if (!existingWorkType)
     throw new ApiError(httpStatus.NOT_FOUND, "WorkType not found");
 
   const result = await prisma.workType.update({
     where: { id },
-    data: payload,
+    data: {
+      ...payload,
+      updatedById: userId ?? null,
+    },
   });
   return result;
 };
@@ -92,20 +115,23 @@ const deleteWorkType = async (id: string) => {
   return result;
 };
 
-const updateWorkTypeStatus = async (id: string) => {
-    const existingWorkType = await prisma.workType.findUnique({ where: { id } });
-    if (!existingWorkType)
-      throw new ApiError(httpStatus.NOT_FOUND, "WorkType not found");
-  
-    const result = await prisma.workType.update({
-      where: { id },
-      data: { isActive: !existingWorkType.isActive },
-    });
-    return result;
-  };
+const updateWorkTypeStatus = async (id: string, userId?: string) => {
+  const existingWorkType = await prisma.workType.findUnique({ where: { id } });
+  if (!existingWorkType)
+    throw new ApiError(httpStatus.NOT_FOUND, "WorkType not found");
+
+  const result = await prisma.workType.update({
+    where: { id },
+    data: { 
+      isActive: !existingWorkType.isActive,
+      updatedById: userId ?? null,
+    },
+  });
+  return result;
+};
 
 export const WorkTypeServices = {
-  createWorkTypeIntoDB,
+  createWorkType,
   getAllWorkType,
   getWorkTypeById,
   updateWorkType,

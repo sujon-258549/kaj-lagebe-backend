@@ -110,6 +110,11 @@ model User {
   subscriptionsCreated Subscription[]       @relation("SubscriptionCreatedBy")
   subscriptionsUpdated Subscription[]       @relation("SubscriptionUpdatedBy")
   jobsUpdated          Job[]                @relation("JobUpdatedBy")
+  
+  foldersCreated       Folder[]             @relation("FolderCreatedBy")
+  foldersUpdated       Folder[]             @relation("FolderUpdatedBy")
+  imagesCreated        Image[]              @relation("ImageCreatedBy")
+  imagesUpdated        Image[]              @relation("ImageUpdatedBy")
 
   @@map("users")
 }
@@ -411,6 +416,11 @@ model Folder {
   children  Folder[] @relation("FolderToFolder")
   images    Image[]
 
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("FolderCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("FolderUpdatedBy", fields: [updatedById], references: [id])
+
   @@map("folders")
 }
 
@@ -428,6 +438,11 @@ model Image {
   nidPhotoProfiles     Profile[] @relation("NidPhotos")
   blogs                Blog[]    @relation("CoverPhoto")
   siteSettings         SiteSetting[]
+
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("ImageCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("ImageUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("images")
 }

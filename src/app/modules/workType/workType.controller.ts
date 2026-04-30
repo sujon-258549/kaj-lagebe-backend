@@ -6,19 +6,16 @@ import catchAsync from "../../shared/catchAsync.ts";
 import { WorkTypeServices } from "./workType.services.ts";
 import sendResponse from "../../utils/response.ts";
 
-const createWorkType = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const payload = req.body;
-    const result = await WorkTypeServices.createWorkTypeIntoDB(payload);
-    sendResponse(res, {
-      success: true,
-      statusCode: status.CREATED,
-      message: "WorkType created successfully",
-      data: result,
-      meta: undefined,
-    });
-  }
-);
+const createWorkType = catchAsync(async (req: Request, res: Response) => {
+  const userId = (req as any).user.id;
+  const result = await WorkTypeServices.createWorkType(req.body, userId);
+  sendResponse(res, {
+    statusCode: status.CREATED,
+    success: true,
+    message: "WorkType created successfully",
+    data: result,
+  });
+});
 
 const getAllWorkType = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -47,18 +44,17 @@ const getWorkTypeById = catchAsync(
   }
 );
 
-const updateWorkType = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id;
-    const result = await WorkTypeServices.updateWorkType(id as string, req.body);
-    sendResponse(res, {
-      success: true,
-      statusCode: status.OK,
-      message: "WorkType updated successfully",
-      data: result,
-    });
-  }
-);
+const updateWorkType = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const userId = (req as any).user.id;
+  const result = await WorkTypeServices.updateWorkType(id as string, req.body, userId);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "WorkType updated successfully",
+    data: result,
+  });
+});
 
 const deleteWorkType = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -73,18 +69,17 @@ const deleteWorkType = catchAsync(
   }
 );
 
-const updateWorkTypeStatus = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id;
-    const result = await WorkTypeServices.updateWorkTypeStatus(id as string);
-    sendResponse(res, {
-      success: true,
-      statusCode: status.OK,
-      message: "WorkType status updated successfully",
-      data: result,
-    });
-  }
-);
+const updateWorkTypeStatus = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const userId = (req as any).user.id;
+  const result = await WorkTypeServices.updateWorkTypeStatus(id as string, userId);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "WorkType status updated successfully",
+    data: result,
+  });
+});
 
 export const WorkTypeController = {
   createWorkType,

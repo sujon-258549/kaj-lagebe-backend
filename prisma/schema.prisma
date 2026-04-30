@@ -105,6 +105,23 @@ model SystemConfig {
   @@map("system_configs")
 }
 
+model SiteSetting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  name        String?
+  value       Json?
+  imageId     String?
+  image       Image?   @relation(fields: [imageId], references: [id])
+  group       String   @default("general")
+  type        String   @default("text")
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("site_settings")
+}
+
 model Profile {
   id            String      @id @default(uuid())
   mobile        String      @unique
@@ -319,6 +336,7 @@ model Image {
   profilePhotoProfiles Profile[] @relation("ProfilePhoto")
   nidPhotoProfiles     Profile[] @relation("NidPhotos")
   blogs                Blog[]    @relation("CoverPhoto")
+  siteSettings         SiteSetting[]
 
   @@map("images")
 }

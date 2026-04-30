@@ -9,7 +9,7 @@ import globalErrorHandler from "./app/middleware/globalErrorHandler.ts";
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: ["http://localhost:5173", "http://localhost:3000","http://localhost:4800"], credentials: true }));
+app.use(cors({ origin: ["http://localhost:5173", "http://localhost:3000","http://localhost:4800", "http://localhost:4801"], credentials: true }));
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Kaj lagbe bd");

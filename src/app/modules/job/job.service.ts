@@ -57,7 +57,7 @@ const createJob = async (userId: string, payload: any) => {
   const slug =
     payload.slug || slugCreate(payload.title + " " + (payload.location || ""));
 
-  const { authorId, userId: payloadUserId, ...rest } = payload;
+  const { authorId, userId: payloadUserId, categoryId, subCategoryId, ...rest } = payload;
   const result = await prisma.job.create({
     data: {
       ...rest,
@@ -65,6 +65,8 @@ const createJob = async (userId: string, payload: any) => {
       user: {
         connect: { id: userId },
       },
+      category: categoryId ? { connect: { id: categoryId } } : undefined,
+      subCategory: subCategoryId ? { connect: { id: subCategoryId } } : undefined,
     },
     include: {
       category: {
@@ -275,9 +277,21 @@ const updateJob = async (id: string, payload: any) => {
     payload.slug = payload.slug || slugCreate(payload.title);
   }
 
+  const { categoryId, subCategoryId, authorId, userId, ...updateData } = payload;
+  
+  if (categoryId) {
+    updateData.category = { connect: { id: categoryId } };
+  }
+  if (subCategoryId) {
+    updateData.subCategory = { connect: { id: subCategoryId } };
+  }
+  if (authorId || userId) {
+    updateData.user = { connect: { id: authorId || userId } };
+  }
+
   const result = await prisma.job.update({
     where: { id },
-    data: payload,
+    data: updateData,
     include: {
       category: {
         select: {

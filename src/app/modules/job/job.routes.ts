@@ -15,7 +15,7 @@ router.get("/", JobControllers.getAllJobs);
 
 router.get("/:id", JobControllers.getJobById);
 
-router.put(
+router.patch(
   "/:id",
   auth(),
   JobControllers.updateJob,

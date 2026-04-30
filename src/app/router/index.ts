@@ -19,6 +19,7 @@ import { RolePermissionRoutes } from "../modules/rolePermission/rolePermission.r
 import { AgentRouter } from "../modules/agent/agent.router.ts";
 import { AutomationRoutes } from "../modules/automation/automation.router.js";
 import { SystemConfigRoutes } from "../modules/systemConfig/systemConfig.router.js";
+import { SiteSettingRoutes } from "../modules/siteSetting/siteSetting.routes.js";
 
 const router = Router();
 
@@ -102,6 +103,10 @@ const allRouter = [
   {
     path: "/system-config",
     router: SystemConfigRoutes,
+  },
+  {
+    path: "/site-setting",
+    router: SiteSettingRoutes,
   },
 ];
 

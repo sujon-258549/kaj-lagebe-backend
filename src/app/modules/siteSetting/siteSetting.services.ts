@@ -23,6 +23,7 @@ const upsertSetting = async (payload: any, userId?: string) => {
     where: { key },
     update: data,
     create: { key, ...data },
+    include: { image: true },
   });
 
   // Create history record
@@ -35,7 +36,11 @@ const upsertSetting = async (payload: any, userId?: string) => {
     },
   });
 
-  return result;
+  return {
+    ...result,
+    image: result.image?.url || null,
+    url: result.image?.url || null,
+  };
 };
 
 /**
@@ -62,6 +67,7 @@ const bulkUpsertSettings = async (settings: any[], userId?: string) => {
         where: { key },
         update: data,
         create: { key, ...data },
+        include: { image: true },
       });
 
       // Create history record
@@ -74,7 +80,11 @@ const bulkUpsertSettings = async (settings: any[], userId?: string) => {
         },
       });
 
-      return result;
+      return {
+        ...result,
+        image: result.image?.url || null,
+        url: result.image?.url || null,
+      };
     })
   );
   return results;
@@ -84,10 +94,16 @@ const bulkUpsertSettings = async (settings: any[], userId?: string) => {
  * Get all settings grouped by their category
  */
 const getSettingsByGroup = async (group: string) => {
-  return await prisma.siteSetting.findMany({
+  const settings = await prisma.siteSetting.findMany({
     where: { group, isActive: true },
     include: { image: true },
   });
+
+  return settings.map((curr: any) => ({
+    ...curr,
+    image: curr.image?.url || null,
+    url: curr.image?.url || null,
+  }));
 };
 
 /**
@@ -102,13 +118,12 @@ const getSettingsMap = async (group?: string) => {
     include: { image: true }
   });
   
-  return settings.reduce((acc: any, curr) => {
+  return settings.reduce((acc: any, curr: any) => {
     acc[curr.key] = {
-      value: curr.value,
+      ...curr,
       image: curr.image?.url || null,
+      url: curr.image?.url || null,
       imageId: curr.imageId,
-      name: curr.name,
-      type: curr.type,
     };
     return acc;
   }, {});
@@ -153,7 +168,7 @@ const getAllSettings = async (query: any) => {
     ];
   }
 
-  return await prisma.siteSetting.findMany({
+  const settings = await prisma.siteSetting.findMany({
     where,
     include: { 
       image: true, 
@@ -179,6 +194,12 @@ const getAllSettings = async (query: any) => {
     },
     orderBy: { createdAt: 'desc' },
   });
+
+  return settings.map((curr: any) => ({
+    ...curr,
+    image: curr.image?.url || null,
+    url: curr.image?.url || null,
+  }));
 };
 
 export const SiteSettingService = {

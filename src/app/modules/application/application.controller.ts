@@ -6,8 +6,8 @@ import { pick } from "../../../shared/pick.ts";
 import { applicationFilterableFields } from "./application.constant.ts";
 
 const createApplication = catchAsync(async (req, res) => {
-  const userId = (req as any).user.id;
-  const result = await ApplicationServices.createApplication(userId, req.body);
+  const user = (req as any).user;
+  const result = await ApplicationServices.createApplication(user?.id, req.body);
   return sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,

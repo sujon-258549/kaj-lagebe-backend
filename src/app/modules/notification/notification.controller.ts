@@ -65,8 +65,8 @@ const deleteNotification = catchAsync(async (req, res) => {
 });
 
 const markAsRead = catchAsync(async (req, res) => {
-  const userId = (req as any).user.id;
-  const result = await NotificationServices.markAsRead(userId);
+  const user = (req as any).user;
+  const result = await NotificationServices.markAsRead(user?.id);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

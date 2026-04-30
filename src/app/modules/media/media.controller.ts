@@ -5,8 +5,8 @@ import sendResponse from "../../utils/response.js";
 import { MediaServices } from "./media.service.js";
 
 const createFolder = catchAsync(async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  const result = await MediaServices.createFolder(req.body, userId);
+  const user = (req as any).user;
+  const result = await MediaServices.createFolder(req.body, user?.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -37,11 +37,11 @@ const getFolderById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateFolder = catchAsync(async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+  const user = (req as any).user;
   const result = await MediaServices.updateFolder(
     req.params.id as string,
     req.body,
-    userId
+    user?.id
   );
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -64,8 +64,8 @@ const deleteFolder = catchAsync(async (req: Request, res: Response) => {
 
 // create image============================================
 const createImage = catchAsync(async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  const result = await MediaServices.createImage(req.body, userId);
+  const user = (req as any).user;
+  const result = await MediaServices.createImage(req.body, user?.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -96,11 +96,11 @@ const deleteImage = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateImage = catchAsync(async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+  const user = (req as any).user;
   const result = await MediaServices.updateImage(
     req.params.id as string,
     req.body,
-    userId
+    user?.id
   );
   sendResponse(res, {
     statusCode: httpStatus.OK,

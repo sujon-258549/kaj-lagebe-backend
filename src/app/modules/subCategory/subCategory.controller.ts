@@ -6,8 +6,8 @@ import { pick } from "../../../shared/pick.ts";
 import { subCategoryFilterableFields } from "./subCategory.constant.ts";
 
 const createSubCategory = catchAsync(async (req, res) => {
-  const userId = (req as any).user.id;
-  const result = await SubCategoryServices.createSubCategory(req.body, userId);
+  const user = (req as any).user;
+  const result = await SubCategoryServices.createSubCategory(req.body, user?.id);
   return sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -54,11 +54,11 @@ const getSubCategoryBySlug = catchAsync(async (req, res) => {
 
 const updateSubCategory = catchAsync(async (req, res) => {
   const id = req.params.id;
-  const userId = (req as any).user.id;
+  const user = (req as any).user;
   const result = await SubCategoryServices.updateSubCategory(
     id as string,
     req.body,
-    userId
+    user?.id
   );
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -81,10 +81,10 @@ const deleteSubCategory = catchAsync(async (req, res) => {
 
 const updateSubCategoryStatus = catchAsync(async (req, res) => {
   const id = req.params.id;
-  const userId = (req as any).user.id;
+  const user = (req as any).user;
   const result = await SubCategoryServices.updateSubCategoryStatus(
     id as string,
-    userId
+    user?.id
   );
   return sendResponse(res, {
     statusCode: httpStatus.OK,

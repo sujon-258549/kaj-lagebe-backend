@@ -107,10 +107,7 @@ const getAllFolders = async (query: any) => {
       limit: limitNumber,
       total: folderTree.length,
     },
-    data: {
-      folders: paginatedFolders,
-      images,
-    },
+    data: paginatedFolders,
   };
 };
 

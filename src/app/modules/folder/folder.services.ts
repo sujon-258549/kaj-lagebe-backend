@@ -6,11 +6,13 @@ import httpStatus from "http-status";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 import { folderSearchableFields } from "./folder.const.ts";
 
-const createFolder = async (payload: any) => {
+const createFolder = async (payload: any, userId?: string) => {
   const slug = payload.slug || slugCreate(payload.name);
   const data: Prisma.FolderCreateInput = {
     ...payload,
     slug,
+    createdBy: userId ? { connect: { id: userId } } : undefined,
+    updatedBy: userId ? { connect: { id: userId } } : undefined,
   };
 
   const result = await prisma.folder.create({
@@ -102,9 +104,11 @@ const getAllFolders = async (query: any) => {
   });
 
   return {
-    data: {
-      folders: paginatedFolders,
-      images,
+    data: paginatedFolders,
+    meta: {
+      page: pageNumber,
+      limit: limitNumber,
+      total: folderTree.length,
     },
   };
 };
@@ -131,7 +135,7 @@ const getFolderById = async (id: string) => {
   return folderWithTree;
 };
 
-const updateFolder = async (id: string, payload: any) => {
+const updateFolder = async (id: string, payload: any, userId?: string) => {
   const existingFolder = await prisma.folder.findUnique({ where: { id } });
   if (!existingFolder)
     throw new ApiError(httpStatus.NOT_FOUND, "Folder not found");
@@ -141,6 +145,10 @@ const updateFolder = async (id: string, payload: any) => {
   if (payload.name) {
     updateData.name = payload.name;
     updateData.slug = payload.slug || slugCreate(payload.name);
+  }
+
+  if (userId) {
+    updateData.updatedBy = { connect: { id: userId } };
   }
 
   const result = await prisma.folder.update({

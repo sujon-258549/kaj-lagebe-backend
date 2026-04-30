@@ -6,8 +6,8 @@ import { subscriptionFilterableFields } from "./subscription.constant.ts";
 import { pick } from "../../../shared/pick.ts";
 
 const createSubscription = catchAsync(async (req, res) => {
-  const userId = (req as any).user.id;
-  const result = await SubscriptionServices.createSubscription(req.body, userId);
+  const user = (req as any).user;
+  const result = await SubscriptionServices.createSubscription(req.body, user?.id);
   return sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -41,11 +41,11 @@ const getSubscriptionById = catchAsync(async (req, res) => {
 
 const updateSubscription = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const userId = (req as any).user.id;
+  const user = (req as any).user;
   const result = await SubscriptionServices.updateSubscription(
     id as string,
     req.body,
-    userId
+    user?.id
   );
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -57,8 +57,8 @@ const updateSubscription = catchAsync(async (req, res) => {
 
 const updateSubscriptionStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const userId = (req as any).user.id;
-  const result = await SubscriptionServices.updateSubscriptionStatus(id as string, userId);
+  const user = (req as any).user;
+  const result = await SubscriptionServices.updateSubscriptionStatus(id as string, user?.id);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

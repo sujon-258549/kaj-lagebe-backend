@@ -7,7 +7,8 @@ import { pick } from "../../../shared/pick.ts";
 import { folderFilterableFields } from "./folder.const.ts";
 
 const createFolder = catchAsync(async (req: Request, res: Response) => {
-  const result = await FolderServices.createFolder(req.body);
+  const user = (req as any).user;
+  const result = await FolderServices.createFolder(req.body, user?.id);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.CREATED,
@@ -38,9 +39,11 @@ const getFolderById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateFolder = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as any).user;
   const result = await FolderServices.updateFolder(
     req.params.id as string,
     req.body,
+    user?.id
   );
   sendResponse(res, {
     success: true,

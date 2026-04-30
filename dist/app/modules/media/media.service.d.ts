@@ -16,14 +16,7 @@ export declare const MediaServices: {
             limit: number;
             total: number;
         };
-        data: {
-            folders: any[];
-            images: {
-                name: string;
-                url: string;
-                id: string;
-            }[];
-        };
+        data: any[];
     }>;
     getFolderById: (id: string) => Promise<{
         children: any[];

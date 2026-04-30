@@ -7,8 +7,8 @@ import { WorkTypeServices } from "./workType.services.ts";
 import sendResponse from "../../utils/response.ts";
 
 const createWorkType = catchAsync(async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
-  const result = await WorkTypeServices.createWorkType(req.body, userId);
+  const user = (req as any).user;
+  const result = await WorkTypeServices.createWorkType(req.body, user?.id);
   sendResponse(res, {
     statusCode: status.CREATED,
     success: true,
@@ -46,8 +46,8 @@ const getWorkTypeById = catchAsync(
 
 const updateWorkType = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
-  const userId = (req as any).user.id;
-  const result = await WorkTypeServices.updateWorkType(id as string, req.body, userId);
+  const user = (req as any).user;
+  const result = await WorkTypeServices.updateWorkType(id as string, req.body, user?.id);
   sendResponse(res, {
     statusCode: status.OK,
     success: true,
@@ -71,8 +71,8 @@ const deleteWorkType = catchAsync(
 
 const updateWorkTypeStatus = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
-  const userId = (req as any).user.id;
-  const result = await WorkTypeServices.updateWorkTypeStatus(id as string, userId);
+  const user = (req as any).user;
+  const result = await WorkTypeServices.updateWorkTypeStatus(id as string, user?.id);
   sendResponse(res, {
     statusCode: status.OK,
     success: true,

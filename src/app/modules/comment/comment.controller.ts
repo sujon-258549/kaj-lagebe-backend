@@ -6,8 +6,8 @@ import { pick } from "../../../shared/pick.ts";
 import { commentFilterableFields } from "./comment.constant.ts";
 
 const createComment = catchAsync(async (req, res) => {
-  const userId = (req as any).user.id;
-  const result = await CommentServices.createComment(userId, req.body);
+  const user = (req as any).user;
+  const result = await CommentServices.createComment(user?.id, req.body);
   return sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,

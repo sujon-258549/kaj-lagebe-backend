@@ -6,8 +6,8 @@ import { pick } from "../../../shared/pick.ts";
 import { roleFilterableFields } from "./role.constant.ts";
 
 const createRole = catchAsync(async (req, res) => {
-  const userId = (req as any).user.id;
-  const result = await RoleServices.createRole(req.body, userId);
+  const user = (req as any).user;
+  const result = await RoleServices.createRole(req.body, user?.id);
   return sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -41,8 +41,8 @@ const getRoleById = catchAsync(async (req, res) => {
 
 const updateRole = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const userId = (req as any).user.id;
-  const result = await RoleServices.updateRole(id as string, req.body, userId);
+  const user = (req as any).user;
+  const result = await RoleServices.updateRole(id as string, req.body, user?.id);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -64,8 +64,8 @@ const deleteRole = catchAsync(async (req, res) => {
 
 const updateRoleStatus = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const userId = (req as any).user.id;
-  const result = await RoleServices.updateRoleStatus(id as string, userId);
+  const user = (req as any).user;
+  const result = await RoleServices.updateRoleStatus(id as string, user?.id);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

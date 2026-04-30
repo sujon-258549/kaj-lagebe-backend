@@ -6,8 +6,8 @@ import { pick } from "../../../shared/pick.ts";
 import { jobFilterableFields } from "./job.constant.ts";
 
 const createJob = catchAsync(async (req, res) => {
-  const userId = (req as any).user.id;
-  const result = await JobServices.createJob(userId, req.body);
+  const user = (req as any).user;
+  const result = await JobServices.createJob(user?.id, req.body);
   return sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -39,8 +39,8 @@ const getJobById = catchAsync(async (req, res) => {
 });
 
 const updateJob = catchAsync(async (req, res) => {
-  const userId = (req as any).user.id;
-  const result = await JobServices.updateJob(req.params.id as string, req.body, userId);
+  const user = (req as any).user;
+  const result = await JobServices.updateJob(req.params.id as string, req.body, user?.id);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -50,8 +50,8 @@ const updateJob = catchAsync(async (req, res) => {
 });
 
 const updateJobStatus = catchAsync(async (req, res) => {
-  const userId = (req as any).user.id;
-  const result = await JobServices.updateJobStatus(req.params.id as string, req.body, userId);
+  const user = (req as any).user;
+  const result = await JobServices.updateJobStatus(req.params.id as string, req.body, user?.id);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

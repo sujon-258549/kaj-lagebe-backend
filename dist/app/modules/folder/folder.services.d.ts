@@ -1,5 +1,5 @@
 export declare const FolderServices: {
-    createFolder: (payload: any) => Promise<{
+    createFolder: (payload: any, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
@@ -11,13 +11,11 @@ export declare const FolderServices: {
         parentId: string | null;
     }>;
     getAllFolders: (query: any) => Promise<{
-        data: {
-            folders: any[];
-            images: {
-                name: string;
-                url: string;
-                id: string;
-            }[];
+        data: any[];
+        meta: {
+            page: number;
+            limit: number;
+            total: number;
         };
     }>;
     getFolderById: (id: string) => Promise<{
@@ -44,7 +42,7 @@ export declare const FolderServices: {
         status: boolean;
         parentId: string | null;
     }>;
-    updateFolder: (id: string, payload: any) => Promise<{
+    updateFolder: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;

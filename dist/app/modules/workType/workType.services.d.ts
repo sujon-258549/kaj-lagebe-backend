@@ -6,6 +6,8 @@ export declare const WorkTypeServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
     getAllWorkType: (query: any) => Promise<{
         data: {
@@ -15,6 +17,8 @@ export declare const WorkTypeServices: {
             updatedAt: Date;
             id: string;
             description: string | null;
+            createdById: string | null;
+            updatedById: string | null;
         }[];
         meta: {
             page: number;
@@ -29,6 +33,8 @@ export declare const WorkTypeServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     } | null>;
     updateWorkType: (id: string, payload: any) => Promise<{
         name: string;
@@ -37,6 +43,8 @@ export declare const WorkTypeServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
     deleteWorkType: (id: string) => Promise<{
         name: string;
@@ -45,6 +53,8 @@ export declare const WorkTypeServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
     updateWorkTypeStatus: (id: string) => Promise<{
         name: string;
@@ -53,6 +63,8 @@ export declare const WorkTypeServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
 };
 //# sourceMappingURL=workType.services.d.ts.map

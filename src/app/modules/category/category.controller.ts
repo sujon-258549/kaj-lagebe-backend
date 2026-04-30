@@ -10,7 +10,8 @@ import sendResponse from "../../utils/response.ts";
 const createCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
-    const result = await CategoryServices.createCategoryIntoDB(payload);
+    const user = (req as any).user;
+    const result = await CategoryServices.createCategoryIntoDB(payload, user?.id);
     sendResponse(res, {
       success: true,
       statusCode: status.CREATED,
@@ -51,9 +52,11 @@ const updateCategory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     console.log("payload", req.body, req.params.id);
     const id = req.params.id;
+    const user = (req as any).user;
     const result = await CategoryServices.updateCategory(
       id as string,
-      req.body
+      req.body,
+      user?.id
     );
     sendResponse(res, {
       success: true,
@@ -67,7 +70,8 @@ const updateCategory = catchAsync(
 const updateCategoryStatus = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
-    const result = await CategoryServices.updateCategoryStatus(id as string);
+    const user = (req as any).user;
+    const result = await CategoryServices.updateCategoryStatus(id as string, user?.id);
     sendResponse(res, {
       success: true,
       statusCode: status.OK,

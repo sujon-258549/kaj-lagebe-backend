@@ -8,7 +8,7 @@ import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOr
 import { categorySearchableFields } from "./category.const.ts";
 import prisma from "../../utils/prismaClient.ts";
 
-const createCategoryIntoDB = async (payload: any) => {
+const createCategoryIntoDB = async (payload: any, userId?: string) => {
   const slug = payload.slug || slugCreate(payload.name);
 
   const data: any = {
@@ -16,6 +16,8 @@ const createCategoryIntoDB = async (payload: any) => {
     icon: payload.icon,
     slug: slug,
     description: payload.description,
+    createdById: userId,
+    updatedById: userId,
   };
 
   if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
@@ -24,6 +26,17 @@ const createCategoryIntoDB = async (payload: any) => {
   const result = await prisma.category.create({
     data,
   });
+
+  // History record
+  await prisma.categoryHistory.create({
+    data: {
+      categoryId: result.id,
+      oldData: (null as any),
+      newData: (result as any),
+      updatedById: userId ?? null,
+    },
+  });
+
   return result;
 };
 
@@ -69,6 +82,19 @@ const getAllCategory = async (query: any) => {
           id: true,
         },
       },
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      histories: {
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        include: {
+          updatedBy: { select: { id: true, email: true } },
+        },
+      },
     },
   });
 
@@ -101,12 +127,25 @@ const getCategoryById = async (id: string) => {
           id: true,
         },
       },
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      histories: {
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        include: {
+          updatedBy: { select: { id: true, email: true } },
+        },
+      },
     },
   });
   return result;
 };
 
-const updateCategory = async (id: string, payload: any) => {
+const updateCategory = async (id: string, payload: any, userId?: string) => {
   const existingCategory = await prisma.category.findUnique({ where: { id } });
   if (!existingCategory)
     throw new ApiError(httpStatus.NOT_FOUND, "Category not found");
@@ -127,22 +166,51 @@ const updateCategory = async (id: string, payload: any) => {
   if (payload.createdAt) updateData.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) updateData.updatedAt = new Date(payload.updatedAt);
 
+  if (userId) {
+    updateData.updatedBy = { connect: { id: userId } };
+  }
+
   const result = await prisma.category.update({
     where: { id },
     data: updateData,
   });
+
+  // History record
+  await prisma.categoryHistory.create({
+    data: {
+      categoryId: result.id,
+      oldData: (existingCategory as any),
+      newData: (result as any),
+      updatedById: userId ?? null,
+    },
+  });
+
   return result;
 };
 
-const updateCategoryStatus = async (id: string) => {
+const updateCategoryStatus = async (id: string, userId?: string) => {
   const existingCategory = await prisma.category.findUnique({ where: { id } });
   if (!existingCategory)
     throw new ApiError(httpStatus.NOT_FOUND, "Category not found");
 
   const result = await prisma.category.update({
     where: { id },
-    data: { status: !existingCategory.status },
+    data: { 
+      status: !existingCategory.status,
+      updatedById: userId ?? null 
+    },
   });
+
+  // History record
+  await prisma.categoryHistory.create({
+    data: {
+      categoryId: result.id,
+      oldData: (existingCategory as any),
+      newData: (result as any),
+      updatedById: userId ?? null,
+    },
+  });
+
   return result;
 };
 

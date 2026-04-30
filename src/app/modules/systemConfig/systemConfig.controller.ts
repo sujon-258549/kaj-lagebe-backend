@@ -7,7 +7,8 @@ import prisma from "../../utils/prismaClient.js";
 
 const updateConfig = catchAsync(async (req: Request, res: Response) => {
   const { key, value, description } = req.body;
-  const result = await setConfig(key, value, description);
+  const user = (req as any).user;
+  const result = await setConfig(key, value, description, user?.id);
 
   sendResponse(res, {
     success: true,

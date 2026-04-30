@@ -62,9 +62,8 @@ const createJob = async (userId: string, payload: any) => {
     data: {
       ...rest,
       slug,
-      user: {
-        connect: { id: userId },
-      },
+      authorId: userId as string,
+      updatedById: userId ?? null,
       category: categoryId ? { connect: { id: categoryId } } : undefined,
       subCategory: subCategoryId ? { connect: { id: subCategoryId } } : undefined,
     },
@@ -171,6 +170,12 @@ const getAllJobs = async (query: any) => {
           },
         },
       },
+      updatedBy: {
+        select: {
+          email: true,
+          profile: { select: { name: true } },
+        },
+      },
     },
   });
 
@@ -222,7 +227,7 @@ const getJobById = async (id: string) => {
   return result;
 };
 
-const updateJob = async (id: string, payload: any) => {
+const updateJob = async (id: string, payload: any, userId?: string) => {
   const isExist = await prisma.job.findUnique({ where: { id } });
   if (!isExist) throw new ApiError(httpStatus.NOT_FOUND, "Job not found");
 
@@ -277,7 +282,7 @@ const updateJob = async (id: string, payload: any) => {
     payload.slug = payload.slug || slugCreate(payload.title);
   }
 
-  const { categoryId, subCategoryId, authorId, userId, ...updateData } = payload;
+  const { categoryId, subCategoryId, authorId, userId: payloadUserId, ...updateData } = payload;
   
   if (categoryId) {
     updateData.category = { connect: { id: categoryId } };
@@ -285,8 +290,8 @@ const updateJob = async (id: string, payload: any) => {
   if (subCategoryId) {
     updateData.subCategory = { connect: { id: subCategoryId } };
   }
-  if (authorId || userId) {
-    updateData.user = { connect: { id: authorId || userId } };
+  if (userId) {
+    updateData.updatedById = userId ?? null;
   }
 
   const result = await prisma.job.update({
@@ -317,18 +322,27 @@ const updateJob = async (id: string, payload: any) => {
           },
         },
       },
+      updatedBy: {
+        select: {
+          email: true,
+          profile: { select: { name: true } },
+        },
+      },
     },
   });
   return result;
 };
 
-const updateJobStatus = async (id: string, payload: any) => {
+const updateJobStatus = async (id: string, payload: any, userId?: string) => {
   const isExist = await prisma.job.findUnique({ where: { id } });
   if (!isExist) throw new ApiError(httpStatus.NOT_FOUND, "Job not found");
 
   const result = await prisma.job.update({
     where: { id },
-    data: { status: !isExist.status },
+    data: { 
+      status: !isExist.status,
+      updatedById: userId ?? null
+    },
   });
   return result;
 };

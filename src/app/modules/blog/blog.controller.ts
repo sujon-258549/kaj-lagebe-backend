@@ -6,7 +6,8 @@ import { pick } from "../../../shared/pick.ts";
 import { blogFilterableFields } from "./blog.constant.ts";
 
 const createBlog = catchAsync(async (req, res) => {
-  const result = await BlogServices.createBlog(req.body);
+  const userId = (req as any).user.id;
+  const result = await BlogServices.createBlog(req.body, userId);
   return sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
@@ -40,9 +41,11 @@ const getBlogById = catchAsync(async (req, res) => {
 });
 
 const updateBlog = catchAsync(async (req, res) => {
+  const userId = (req as any).user.id;
   const result = await BlogServices.updateBlog(
     req.params.id as string,
     req.body,
+    userId
   );
   return sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -53,7 +56,8 @@ const updateBlog = catchAsync(async (req, res) => {
 });
 
 const updateBlogStatus = catchAsync(async (req, res) => {
-  const result = await BlogServices.updateBlogStatus(req.params.id as string);
+  const userId = (req as any).user.id;
+  const result = await BlogServices.updateBlogStatus(req.params.id as string, userId);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

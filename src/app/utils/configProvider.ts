@@ -7,11 +7,21 @@ export const getConfig = async (key: string, defaultValue?: string): Promise<str
   return config ? config.value : defaultValue || null;
 };
 
-export const setConfig = async (key: string, value: string, description?: string) => {
+export const setConfig = async (key: string, value: string, description?: string, userId?: string) => {
   return await prisma.systemConfig.upsert({
     where: { key },
-    update: { value, description: description || null },
-    create: { key, value, description: description || null },
+    update: { 
+      value, 
+      description: description || null,
+      updatedById: userId ?? null
+    },
+    create: { 
+      key, 
+      value, 
+      description: description || null,
+      createdById: userId ?? null,
+      updatedById: userId ?? null
+    },
   });
 };
 

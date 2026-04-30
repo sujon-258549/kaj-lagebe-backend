@@ -1,5 +1,5 @@
 export declare const SubscriptionServices: {
-    createSubscription: (payload: any) => Promise<{
+    createSubscription: (payload: any, userId?: string) => Promise<{
         name: string;
         isDeleted: boolean;
         isActive: boolean;
@@ -7,6 +7,8 @@ export declare const SubscriptionServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         price: string;
@@ -17,7 +19,22 @@ export declare const SubscriptionServices: {
         activeDays: number;
     }>;
     getAllSubscription: (query: any) => Promise<{
-        data: {
+        data: ({
+            createdBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
+            updatedBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
+        } & {
             name: string;
             isDeleted: boolean;
             isActive: boolean;
@@ -25,6 +42,8 @@ export declare const SubscriptionServices: {
             updatedAt: Date;
             id: string;
             description: string | null;
+            createdById: string | null;
+            updatedById: string | null;
             slug: string;
             status: boolean;
             price: string;
@@ -33,7 +52,7 @@ export declare const SubscriptionServices: {
             isRecomended: boolean;
             featured: string[];
             activeDays: number;
-        }[];
+        })[];
         meta: {
             page: number;
             limit: number;
@@ -41,6 +60,21 @@ export declare const SubscriptionServices: {
         };
     }>;
     getSubscriptionById: (id: string) => Promise<{
+        createdBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
+        updatedBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
+    } & {
         name: string;
         isDeleted: boolean;
         isActive: boolean;
@@ -48,6 +82,8 @@ export declare const SubscriptionServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         price: string;
@@ -57,7 +93,7 @@ export declare const SubscriptionServices: {
         featured: string[];
         activeDays: number;
     }>;
-    updateSubscription: (id: string, payload: any) => Promise<{
+    updateSubscription: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
         isDeleted: boolean;
         isActive: boolean;
@@ -65,6 +101,8 @@ export declare const SubscriptionServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         price: string;
@@ -77,7 +115,7 @@ export declare const SubscriptionServices: {
     deleteSubscription: (id: string) => Promise<{
         message: string;
     }>;
-    updateSubscriptionStatus: (id: string) => Promise<{
+    updateSubscriptionStatus: (id: string, userId?: string) => Promise<{
         name: string;
         isDeleted: boolean;
         isActive: boolean;
@@ -85,6 +123,8 @@ export declare const SubscriptionServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         price: string;

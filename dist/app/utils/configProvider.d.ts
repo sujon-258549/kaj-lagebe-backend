@@ -1,9 +1,11 @@
 export declare const getConfig: (key: string, defaultValue?: string) => Promise<string | null>;
-export declare const setConfig: (key: string, value: string, description?: string) => Promise<{
+export declare const setConfig: (key: string, value: string, description?: string, userId?: string) => Promise<{
     createdAt: Date;
     updatedAt: Date;
     id: string;
     description: string | null;
+    createdById: string | null;
+    updatedById: string | null;
     value: string;
     key: string;
 }>;

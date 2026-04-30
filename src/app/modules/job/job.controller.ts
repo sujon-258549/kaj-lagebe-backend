@@ -39,7 +39,8 @@ const getJobById = catchAsync(async (req, res) => {
 });
 
 const updateJob = catchAsync(async (req, res) => {
-  const result = await JobServices.updateJob(req.params.id as string, req.body);
+  const userId = (req as any).user.id;
+  const result = await JobServices.updateJob(req.params.id as string, req.body, userId);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -49,7 +50,8 @@ const updateJob = catchAsync(async (req, res) => {
 });
 
 const updateJobStatus = catchAsync(async (req, res) => {
-  const result = await JobServices.updateJobStatus(req.params.id as string, req.body);
+  const userId = (req as any).user.id;
+  const result = await JobServices.updateJobStatus(req.params.id as string, req.body, userId);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

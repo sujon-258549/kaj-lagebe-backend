@@ -5,7 +5,7 @@ import ApiError from "../../middleware/apiError.ts";
 import { roleSearchableFields } from "./role.constant.ts";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 
-const createRole = async (payload: any) => {
+const createRole = async (payload: any, userId?: string) => {
   if (payload.role) {
     payload.role = payload.role.toUpperCase();
   }
@@ -15,7 +15,13 @@ const createRole = async (payload: any) => {
   if (isExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Role already exists");
   }
-  const result = await prisma.allRole.create({ data: payload });
+  const result = await prisma.allRole.create({ 
+    data: {
+      ...payload,
+      createdById: userId ?? null,
+      updatedById: userId ?? null
+    } 
+  });
   return result;
 };
 
@@ -58,6 +64,14 @@ const getAllRole = async (query: any) => {
     orderBy: {
       [sortByValue]: sortOrderValue,
     },
+    include: {
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+    },
   });
 
   const total = await prisma.allRole.count({
@@ -75,18 +89,31 @@ const getAllRole = async (query: any) => {
 };
 
 const getRoleById = async (id: string) => {
-  const result = await prisma.allRole.findUnique({ where: { id } });
+  const result = await prisma.allRole.findUnique({ 
+    where: { id },
+    include: {
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+    },
+  });
   if (!result) throw new ApiError(httpStatus.NOT_FOUND, "Role not found");
   return result;
 };
 
-const updateRole = async (id: string, payload: any) => {
+const updateRole = async (id: string, payload: any, userId?: string) => {
   if (payload.role) {
     payload.role = payload.role.toUpperCase();
   }
   const result = await prisma.allRole.update({
     where: { id },
-    data: payload,
+    data: {
+      ...payload,
+      updatedById: userId ?? null
+    },
   });
   return result;
 };
@@ -96,14 +123,17 @@ const deleteRole = async (id: string) => {
   return { message: "Role deleted successfully" };
 };
 
-const updateRoleStatus = async (id: string) => {
+const updateRoleStatus = async (id: string, userId?: string) => {
   const isExist = await prisma.allRole.findUnique({ where: { id } });
   if (!isExist) {
     throw new ApiError(httpStatus.NOT_FOUND, "Role not found");
   }
   const result = await prisma.allRole.update({
     where: { id },
-    data: { isActive: !isExist.isActive },
+    data: { 
+      isActive: !isExist.isActive,
+      updatedById: userId ?? null 
+    },
   });
   return result;
 };

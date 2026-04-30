@@ -26,23 +26,35 @@ const blogInclude = {
       },
     },
   },
+  updatedBy: {
+    select: {
+      id: true,
+      email: true,
+      profile: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  },
 };
 
-const createBlog = async (payload: any) => {
+const createBlog = async (payload: any, userId?: string) => {
   const { coverId, authorId, tags, ...rest } = payload;
   const slug = payload.slug || slugCreate(payload.title);
   
+  const creatorId = userId || authorId;
+
   const data: Prisma.BlogCreateInput = {
     ...rest,
     slug,
     tags: tags ? (Array.isArray(tags) ? tags : tags.split(",")) : [],
+    author: creatorId ? { connect: { id: creatorId } } : undefined,
+    updatedBy: creatorId ? { connect: { id: creatorId } } : undefined,
   };
 
   if (coverId) {
     data.cover = { connect: { id: coverId } };
-  }
-  if (authorId) {
-    data.author = { connect: { id: authorId } };
   }
 
   if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
@@ -117,7 +129,7 @@ const getBlogById = async (id: string) => {
   return result;
 };
 
-const updateBlog = async (id: string, payload: any) => {
+const updateBlog = async (id: string, payload: any, userId?: string) => {
   const existingBlog = await prisma.blog.findUnique({ where: { id } });
   if (!existingBlog) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
 
@@ -134,9 +146,9 @@ const updateBlog = async (id: string, payload: any) => {
     };
   }
 
-  if (authorId) {
-    updateData.author = {
-      connect: { id: authorId },
+  if (userId || authorId) {
+    updateData.updatedBy = {
+      connect: { id: userId || authorId },
     };
   }
 
@@ -158,7 +170,7 @@ const updateBlog = async (id: string, payload: any) => {
   return result;
 };
 
-const updateBlogStatus = async (id: string) => {
+const updateBlogStatus = async (id: string, userId?: string) => {
   const isBlogExist = await prisma.blog.findUnique({ where: { id } });
   if (!isBlogExist) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
 
@@ -166,7 +178,8 @@ const updateBlogStatus = async (id: string) => {
     where: { id },
     data: { 
       isPublished: !isBlogExist.isPublished, 
-      publishedAt: !isBlogExist.isPublished ? new Date() : isBlogExist.publishedAt 
+      publishedAt: !isBlogExist.isPublished ? new Date() : isBlogExist.publishedAt,
+      updatedById: userId ?? null
     },
     include: blogInclude,
   });

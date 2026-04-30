@@ -13,6 +13,8 @@ export declare const UserServices: {
             updatedAt: Date;
             id: string;
             description: string | null;
+            createdById: string | null;
+            updatedById: string | null;
         }) | null;
         department: {
             name: string;
@@ -110,6 +112,8 @@ export declare const UserServices: {
             updatedAt: Date;
             id: string;
             description: string | null;
+            createdById: string | null;
+            updatedById: string | null;
         }) | null;
         department: {
             name: string;

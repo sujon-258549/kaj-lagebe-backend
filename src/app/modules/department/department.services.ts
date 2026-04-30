@@ -5,12 +5,14 @@ import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOr
 import { departmentSearchableFields } from "./department.const.ts";
 import prisma from "../../utils/prismaClient.ts";
 
-const createDepartmentIntoDB = async (payload: any) => {
+const createDepartment = async (payload: any, userId?: string) => {
   const result = await prisma.department.create({
     data: {
       name: payload.name,
       description: payload.description,
       isActive: payload.isActive,
+      createdById: userId ?? null,
+      updatedById: userId ?? null,
     },
   });
   return result;
@@ -54,6 +56,12 @@ const getAllDepartment = async (query: any) => {
           roleId: true,
         },
       },
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
     },
   });
 
@@ -86,12 +94,18 @@ const getDepartmentById = async (id: string) => {
           roleId: true,
         },
       },
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
     },
   });
   return result;
 };
 
-const updateDepartment = async (id: string, payload: any) => {
+const updateDepartment = async (id: string, payload: any, userId?: string) => {
   const existingDepartment = await prisma.department.findUnique({
     where: { id },
   });
@@ -104,6 +118,7 @@ const updateDepartment = async (id: string, payload: any) => {
       name: payload.name,
       description: payload.description,
       isActive: payload.isActive,
+      updatedById: userId ?? null,
     },
   });
   return result;
@@ -120,7 +135,7 @@ const deleteDepartment = async (id: string) => {
   return result;
 };
 
-const updateDepartmentStatus = async (id: string) => {
+const updateDepartmentStatus = async (id: string, userId?: string) => {
   const existingDepartment = await prisma.department.findUnique({
     where: { id },
   });
@@ -132,13 +147,14 @@ const updateDepartmentStatus = async (id: string) => {
     where: { id },
     data: {
       isActive: !existingDepartment.isActive,
+      updatedById: userId ?? null,
     },
   });
   return result;
 };
 
 export const DepartmentServices = {
-  createDepartmentIntoDB,
+  createDepartment,
   getAllDepartment,
   getDepartmentById,
   updateDepartment,

@@ -1,28 +1,60 @@
+import type { Prisma } from "@prisma/client";
 export declare const CategoryServices: {
-    createCategoryIntoDB: (payload: any) => Promise<{
+    createCategoryIntoDB: (payload: any, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         icon: string | null;
     }>;
     getAllCategory: (query: any) => Promise<{
         data: ({
+            createdBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
+            updatedBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
             subCategories: {
                 name: string;
                 id: string;
                 slug: string;
                 icon: string | null;
             }[];
+            histories: ({
+                updatedBy: {
+                    email: string;
+                    id: string;
+                } | null;
+            } & {
+                createdAt: Date;
+                id: string;
+                updatedById: string | null;
+                categoryId: string;
+                oldData: Prisma.JsonValue | null;
+                newData: Prisma.JsonValue | null;
+            })[];
         } & {
             name: string;
             createdAt: Date;
             updatedAt: Date;
             id: string;
             description: string | null;
+            createdById: string | null;
+            updatedById: string | null;
             slug: string;
             status: boolean;
             icon: string | null;
@@ -34,28 +66,59 @@ export declare const CategoryServices: {
         };
     }>;
     getCategoryById: (id: string) => Promise<({
+        createdBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
+        updatedBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
         subCategories: {
             name: string;
             id: string;
             slug: string;
             icon: string | null;
         }[];
+        histories: ({
+            updatedBy: {
+                email: string;
+                id: string;
+            } | null;
+        } & {
+            createdAt: Date;
+            id: string;
+            updatedById: string | null;
+            categoryId: string;
+            oldData: Prisma.JsonValue | null;
+            newData: Prisma.JsonValue | null;
+        })[];
     } & {
         name: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         icon: string | null;
     }) | null>;
-    updateCategory: (id: string, payload: any) => Promise<{
+    updateCategory: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         icon: string | null;
@@ -66,16 +129,20 @@ export declare const CategoryServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         icon: string | null;
     }>;
-    updateCategoryStatus: (id: string) => Promise<{
+    updateCategoryStatus: (id: string, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         icon: string | null;

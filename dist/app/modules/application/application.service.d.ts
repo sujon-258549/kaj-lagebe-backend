@@ -18,6 +18,7 @@ export declare const ApplicationServices: {
             address: string | null;
             id: string;
             description: string;
+            updatedById: string | null;
             slug: string;
             status: boolean;
             categoryId: string | null;
@@ -25,16 +26,19 @@ export declare const ApplicationServices: {
             experience: string | null;
             workStartTime: string | null;
             workTimeLimit: string | null;
+            type: string | null;
             title: string;
+            isPublished: boolean;
+            authorId: string;
+            tags: string[];
             company: string | null;
             location: string;
-            type: string | null;
             salary: string | null;
             salaryMin: number | null;
             salaryMax: number | null;
             negotiable: boolean | null;
             logo: string | null;
-            tags: string[];
+            subCategoryId: string | null;
             categoryName: string | null;
             shortDescription: string | null;
             responsibilities: string[];
@@ -78,10 +82,7 @@ export declare const ApplicationServices: {
             isUrgent: boolean;
             jobAmount: string | null;
             jobLocation: Prisma.JsonValue | null;
-            isPublished: boolean;
             applicantsCount: number;
-            subCategoryId: string | null;
-            authorId: string;
         };
     } & {
         isDeleted: boolean;
@@ -117,6 +118,7 @@ export declare const ApplicationServices: {
                 address: string | null;
                 id: string;
                 description: string;
+                updatedById: string | null;
                 slug: string;
                 status: boolean;
                 categoryId: string | null;
@@ -124,16 +126,19 @@ export declare const ApplicationServices: {
                 experience: string | null;
                 workStartTime: string | null;
                 workTimeLimit: string | null;
+                type: string | null;
                 title: string;
+                isPublished: boolean;
+                authorId: string;
+                tags: string[];
                 company: string | null;
                 location: string;
-                type: string | null;
                 salary: string | null;
                 salaryMin: number | null;
                 salaryMax: number | null;
                 negotiable: boolean | null;
                 logo: string | null;
-                tags: string[];
+                subCategoryId: string | null;
                 categoryName: string | null;
                 shortDescription: string | null;
                 responsibilities: string[];
@@ -177,10 +182,7 @@ export declare const ApplicationServices: {
                 isUrgent: boolean;
                 jobAmount: string | null;
                 jobLocation: Prisma.JsonValue | null;
-                isPublished: boolean;
                 applicantsCount: number;
-                subCategoryId: string | null;
-                authorId: string;
             };
         } & {
             isDeleted: boolean;
@@ -239,6 +241,7 @@ export declare const ApplicationServices: {
             address: string | null;
             id: string;
             description: string;
+            updatedById: string | null;
             slug: string;
             status: boolean;
             categoryId: string | null;
@@ -246,16 +249,19 @@ export declare const ApplicationServices: {
             experience: string | null;
             workStartTime: string | null;
             workTimeLimit: string | null;
+            type: string | null;
             title: string;
+            isPublished: boolean;
+            authorId: string;
+            tags: string[];
             company: string | null;
             location: string;
-            type: string | null;
             salary: string | null;
             salaryMin: number | null;
             salaryMax: number | null;
             negotiable: boolean | null;
             logo: string | null;
-            tags: string[];
+            subCategoryId: string | null;
             categoryName: string | null;
             shortDescription: string | null;
             responsibilities: string[];
@@ -299,10 +305,7 @@ export declare const ApplicationServices: {
             isUrgent: boolean;
             jobAmount: string | null;
             jobLocation: Prisma.JsonValue | null;
-            isPublished: boolean;
             applicantsCount: number;
-            subCategoryId: string | null;
-            authorId: string;
         };
     } & {
         isDeleted: boolean;
@@ -337,6 +340,7 @@ export declare const ApplicationServices: {
             address: string | null;
             id: string;
             description: string;
+            updatedById: string | null;
             slug: string;
             status: boolean;
             categoryId: string | null;
@@ -344,16 +348,19 @@ export declare const ApplicationServices: {
             experience: string | null;
             workStartTime: string | null;
             workTimeLimit: string | null;
+            type: string | null;
             title: string;
+            isPublished: boolean;
+            authorId: string;
+            tags: string[];
             company: string | null;
             location: string;
-            type: string | null;
             salary: string | null;
             salaryMin: number | null;
             salaryMax: number | null;
             negotiable: boolean | null;
             logo: string | null;
-            tags: string[];
+            subCategoryId: string | null;
             categoryName: string | null;
             shortDescription: string | null;
             responsibilities: string[];
@@ -397,10 +404,7 @@ export declare const ApplicationServices: {
             isUrgent: boolean;
             jobAmount: string | null;
             jobLocation: Prisma.JsonValue | null;
-            isPublished: boolean;
             applicantsCount: number;
-            subCategoryId: string | null;
-            authorId: string;
         };
     } & {
         isDeleted: boolean;

@@ -6,19 +6,16 @@ import catchAsync from "../../shared/catchAsync.ts";
 import { DepartmentServices } from "./department.services.ts";
 import sendResponse from "../../utils/response.ts";
 
-const createDepartment = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const payload = req.body;
-    const result = await DepartmentServices.createDepartmentIntoDB(payload);
-    sendResponse(res, {
-      success: true,
-      statusCode: status.CREATED,
-      message: "Department created successfully",
-      data: result,
-      meta: undefined,
-    });
-  }
-);
+const createDepartment = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const result = await DepartmentServices.createDepartment(req.body, user?.id);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Department created successfully",
+    data: result,
+  });
+});
 
 const getAllDepartment = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -47,21 +44,20 @@ const getDepartmentById = catchAsync(
   }
 );
 
-const updateDepartment = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const id = req.params.id;
-    const result = await DepartmentServices.updateDepartment(
-      id as string,
-      req.body
-    );
-    sendResponse(res, {
-      success: true,
-      statusCode: status.OK,
-      message: "Department updated successfully",
-      data: result,
-    });
-  }
-);
+const updateDepartment = catchAsync(async (req: Request, res: Response) => {
+  const user = (req as any).user;
+  const result = await DepartmentServices.updateDepartment(
+    req.params.id as string,
+    req.body,
+    user?.id as string
+  );
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Department updated successfully",
+    data: result,
+  });
+});
 
 const deleteDepartment = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -79,8 +75,10 @@ const deleteDepartment = catchAsync(
 const updateDepartmentStatus = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = req.params.id;
+    const user = (req as any).user;
     const result = await DepartmentServices.updateDepartmentStatus(
-      id as string
+      id as string,
+      user?.id as string
     );
     sendResponse(res, {
       success: true,

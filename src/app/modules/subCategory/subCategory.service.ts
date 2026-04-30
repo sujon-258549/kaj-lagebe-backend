@@ -6,9 +6,14 @@ import { subCategorySearchableFields } from "./subCategory.constant.ts";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 import slugCreate from "../../utils/slugCreate.ts";
 
-const createSubCategory = async (payload: any) => {
+const createSubCategory = async (payload: any, userId?: string) => {
   const slug = payload.slug || slugCreate(payload.name);
-  const data: any = { ...payload, slug };
+  const data: any = { 
+    ...payload, 
+    slug,
+    createdById: userId ?? null,
+    updatedById: userId ?? null
+  };
   if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
 
@@ -65,6 +70,12 @@ const getAllSubCategory = async (query: any) => {
           name: true,
           slug: true,
         },
+      },
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
       },
     },
     orderBy: {
@@ -126,7 +137,7 @@ const getSubCategoryBySlug = async (slug: string) => {
   return result;
 };
 
-const updateSubCategory = async (id: string, payload: any) => {
+const updateSubCategory = async (id: string, payload: any, userId?: string) => {
   const existingSubCategory = await prisma.subCategory.findUnique({
     where: { id },
   });
@@ -156,6 +167,10 @@ const updateSubCategory = async (id: string, payload: any) => {
   if (payload.createdAt) updateData.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) updateData.updatedAt = new Date(payload.updatedAt);
 
+  if (userId) {
+    updateData.updatedBy = { connect: { id: userId } };
+  }
+
   const result = await prisma.subCategory.update({
     where: { id },
     data: updateData,
@@ -167,7 +182,7 @@ const deleteSubCategory = async (id: string) => {
   await prisma.subCategory.delete({ where: { id } });
   return { message: "SubCategory deleted successfully" };
 };
-const updateSubCategoryStatus = async (id: string) => {
+const updateSubCategoryStatus = async (id: string, userId?: string) => {
   const existingSubCategory = await prisma.subCategory.findUnique({
     where: { id },
   });
@@ -176,7 +191,10 @@ const updateSubCategoryStatus = async (id: string) => {
 
   const result = await prisma.subCategory.update({
     where: { id },
-    data: { status: !existingSubCategory.status },
+    data: { 
+      status: !existingSubCategory.status,
+      updatedById: userId ?? null
+    },
   });
   return result;
 };

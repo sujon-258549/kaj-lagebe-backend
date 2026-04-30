@@ -1,11 +1,13 @@
 export declare const DepartmentServices: {
-    createDepartmentIntoDB: (payload: any) => Promise<{
+    createDepartment: (payload: any, userId?: string) => Promise<{
         name: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
     getAllDepartment: (query: any) => Promise<{
         data: ({
@@ -15,6 +17,20 @@ export declare const DepartmentServices: {
                 id: string;
                 roleId: string | null;
             }[];
+            createdBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
+            updatedBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
         } & {
             name: string;
             isActive: boolean;
@@ -22,6 +38,8 @@ export declare const DepartmentServices: {
             updatedAt: Date;
             id: string;
             description: string | null;
+            createdById: string | null;
+            updatedById: string | null;
         })[];
         meta: {
             page: number;
@@ -36,6 +54,20 @@ export declare const DepartmentServices: {
             id: string;
             roleId: string | null;
         }[];
+        createdBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
+        updatedBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
     } & {
         name: string;
         isActive: boolean;
@@ -43,14 +75,18 @@ export declare const DepartmentServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     }) | null>;
-    updateDepartment: (id: string, payload: any) => Promise<{
+    updateDepartment: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
     deleteDepartment: (id: string) => Promise<{
         name: string;
@@ -59,14 +95,18 @@ export declare const DepartmentServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
-    updateDepartmentStatus: (id: string) => Promise<{
+    updateDepartmentStatus: (id: string, userId?: string) => Promise<{
         name: string;
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
 };
 //# sourceMappingURL=department.services.d.ts.map

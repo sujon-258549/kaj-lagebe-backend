@@ -16,6 +16,11 @@ model AllRole {
   users       User[]
   permissions RolePermission[]
 
+  createdById String?
+  updatedById String?
+  createdBy   User?            @relation("AllRoleCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?            @relation("AllRoleUpdatedBy", fields: [updatedById], references: [id])
+
   @@map("all_roles")
 }
 
@@ -40,6 +45,11 @@ model Department {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   users       User[]
+
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("DepartmentCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("DepartmentUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("departments")
 }
@@ -81,6 +91,25 @@ model User {
   blogs              Blog[]
   siteSettingsUpdated SiteSetting[] @relation("SiteSettingUpdatedBy")
   siteSettingHistories SiteSettingHistory[]
+  categoriesCreated    Category[]           @relation("CategoryCreatedBy")
+  categoriesUpdated    Category[]           @relation("CategoryUpdatedBy")
+  categoryHistories    CategoryHistory[]
+  
+  // New Audit Relations
+  rolesCreated         AllRole[]            @relation("AllRoleCreatedBy")
+  rolesUpdated         AllRole[]            @relation("AllRoleUpdatedBy")
+  departmentsCreated   Department[]         @relation("DepartmentCreatedBy")
+  departmentsUpdated   Department[]         @relation("DepartmentUpdatedBy")
+  configsCreated       SystemConfig[]       @relation("SystemConfigCreatedBy")
+  configsUpdated       SystemConfig[]       @relation("SystemConfigUpdatedBy")
+  subCategoriesCreated SubCategory[]        @relation("SubCategoryCreatedBy")
+  subCategoriesUpdated SubCategory[]        @relation("SubCategoryUpdatedBy")
+  workTypesCreated     WorkType[]           @relation("WorkTypeCreatedBy")
+  workTypesUpdated     WorkType[]           @relation("WorkTypeUpdatedBy")
+  blogsUpdated         Blog[]               @relation("BlogUpdatedBy")
+  subscriptionsCreated Subscription[]       @relation("SubscriptionCreatedBy")
+  subscriptionsUpdated Subscription[]       @relation("SubscriptionUpdatedBy")
+  jobsUpdated          Job[]                @relation("JobUpdatedBy")
 
   @@map("users")
 }
@@ -103,6 +132,11 @@ model SystemConfig {
   description String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("SystemConfigCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("SystemConfigUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("system_configs")
 }
@@ -252,7 +286,27 @@ model Category {
   subCategories SubCategory[]
   jobs          Job[]
 
+  // Audit fields
+  createdById String?
+  updatedById String?
+  createdBy   User?             @relation("CategoryCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?             @relation("CategoryUpdatedBy", fields: [updatedById], references: [id])
+  histories   CategoryHistory[]
+
   @@map("categories")
+}
+
+model CategoryHistory {
+  id         String   @id @default(uuid())
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  oldData    Json?
+  newData    Json?
+  updatedById String?
+  updatedBy   User?    @relation(fields: [updatedById], references: [id])
+  createdAt  DateTime @default(now())
+
+  @@map("category_histories")
 }
 
 model SubCategory {
@@ -269,6 +323,11 @@ model SubCategory {
   jobs        Job[]
   workInfos   WorkInfo[]
 
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("SubCategoryCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("SubCategoryUpdatedBy", fields: [updatedById], references: [id])
+
   @@map("sub_categories")
 }
 
@@ -280,6 +339,11 @@ model WorkType {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   workInfos   WorkInfo[]
+
+  createdById String?
+  updatedById String?
+  createdBy   User?      @relation("WorkTypeCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?      @relation("WorkTypeUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("work_types")
 }
@@ -297,6 +361,8 @@ model Blog {
   category    String?
   authorId    String?
   author      User?     @relation(fields: [authorId], references: [id])
+  updatedById String?
+  updatedBy   User?     @relation("BlogUpdatedBy", fields: [updatedById], references: [id])
   isPublished Boolean   @default(false)
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
@@ -324,6 +390,11 @@ model Subscription {
   users             User[]
   payments          Payment[]
   subscriptionEarns SubscriptionEarn[]
+
+  createdById String?
+  updatedById String?
+  createdBy   User?         @relation("SubscriptionCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?         @relation("SubscriptionUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("subscriptions")
 }
@@ -467,6 +538,8 @@ model Job {
   applicantsCount      Int           @default(0)
   authorId             String
   user                 User          @relation(fields: [authorId], references: [id])
+  updatedById          String?
+  updatedBy            User?         @relation("JobUpdatedBy", fields: [updatedById], references: [id])
   category             Category?     @relation(fields: [categoryId], references: [id])
   subCategory          SubCategory?  @relation(fields: [subCategoryId], references: [id])
   applications         Application[]

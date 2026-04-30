@@ -7,12 +7,12 @@ export declare const SiteSettingService: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        updatedById: string | null;
         type: string;
         value: Prisma.JsonValue | null;
         key: string;
         imageId: string | null;
         group: string;
-        updatedById: string | null;
     }>;
     bulkUpsertSettings: (settings: any[], userId?: string) => Promise<{
         name: string | null;
@@ -21,12 +21,12 @@ export declare const SiteSettingService: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        updatedById: string | null;
         type: string;
         value: Prisma.JsonValue | null;
         key: string;
         imageId: string | null;
         group: string;
-        updatedById: string | null;
     }[]>;
     getSettingsByGroup: (group: string) => Promise<({
         image: {
@@ -46,12 +46,12 @@ export declare const SiteSettingService: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        updatedById: string | null;
         type: string;
         value: Prisma.JsonValue | null;
         key: string;
         imageId: string | null;
         group: string;
-        updatedById: string | null;
     })[]>;
     getSettingsMap: (group?: string) => Promise<any>;
     deleteSetting: (key: string) => Promise<{
@@ -61,12 +61,12 @@ export declare const SiteSettingService: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        updatedById: string | null;
         type: string;
         value: Prisma.JsonValue | null;
         key: string;
         imageId: string | null;
         group: string;
-        updatedById: string | null;
     }>;
     bulkDeleteSettings: (keys: string[]) => Promise<Prisma.BatchPayload>;
     getAllSettings: (query: any) => Promise<({
@@ -121,12 +121,12 @@ export declare const SiteSettingService: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        updatedById: string | null;
         type: string;
         value: Prisma.JsonValue | null;
         key: string;
         imageId: string | null;
         group: string;
-        updatedById: string | null;
     })[]>;
 };
 //# sourceMappingURL=siteSetting.services.d.ts.map

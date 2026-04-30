@@ -26,6 +26,7 @@ export declare const JobServices: {
         address: string | null;
         id: string;
         description: string;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         categoryId: string | null;
@@ -33,16 +34,19 @@ export declare const JobServices: {
         experience: string | null;
         workStartTime: string | null;
         workTimeLimit: string | null;
+        type: string | null;
         title: string;
+        isPublished: boolean;
+        authorId: string;
+        tags: string[];
         company: string | null;
         location: string;
-        type: string | null;
         salary: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
         negotiable: boolean | null;
         logo: string | null;
-        tags: string[];
+        subCategoryId: string | null;
         categoryName: string | null;
         shortDescription: string | null;
         responsibilities: string[];
@@ -86,10 +90,7 @@ export declare const JobServices: {
         isUrgent: boolean;
         jobAmount: string | null;
         jobLocation: Prisma.JsonValue | null;
-        isPublished: boolean;
         applicantsCount: number;
-        subCategoryId: string | null;
-        authorId: string;
     }>;
     getAllJobs: (query: any) => Promise<{
         data: ({
@@ -109,6 +110,12 @@ export declare const JobServices: {
                 name: string;
                 slug: string;
             } | null;
+            updatedBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+            } | null;
         } & {
             email: string | null;
             isDeleted: boolean;
@@ -118,6 +125,7 @@ export declare const JobServices: {
             address: string | null;
             id: string;
             description: string;
+            updatedById: string | null;
             slug: string;
             status: boolean;
             categoryId: string | null;
@@ -125,16 +133,19 @@ export declare const JobServices: {
             experience: string | null;
             workStartTime: string | null;
             workTimeLimit: string | null;
+            type: string | null;
             title: string;
+            isPublished: boolean;
+            authorId: string;
+            tags: string[];
             company: string | null;
             location: string;
-            type: string | null;
             salary: string | null;
             salaryMin: number | null;
             salaryMax: number | null;
             negotiable: boolean | null;
             logo: string | null;
-            tags: string[];
+            subCategoryId: string | null;
             categoryName: string | null;
             shortDescription: string | null;
             responsibilities: string[];
@@ -178,10 +189,7 @@ export declare const JobServices: {
             isUrgent: boolean;
             jobAmount: string | null;
             jobLocation: Prisma.JsonValue | null;
-            isPublished: boolean;
             applicantsCount: number;
-            subCategoryId: string | null;
-            authorId: string;
         })[];
         meta: {
             page: number;
@@ -236,6 +244,8 @@ export declare const JobServices: {
             updatedAt: Date;
             id: string;
             description: string | null;
+            createdById: string | null;
+            updatedById: string | null;
             slug: string;
             status: boolean;
             icon: string | null;
@@ -246,6 +256,8 @@ export declare const JobServices: {
             updatedAt: Date;
             id: string;
             description: string | null;
+            createdById: string | null;
+            updatedById: string | null;
             slug: string;
             status: boolean;
             categoryId: string;
@@ -316,6 +328,7 @@ export declare const JobServices: {
         address: string | null;
         id: string;
         description: string;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         categoryId: string | null;
@@ -323,16 +336,19 @@ export declare const JobServices: {
         experience: string | null;
         workStartTime: string | null;
         workTimeLimit: string | null;
+        type: string | null;
         title: string;
+        isPublished: boolean;
+        authorId: string;
+        tags: string[];
         company: string | null;
         location: string;
-        type: string | null;
         salary: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
         negotiable: boolean | null;
         logo: string | null;
-        tags: string[];
+        subCategoryId: string | null;
         categoryName: string | null;
         shortDescription: string | null;
         responsibilities: string[];
@@ -376,12 +392,9 @@ export declare const JobServices: {
         isUrgent: boolean;
         jobAmount: string | null;
         jobLocation: Prisma.JsonValue | null;
-        isPublished: boolean;
         applicantsCount: number;
-        subCategoryId: string | null;
-        authorId: string;
     }>;
-    updateJob: (id: string, payload: any) => Promise<{
+    updateJob: (id: string, payload: any, userId?: string) => Promise<{
         user: {
             email: string;
             mobile: string;
@@ -398,6 +411,12 @@ export declare const JobServices: {
             name: string;
             slug: string;
         } | null;
+        updatedBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+        } | null;
     } & {
         email: string | null;
         isDeleted: boolean;
@@ -407,6 +426,7 @@ export declare const JobServices: {
         address: string | null;
         id: string;
         description: string;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         categoryId: string | null;
@@ -414,16 +434,19 @@ export declare const JobServices: {
         experience: string | null;
         workStartTime: string | null;
         workTimeLimit: string | null;
+        type: string | null;
         title: string;
+        isPublished: boolean;
+        authorId: string;
+        tags: string[];
         company: string | null;
         location: string;
-        type: string | null;
         salary: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
         negotiable: boolean | null;
         logo: string | null;
-        tags: string[];
+        subCategoryId: string | null;
         categoryName: string | null;
         shortDescription: string | null;
         responsibilities: string[];
@@ -467,12 +490,9 @@ export declare const JobServices: {
         isUrgent: boolean;
         jobAmount: string | null;
         jobLocation: Prisma.JsonValue | null;
-        isPublished: boolean;
         applicantsCount: number;
-        subCategoryId: string | null;
-        authorId: string;
     }>;
-    updateJobStatus: (id: string, payload: any) => Promise<{
+    updateJobStatus: (id: string, payload: any, userId?: string) => Promise<{
         email: string | null;
         isDeleted: boolean;
         createdAt: Date;
@@ -481,6 +501,7 @@ export declare const JobServices: {
         address: string | null;
         id: string;
         description: string;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         categoryId: string | null;
@@ -488,16 +509,19 @@ export declare const JobServices: {
         experience: string | null;
         workStartTime: string | null;
         workTimeLimit: string | null;
+        type: string | null;
         title: string;
+        isPublished: boolean;
+        authorId: string;
+        tags: string[];
         company: string | null;
         location: string;
-        type: string | null;
         salary: string | null;
         salaryMin: number | null;
         salaryMax: number | null;
         negotiable: boolean | null;
         logo: string | null;
-        tags: string[];
+        subCategoryId: string | null;
         categoryName: string | null;
         shortDescription: string | null;
         responsibilities: string[];
@@ -541,10 +565,7 @@ export declare const JobServices: {
         isUrgent: boolean;
         jobAmount: string | null;
         jobLocation: Prisma.JsonValue | null;
-        isPublished: boolean;
         applicantsCount: number;
-        subCategoryId: string | null;
-        authorId: string;
     }>;
     deleteJob: (id: string) => Promise<{
         message: string;

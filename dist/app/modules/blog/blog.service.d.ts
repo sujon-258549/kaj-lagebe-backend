@@ -1,5 +1,12 @@
 export declare const BlogServices: {
-    createBlog: (payload: any) => Promise<{
+    createBlog: (payload: any, userId?: string) => Promise<{
+        updatedBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
         cover: {
             url: string;
             id: string;
@@ -18,18 +25,26 @@ export declare const BlogServices: {
         category: string | null;
         id: string;
         description: string | null;
+        updatedById: string | null;
         slug: string;
         title: string;
-        tags: string[];
+        excerpt: string | null;
         isPublished: boolean;
         authorId: string | null;
-        excerpt: string | null;
         content: string;
+        tags: string[];
         publishedAt: Date | null;
         coverId: string | null;
     }>;
     getAllBlog: (query: any) => Promise<{
         data: ({
+            updatedBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
             cover: {
                 url: string;
                 id: string;
@@ -48,13 +63,14 @@ export declare const BlogServices: {
             category: string | null;
             id: string;
             description: string | null;
+            updatedById: string | null;
             slug: string;
             title: string;
-            tags: string[];
+            excerpt: string | null;
             isPublished: boolean;
             authorId: string | null;
-            excerpt: string | null;
             content: string;
+            tags: string[];
             publishedAt: Date | null;
             coverId: string | null;
         })[];
@@ -65,6 +81,13 @@ export declare const BlogServices: {
         };
     }>;
     getBlogById: (id: string) => Promise<{
+        updatedBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
         cover: {
             url: string;
             id: string;
@@ -83,17 +106,25 @@ export declare const BlogServices: {
         category: string | null;
         id: string;
         description: string | null;
+        updatedById: string | null;
         slug: string;
         title: string;
-        tags: string[];
+        excerpt: string | null;
         isPublished: boolean;
         authorId: string | null;
-        excerpt: string | null;
         content: string;
+        tags: string[];
         publishedAt: Date | null;
         coverId: string | null;
     }>;
-    updateBlog: (id: string, payload: any) => Promise<{
+    updateBlog: (id: string, payload: any, userId?: string) => Promise<{
+        updatedBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
         cover: {
             url: string;
             id: string;
@@ -112,20 +143,28 @@ export declare const BlogServices: {
         category: string | null;
         id: string;
         description: string | null;
+        updatedById: string | null;
         slug: string;
         title: string;
-        tags: string[];
+        excerpt: string | null;
         isPublished: boolean;
         authorId: string | null;
-        excerpt: string | null;
         content: string;
+        tags: string[];
         publishedAt: Date | null;
         coverId: string | null;
     }>;
     deleteBlog: (id: string) => Promise<{
         message: string;
     }>;
-    updateBlogStatus: (id: string) => Promise<{
+    updateBlogStatus: (id: string, userId?: string) => Promise<{
+        updatedBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
         cover: {
             url: string;
             id: string;
@@ -144,13 +183,14 @@ export declare const BlogServices: {
         category: string | null;
         id: string;
         description: string | null;
+        updatedById: string | null;
         slug: string;
         title: string;
-        tags: string[];
+        excerpt: string | null;
         isPublished: boolean;
         authorId: string | null;
-        excerpt: string | null;
         content: string;
+        tags: string[];
         publishedAt: Date | null;
         coverId: string | null;
     }>;

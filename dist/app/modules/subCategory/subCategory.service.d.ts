@@ -1,10 +1,12 @@
 export declare const SubCategoryServices: {
-    createSubCategory: (payload: any) => Promise<{
+    createSubCategory: (payload: any, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         categoryId: string;
@@ -16,12 +18,28 @@ export declare const SubCategoryServices: {
                 name: string;
                 slug: string;
             };
+            createdBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
+            updatedBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
         } & {
             name: string;
             createdAt: Date;
             updatedAt: Date;
             id: string;
             description: string | null;
+            createdById: string | null;
+            updatedById: string | null;
             slug: string;
             status: boolean;
             categoryId: string;
@@ -45,6 +63,8 @@ export declare const SubCategoryServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         categoryId: string;
@@ -62,17 +82,21 @@ export declare const SubCategoryServices: {
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         categoryId: string;
         icon: string | null;
     }>;
-    updateSubCategory: (id: string, payload: any) => Promise<{
+    updateSubCategory: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         categoryId: string;
@@ -81,12 +105,14 @@ export declare const SubCategoryServices: {
     deleteSubCategory: (id: string) => Promise<{
         message: string;
     }>;
-    updateSubCategoryStatus: (id: string) => Promise<{
+    updateSubCategoryStatus: (id: string, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
         description: string | null;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         categoryId: string;

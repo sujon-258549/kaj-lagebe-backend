@@ -10,9 +10,14 @@ import prisma from "../../utils/prismaClient.ts";
 
 //create subscription
 
-const createSubscription = async (payload: any) => {
+const createSubscription = async (payload: any, userId?: string) => {
   const slug = payload.slug || slugCreate(payload.name);
-  const data = { ...payload, slug };
+  const data = { 
+    ...payload, 
+    slug,
+    createdById: userId ?? null,
+    updatedById: userId ?? null
+  };
   return await prisma.subscription.create({ data });
 };
 
@@ -47,6 +52,14 @@ const getAllSubscription = async (query: any) => {
     orderBy: {
       [sortByValue]: sortOrderValue,
     },
+    include: {
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+    },
   });
 
   const total = await prisma.subscription.count({
@@ -71,6 +84,14 @@ const getAllSubscription = async (query: any) => {
 const getSubscriptionById = async (id: string) => {
   const result = await prisma.subscription.findFirst({
     where: { OR: [{ id: id }, { slug: id }] },
+    include: {
+      createdBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+      updatedBy: {
+        select: { id: true, email: true, profile: { select: { name: true } } },
+      },
+    },
   });
   if (!result)
     throw new ApiError(httpStatus.NOT_FOUND, "Subscription not found");
@@ -79,7 +100,7 @@ const getSubscriptionById = async (id: string) => {
 
 //update subscription
 
-const updateSubscription = async (id: string, payload: any) => {
+const updateSubscription = async (id: string, payload: any, userId?: string) => {
   const existingSubscription = await prisma.subscription.findUnique({
     where: { id },
   });
@@ -92,6 +113,10 @@ const updateSubscription = async (id: string, payload: any) => {
     updateData.slug = payload.slug || slugCreate(payload.name);
   } else if (payload.slug) {
     updateData.slug = payload.slug;
+  }
+
+  if (userId) {
+    updateData.updatedById = userId;
   }
 
   const result = await prisma.subscription.update({
@@ -110,7 +135,7 @@ const deleteSubscription = async (id: string) => {
 
 
 //update subscription status
-const updateSubscriptionStatus = async (id: string) => {
+const updateSubscriptionStatus = async (id: string, userId?: string) => {
   const existingSubscription = await prisma.subscription.findUnique({
     where: { id },
   });
@@ -119,7 +144,10 @@ const updateSubscriptionStatus = async (id: string) => {
 
   const result = await prisma.subscription.update({
     where: { id },
-    data: { status: !existingSubscription.status },
+    data: { 
+      status: !existingSubscription.status,
+      updatedById: userId ?? null 
+    },
   });
   return result;
 };

@@ -16,6 +16,7 @@ const createCategoryIntoDB = async (payload: any, userId?: string) => {
     icon: payload.icon,
     slug: slug,
     description: payload.description,
+    imageId: payload.imageId,
     createdById: userId,
     updatedById: userId,
   };
@@ -80,8 +81,10 @@ const getAllCategory = async (query: any) => {
           icon: true,
           slug: true,
           id: true,
+          image: true,
         },
       },
+      image: true,
       createdBy: {
         select: { id: true, email: true, profile: { select: { name: true } } },
       },
@@ -125,8 +128,10 @@ const getCategoryById = async (id: string) => {
           icon: true,
           slug: true,
           id: true,
+          image: true,
         },
       },
+      image: true,
       createdBy: {
         select: { id: true, email: true, profile: { select: { name: true } } },
       },
@@ -163,6 +168,7 @@ const updateCategory = async (id: string, payload: any, userId?: string) => {
   if (payload.status !== undefined)
     updateData.status = payload.status === true || payload.status === "true";
   if (payload.description) updateData.description = payload.description;
+  if (payload.imageId) updateData.image = { connect: { id: payload.imageId } };
   if (payload.createdAt) updateData.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) updateData.updatedAt = new Date(payload.updatedAt);
 

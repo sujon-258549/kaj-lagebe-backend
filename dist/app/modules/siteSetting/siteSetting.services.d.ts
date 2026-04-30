@@ -10,10 +10,10 @@ export declare const SiteSettingService: {
         id: string;
         description: string | null;
         updatedById: string | null;
+        imageId: string | null;
         type: string;
         value: Prisma.JsonValue | null;
         key: string;
-        imageId: string | null;
         group: string;
     }>;
     bulkUpsertSettings: (settings: any[], userId?: string) => Promise<{
@@ -26,10 +26,10 @@ export declare const SiteSettingService: {
         id: string;
         description: string | null;
         updatedById: string | null;
+        imageId: string | null;
         type: string;
         value: Prisma.JsonValue | null;
         key: string;
-        imageId: string | null;
         group: string;
     }[]>;
     getSettingsByGroup: (group: string) => Promise<any[]>;
@@ -42,10 +42,10 @@ export declare const SiteSettingService: {
         id: string;
         description: string | null;
         updatedById: string | null;
+        imageId: string | null;
         type: string;
         value: Prisma.JsonValue | null;
         key: string;
-        imageId: string | null;
         group: string;
     }>;
     bulkDeleteSettings: (keys: string[]) => Promise<Prisma.BatchPayload>;

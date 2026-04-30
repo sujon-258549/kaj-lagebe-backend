@@ -249,6 +249,7 @@ export declare const JobServices: {
             slug: string;
             status: boolean;
             icon: string | null;
+            imageId: string | null;
         } | null;
         subCategory: {
             name: string;
@@ -262,6 +263,7 @@ export declare const JobServices: {
             status: boolean;
             categoryId: string;
             icon: string | null;
+            imageId: string | null;
         } | null;
         applications: ({
             user: {

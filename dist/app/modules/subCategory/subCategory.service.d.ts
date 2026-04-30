@@ -11,13 +11,38 @@ export declare const SubCategoryServices: {
         status: boolean;
         categoryId: string;
         icon: string | null;
+        imageId: string | null;
     }>;
     getAllSubCategory: (query: any) => Promise<{
         data: ({
             category: {
                 name: string;
+                image: {
+                    name: string;
+                    url: string;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    id: string;
+                    createdById: string | null;
+                    updatedById: string | null;
+                    folderId: string | null;
+                    slug: string;
+                    status: boolean;
+                } | null;
                 slug: string;
             };
+            image: {
+                name: string;
+                url: string;
+                createdAt: Date;
+                updatedAt: Date;
+                id: string;
+                createdById: string | null;
+                updatedById: string | null;
+                folderId: string | null;
+                slug: string;
+                status: boolean;
+            } | null;
             createdBy: {
                 email: string;
                 profile: {
@@ -44,6 +69,7 @@ export declare const SubCategoryServices: {
             status: boolean;
             categoryId: string;
             icon: string | null;
+            imageId: string | null;
         })[];
         meta: {
             page: number;
@@ -57,6 +83,18 @@ export declare const SubCategoryServices: {
             id: string;
             slug: string;
         };
+        image: {
+            name: string;
+            url: string;
+            createdAt: Date;
+            updatedAt: Date;
+            id: string;
+            createdById: string | null;
+            updatedById: string | null;
+            folderId: string | null;
+            slug: string;
+            status: boolean;
+        } | null;
     } & {
         name: string;
         createdAt: Date;
@@ -69,6 +107,7 @@ export declare const SubCategoryServices: {
         status: boolean;
         categoryId: string;
         icon: string | null;
+        imageId: string | null;
     }>;
     getSubCategoryBySlug: (slug: string) => Promise<{
         category: {
@@ -76,6 +115,18 @@ export declare const SubCategoryServices: {
             id: string;
             slug: string;
         };
+        image: {
+            name: string;
+            url: string;
+            createdAt: Date;
+            updatedAt: Date;
+            id: string;
+            createdById: string | null;
+            updatedById: string | null;
+            folderId: string | null;
+            slug: string;
+            status: boolean;
+        } | null;
     } & {
         name: string;
         createdAt: Date;
@@ -88,6 +139,7 @@ export declare const SubCategoryServices: {
         status: boolean;
         categoryId: string;
         icon: string | null;
+        imageId: string | null;
     }>;
     updateSubCategory: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
@@ -101,6 +153,7 @@ export declare const SubCategoryServices: {
         status: boolean;
         categoryId: string;
         icon: string | null;
+        imageId: string | null;
     }>;
     deleteSubCategory: (id: string) => Promise<{
         message: string;
@@ -117,6 +170,7 @@ export declare const SubCategoryServices: {
         status: boolean;
         categoryId: string;
         icon: string | null;
+        imageId: string | null;
     }>;
 };
 //# sourceMappingURL=subCategory.service.d.ts.map

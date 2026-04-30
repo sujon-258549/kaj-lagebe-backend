@@ -12,7 +12,8 @@ const createSubCategory = async (payload: any, userId?: string) => {
     ...payload, 
     slug,
     createdById: userId ?? null,
-    updatedById: userId ?? null
+    updatedById: userId ?? null,
+    imageId: payload.imageId ?? null
   };
   if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
@@ -69,8 +70,10 @@ const getAllSubCategory = async (query: any) => {
         select: {
           name: true,
           slug: true,
+          image: true,
         },
       },
+      image: true,
       createdBy: {
         select: { id: true, email: true, profile: { select: { name: true } } },
       },
@@ -112,6 +115,7 @@ const getSubCategoryById = async (id: string) => {
           slug: true,
         },
       },
+      image: true,
     },
   });
   if (!result)
@@ -130,6 +134,7 @@ const getSubCategoryBySlug = async (slug: string) => {
           slug: true,
         },
       },
+      image: true,
     },
   });
   if (!result)
@@ -164,6 +169,7 @@ const updateSubCategory = async (id: string, payload: any, userId?: string) => {
   if (payload.status !== undefined) {
     updateData.status = payload.status === true || payload.status === "true";
   }
+  if (payload.imageId) updateData.image = { connect: { id: payload.imageId } };
   if (payload.createdAt) updateData.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) updateData.updatedAt = new Date(payload.updatedAt);
 

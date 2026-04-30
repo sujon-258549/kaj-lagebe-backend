@@ -290,6 +290,8 @@ model Category {
   status        Boolean       @default(true)
   subCategories SubCategory[]
   jobs          Job[]
+  imageId       String?
+  image         Image?            @relation(fields: [imageId], references: [id])
 
   // Audit fields
   createdById String?
@@ -325,8 +327,10 @@ model SubCategory {
   slug        String     @unique
   status      Boolean    @default(true)
   category    Category   @relation(fields: [categoryId], references: [id])
-  jobs        Job[]
-  workInfos   WorkInfo[]
+  jobs          Job[]
+  workInfos     WorkInfo[]
+  imageId       String?
+  image         Image?     @relation(fields: [imageId], references: [id])
 
   createdById String?
   updatedById String?
@@ -438,6 +442,8 @@ model Image {
   nidPhotoProfiles     Profile[] @relation("NidPhotos")
   blogs                Blog[]    @relation("CoverPhoto")
   siteSettings         SiteSetting[]
+  categories           Category[]
+  subCategories        SubCategory[]
 
   createdById String?
   updatedById String?

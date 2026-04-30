@@ -11,9 +11,22 @@ export declare const CategoryServices: {
         slug: string;
         status: boolean;
         icon: string | null;
+        imageId: string | null;
     }>;
     getAllCategory: (query: any) => Promise<{
         data: ({
+            image: {
+                name: string;
+                url: string;
+                createdAt: Date;
+                updatedAt: Date;
+                id: string;
+                createdById: string | null;
+                updatedById: string | null;
+                folderId: string | null;
+                slug: string;
+                status: boolean;
+            } | null;
             createdBy: {
                 email: string;
                 profile: {
@@ -30,6 +43,18 @@ export declare const CategoryServices: {
             } | null;
             subCategories: {
                 name: string;
+                image: {
+                    name: string;
+                    url: string;
+                    createdAt: Date;
+                    updatedAt: Date;
+                    id: string;
+                    createdById: string | null;
+                    updatedById: string | null;
+                    folderId: string | null;
+                    slug: string;
+                    status: boolean;
+                } | null;
                 id: string;
                 slug: string;
                 icon: string | null;
@@ -58,6 +83,7 @@ export declare const CategoryServices: {
             slug: string;
             status: boolean;
             icon: string | null;
+            imageId: string | null;
         })[];
         meta: {
             page: number;
@@ -66,6 +92,18 @@ export declare const CategoryServices: {
         };
     }>;
     getCategoryById: (id: string) => Promise<({
+        image: {
+            name: string;
+            url: string;
+            createdAt: Date;
+            updatedAt: Date;
+            id: string;
+            createdById: string | null;
+            updatedById: string | null;
+            folderId: string | null;
+            slug: string;
+            status: boolean;
+        } | null;
         createdBy: {
             email: string;
             profile: {
@@ -82,6 +120,18 @@ export declare const CategoryServices: {
         } | null;
         subCategories: {
             name: string;
+            image: {
+                name: string;
+                url: string;
+                createdAt: Date;
+                updatedAt: Date;
+                id: string;
+                createdById: string | null;
+                updatedById: string | null;
+                folderId: string | null;
+                slug: string;
+                status: boolean;
+            } | null;
             id: string;
             slug: string;
             icon: string | null;
@@ -110,6 +160,7 @@ export declare const CategoryServices: {
         slug: string;
         status: boolean;
         icon: string | null;
+        imageId: string | null;
     }) | null>;
     updateCategory: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
@@ -122,6 +173,7 @@ export declare const CategoryServices: {
         slug: string;
         status: boolean;
         icon: string | null;
+        imageId: string | null;
     }>;
     deleteCategory: (id: string) => Promise<{
         name: string;
@@ -134,6 +186,7 @@ export declare const CategoryServices: {
         slug: string;
         status: boolean;
         icon: string | null;
+        imageId: string | null;
     }>;
     updateCategoryStatus: (id: string, userId?: string) => Promise<{
         name: string;
@@ -146,6 +199,7 @@ export declare const CategoryServices: {
         slug: string;
         status: boolean;
         icon: string | null;
+        imageId: string | null;
     }>;
 };
 //# sourceMappingURL=category.services.d.ts.map

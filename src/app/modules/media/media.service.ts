@@ -6,11 +6,13 @@ import httpStatus from "http-status";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 import { mediaSearchableFields } from "./media.const.js";
 
-const createFolder = async (payload: any) => {
+const createFolder = async (payload: any, userId?: string) => {
   const slug = payload.slug || slugCreate(payload.name + Math.floor(Math.random() * 1000));
   const data: Prisma.FolderCreateInput = {
     ...payload,
     slug,
+    createdBy: userId ? { connect: { id: userId } } : undefined,
+    updatedBy: userId ? { connect: { id: userId } } : undefined,
   };
 
   const result = await prisma.folder.create({
@@ -146,7 +148,7 @@ const getFolderById = async (id: string) => {
   return folderWithTree;
 };
 
-const updateFolder = async (id: string, payload: any) => {
+const updateFolder = async (id: string, payload: any, userId?: string) => {
   const existingFolder = await prisma.folder.findUnique({ where: { id } });
   if (!existingFolder)
     throw new ApiError(httpStatus.NOT_FOUND, "Folder not found");
@@ -156,6 +158,10 @@ const updateFolder = async (id: string, payload: any) => {
   if (payload.name) {
     updateData.name = payload.name;
     updateData.slug = payload.slug || slugCreate(payload.name);
+  }
+
+  if (userId) {
+    updateData.updatedBy = { connect: { id: userId } };
   }
 
   const result = await prisma.folder.update({
@@ -184,7 +190,7 @@ const createImage = async (payload: {
   name: string;
   url: string;
   folderId?: string;
-}) => {
+}, userId?: string) => {
   const slug = slugCreate(payload.name + "-" + Math.floor(Math.random() * 10000));
   const result = await prisma.image.create({
     data: {
@@ -192,6 +198,8 @@ const createImage = async (payload: {
       url: payload.url,
       slug: slug,
       folderId: payload.folderId || null,
+      createdById: userId ?? null,
+      updatedById: userId ?? null,
     },
   });
   return result;
@@ -225,7 +233,7 @@ const deleteImage = async (id: string) => {
   return result;
 };
 
-const updateImage = async (id: string, payload: { name: string }) => {
+const updateImage = async (id: string, payload: { name: string }, userId?: string) => {
   const existingImage = await prisma.image.findUnique({ where: { id } });
   if (!existingImage)
     throw new ApiError(httpStatus.NOT_FOUND, "Image not found");
@@ -237,6 +245,7 @@ const updateImage = async (id: string, payload: { name: string }) => {
     data: {
       name: payload.name,
       slug,
+      updatedById: userId ?? null,
     },
   });
   return result;

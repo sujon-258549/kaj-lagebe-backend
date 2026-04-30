@@ -4,6 +4,8 @@ export declare const FolderServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
@@ -26,6 +28,8 @@ export declare const FolderServices: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
+            createdById: string | null;
+            updatedById: string | null;
             folderId: string | null;
             slug: string;
             status: boolean;
@@ -34,6 +38,8 @@ export declare const FolderServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
@@ -43,6 +49,8 @@ export declare const FolderServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
@@ -52,6 +60,8 @@ export declare const FolderServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;

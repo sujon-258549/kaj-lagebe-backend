@@ -1,5 +1,5 @@
 export declare const WorkTypeServices: {
-    createWorkTypeIntoDB: (payload: any) => Promise<{
+    createWorkType: (payload: any, userId?: string) => Promise<{
         name: string;
         isActive: boolean;
         createdAt: Date;
@@ -10,7 +10,22 @@ export declare const WorkTypeServices: {
         updatedById: string | null;
     }>;
     getAllWorkType: (query: any) => Promise<{
-        data: {
+        data: ({
+            createdBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
+            updatedBy: {
+                email: string;
+                profile: {
+                    name: string | null;
+                } | null;
+                id: string;
+            } | null;
+        } & {
             name: string;
             isActive: boolean;
             createdAt: Date;
@@ -19,14 +34,29 @@ export declare const WorkTypeServices: {
             description: string | null;
             createdById: string | null;
             updatedById: string | null;
-        }[];
+        })[];
         meta: {
             page: number;
             limit: number;
             total: number;
         };
     }>;
-    getWorkTypeById: (id: string) => Promise<{
+    getWorkTypeById: (id: string) => Promise<({
+        createdBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
+        updatedBy: {
+            email: string;
+            profile: {
+                name: string | null;
+            } | null;
+            id: string;
+        } | null;
+    } & {
         name: string;
         isActive: boolean;
         createdAt: Date;
@@ -35,8 +65,8 @@ export declare const WorkTypeServices: {
         description: string | null;
         createdById: string | null;
         updatedById: string | null;
-    } | null>;
-    updateWorkType: (id: string, payload: any) => Promise<{
+    }) | null>;
+    updateWorkType: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
         isActive: boolean;
         createdAt: Date;
@@ -56,7 +86,7 @@ export declare const WorkTypeServices: {
         createdById: string | null;
         updatedById: string | null;
     }>;
-    updateWorkTypeStatus: (id: string) => Promise<{
+    updateWorkTypeStatus: (id: string, userId?: string) => Promise<{
         name: string;
         isActive: boolean;
         createdAt: Date;

@@ -35,6 +35,8 @@ export declare const SiteSettingService: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
+            createdById: string | null;
+            updatedById: string | null;
             folderId: string | null;
             slug: string;
             status: boolean;
@@ -76,6 +78,8 @@ export declare const SiteSettingService: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
+            createdById: string | null;
+            updatedById: string | null;
             folderId: string | null;
             slug: string;
             status: boolean;

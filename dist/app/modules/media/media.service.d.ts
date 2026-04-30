@@ -1,9 +1,11 @@
 export declare const MediaServices: {
-    createFolder: (payload: any) => Promise<{
+    createFolder: (payload: any, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
@@ -34,6 +36,8 @@ export declare const MediaServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
@@ -43,15 +47,19 @@ export declare const MediaServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
     }>;
-    updateFolder: (id: string, payload: any) => Promise<{
+    updateFolder: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
@@ -60,12 +68,14 @@ export declare const MediaServices: {
         name: string;
         url: string;
         folderId?: string;
-    }) => Promise<{
+    }, userId?: string) => Promise<{
         name: string;
         url: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         folderId: string | null;
         slug: string;
         status: boolean;
@@ -81,18 +91,22 @@ export declare const MediaServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         folderId: string | null;
         slug: string;
         status: boolean;
     }>;
     updateImage: (id: string, payload: {
         name: string;
-    }) => Promise<{
+    }, userId?: string) => Promise<{
         name: string;
         url: string;
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
+        updatedById: string | null;
         folderId: string | null;
         slug: string;
         status: boolean;

@@ -79,6 +79,8 @@ model User {
   lastFollowUp       DateTime?
   followUpHistory    FollowUpHistory[]
   blogs              Blog[]
+  siteSettingsUpdated SiteSetting[] @relation("SiteSettingUpdatedBy")
+  siteSettingHistories SiteSettingHistory[]
 
   @@map("users")
 }
@@ -119,7 +121,25 @@ model SiteSetting {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  // Audit fields
+  updatedById String?
+  updatedBy   User?                @relation("SiteSettingUpdatedBy", fields: [updatedById], references: [id])
+  histories   SiteSettingHistory[]
+
   @@map("site_settings")
+}
+
+model SiteSettingHistory {
+  id            String      @id @default(uuid())
+  siteSettingId String
+  siteSetting   SiteSetting @relation(fields: [siteSettingId], references: [id], onDelete: Cascade)
+  oldValue      Json?
+  newValue      Json?
+  updatedById   String?
+  updatedBy     User?       @relation(fields: [updatedById], references: [id])
+  createdAt     DateTime    @default(now())
+
+  @@map("site_setting_histories")
 }
 
 model Profile {

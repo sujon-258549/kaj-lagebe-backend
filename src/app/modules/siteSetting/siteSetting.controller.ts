@@ -5,7 +5,8 @@ import sendResponse from "../../utils/response.ts";
 import { SiteSettingService } from "./siteSetting.services.js";
 
 const upsertSetting = catchAsync(async (req: Request, res: Response) => {
-  const result = await SiteSettingService.upsertSetting(req.body);
+  const user = (req as any).user;
+  const result = await SiteSettingService.upsertSetting(req.body, user?.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -15,7 +16,8 @@ const upsertSetting = catchAsync(async (req: Request, res: Response) => {
 });
 
 const bulkUpsertSettings = catchAsync(async (req: Request, res: Response) => {
-  const result = await SiteSettingService.bulkUpsertSettings(req.body);
+  const user = (req as any).user;
+  const result = await SiteSettingService.bulkUpsertSettings(req.body, user?.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

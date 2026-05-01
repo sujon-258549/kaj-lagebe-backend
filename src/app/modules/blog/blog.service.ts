@@ -40,7 +40,7 @@ const blogInclude = {
 };
 
 const createBlog = async (payload: any, userId?: string) => {
-  const { coverId, authorId, tags, ...rest } = payload;
+  const { coverId, authorId, tags, authorName, coverImage, ...rest } = payload;
   const slug = payload.slug || slugCreate(payload.title);
   
   const creatorId = userId || authorId;
@@ -133,7 +133,7 @@ const updateBlog = async (id: string, payload: any, userId?: string) => {
   const existingBlog = await prisma.blog.findUnique({ where: { id } });
   if (!existingBlog) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
 
-  const { tags, coverId, authorId, ...rest } = payload;
+  const { tags, coverId, authorId, authorName, coverImage, ...rest } = payload;
   const updateData: Prisma.BlogUpdateInput = { ...rest };
 
   if (tags) {

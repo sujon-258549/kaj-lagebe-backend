@@ -33,6 +33,7 @@ export declare const BlogServices: {
         authorId: string | null;
         content: string;
         tags: string[];
+        authorName: string | null;
         publishedAt: Date | null;
         coverId: string | null;
     }>;
@@ -71,6 +72,7 @@ export declare const BlogServices: {
             authorId: string | null;
             content: string;
             tags: string[];
+            authorName: string | null;
             publishedAt: Date | null;
             coverId: string | null;
         })[];
@@ -114,6 +116,7 @@ export declare const BlogServices: {
         authorId: string | null;
         content: string;
         tags: string[];
+        authorName: string | null;
         publishedAt: Date | null;
         coverId: string | null;
     }>;
@@ -151,6 +154,7 @@ export declare const BlogServices: {
         authorId: string | null;
         content: string;
         tags: string[];
+        authorName: string | null;
         publishedAt: Date | null;
         coverId: string | null;
     }>;
@@ -191,6 +195,7 @@ export declare const BlogServices: {
         authorId: string | null;
         content: string;
         tags: string[];
+        authorName: string | null;
         publishedAt: Date | null;
         coverId: string | null;
     }>;

@@ -16,6 +16,11 @@ const initAutomationCron = async () => {
     await AutomationService.processFollowUpEmails();
   });
 
+  // 3. Schedule Contact Nurturing (Hourly to match their original contact time)
+  cron.schedule("0 * * * *", async () => {
+    await AutomationService.processContactNurturingEmails();
+  });
+
   console.log(`⏰ [Cron] Automation Cron Jobs Initialized (Schedule: ${cronTime})`);
 };
 

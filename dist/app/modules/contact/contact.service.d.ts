@@ -12,6 +12,7 @@ export declare const ContactService: {
         firstName: string;
         lastName: string | null;
         aiResponse: string | null;
+        isNurtured: boolean;
     }>;
     getAllContacts: () => Promise<{
         name: string;
@@ -47,6 +48,7 @@ export declare const ContactService: {
         firstName: string;
         lastName: string | null;
         aiResponse: string | null;
+        isNurtured: boolean;
     }[]>;
     getContactById: (id: string) => Promise<{
         name: string;
@@ -83,6 +85,7 @@ export declare const ContactService: {
         firstName: string;
         lastName: string | null;
         aiResponse: string | null;
+        isNurtured: boolean;
     } | null>;
     sendContactFeedback: (id: string, feedbackMessage: string, senderId: string) => Promise<{
         subject: string | null;
@@ -96,6 +99,7 @@ export declare const ContactService: {
         firstName: string;
         lastName: string | null;
         aiResponse: string | null;
+        isNurtured: boolean;
     }>;
 };
 //# sourceMappingURL=contact.service.d.ts.map

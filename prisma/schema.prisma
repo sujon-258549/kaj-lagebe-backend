@@ -684,6 +684,7 @@ model Contact {
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isNurtured Boolean  @default(false)
   feedbacks ContactFeedback[]
 
   @@map("contacts")

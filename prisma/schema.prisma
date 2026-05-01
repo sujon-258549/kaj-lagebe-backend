@@ -676,6 +676,7 @@ model Contact {
   lastName  String?
   email     String?
   phone     String?
+  subject   String?
   message    String
   aiResponse String?
   userId    String?

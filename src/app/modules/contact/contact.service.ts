@@ -8,10 +8,10 @@ import { USER_ROLE } from "../users/user.constant.ts";
 const createContact = async (payload: IContact) => {
   // 1. Generate AI Response
   const prompt = `You are a professional customer support assistant for KajLagbe. 
-  A user named ${payload.firstName} ${payload.lastName || ""} has sent a message: 
-  "${payload.message}"
+  A user named ${payload.firstName} ${payload.lastName || ""} has sent a message with the subject: "${payload.subject || "No Subject"}".
+  Message content: "${payload.message}"
   
-  Provide a short, polite, and professional acknowledgment response that addresses the user's query if possible, or assures them that an admin will get back to them soon. Max 2-3 sentences.`;
+  Provide a short, polite, and professional acknowledgment response that addresses the user's query if possible, or assures them that an admin will get back to them soon. Use a warm but professional tone. Max 2-3 sentences.`;
 
   const aiResponse = await AgentService.generateResponse(prompt);
   payload.aiResponse = aiResponse;
@@ -36,7 +36,7 @@ const createContact = async (payload: IContact) => {
     await NotificationServices.createNotification({
       userId: admin.id,
       type: "CONTACT",
-      message: `New contact message from ${payload.firstName}: ${payload.message.substring(0, 50)}...`,
+      message: `🔔 New Inquiry: ${payload.firstName} sent a message regarding "${payload.subject || "General Inquiry"}".`,
     });
   }
 
@@ -58,17 +58,24 @@ const getAllContacts = async () => {
       },
     },
   });
-  return result;
+  return result.map((contact) => ({
+    ...contact,
+    name: `${contact.firstName} ${contact.lastName || ""}`.trim(),
+  }));
 };
 
 const getContactById = async (id: string) => {
-  const result = await prisma.contact.findUnique({
+  const contact = await prisma.contact.findUnique({
     where: { id },
     include: {
       user: true,
     },
   });
-  return result;
+  if (!contact) return null;
+  return {
+    ...contact,
+    name: `${contact.firstName} ${contact.lastName || ""}`.trim(),
+  };
 };
 
 export const ContactService = {

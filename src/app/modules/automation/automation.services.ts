@@ -1,6 +1,7 @@
 import prisma from "../../utils/prismaClient.js";
 import { AgentService } from "../agent/agent.services.js";
 import { sendEmail } from "../../utils/sendEmail.js";
+import { sendWhatsAppMessage } from "../../utils/whatsapp.js";
 import { getConfig, ConfigKeys, setConfig } from "../../utils/configProvider.js";
 
 const processFollowUpEmails = async () => {
@@ -298,6 +299,12 @@ const processContactNurturingEmails = async () => {
       `,
         subject,
       );
+
+      // Send WhatsApp if phone number exists
+      if (contact.phone) {
+        // Use the raw AI response (which is HTML) and the utility will format it for WA
+        await sendWhatsAppMessage(contact.phone, aiResponse);
+      }
 
       // Increment nurtureCount and set lastNurturedAt for ALL contacts with this email
       await prisma.contact.updateMany({

@@ -4,8 +4,9 @@ import prisma from "../../utils/prismaClient.ts";
 import { AgentService } from "../agent/agent.services.ts";
 import { NotificationServices } from "../notification/notification.service.ts";
 import { USER_ROLE } from "../users/user.constant.ts";
-import { contactAcknowledgmentTemplate, adminContactNotificationTemplate, sendEmail, contactFeedbackTemplate } from "../../utils/sendEmail.ts";
+import { contactAcknowledgmentTemplate, adminContactNotificationTemplate, sendEmail, contactFeedbackTemplate } from "../../utils/sendEmail.js";
 import { emitToUser } from "../../utils/socket.js";
+import { sendWhatsAppMessage } from "../../utils/whatsapp.js";
 
 const createContact = async (payload: IContact) => {
   // 1. Generate AI Response
@@ -154,6 +155,10 @@ const sendContactFeedback = async (id: string, feedbackMessage: string, senderId
   });
 
   await sendEmail(contact.email, emailHtml, `Re: ${contact.subject || "Contact Inquiry Response"}`);
+
+  if (contact.phone) {
+    await sendWhatsAppMessage(contact.phone, polishedFeedback);
+  }
 
   // 2. Store the feedback record in the new model
   await prisma.contactFeedback.create({

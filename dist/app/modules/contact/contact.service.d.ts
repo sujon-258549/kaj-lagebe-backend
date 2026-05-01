@@ -1,0 +1,82 @@
+import type { IContact } from "./contact.interface.ts";
+export declare const ContactService: {
+    createContact: (payload: IContact) => Promise<{
+        email: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        id: string;
+        message: string;
+        userId: string | null;
+        phone: string | null;
+        firstName: string;
+        lastName: string | null;
+    }>;
+    getAllContacts: () => Promise<({
+        user: {
+            email: string;
+            profile: {
+                name: string | null;
+                mobile: string;
+                id: string;
+                gender: import("@prisma/client").$Enums.Gender | null;
+                age: number | null;
+                dob: Date | null;
+                bloodGroup: import("@prisma/client").$Enums.BloodGroup | null;
+                photoId: string | null;
+                photo: string | null;
+                nid: string | null;
+                nidPhoto: string[];
+                emailVerified: boolean;
+                phoneVerified: boolean;
+                nidVerified: boolean;
+                serialId: string | null;
+            } | null;
+            id: string;
+        } | null;
+    } & {
+        email: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        id: string;
+        message: string;
+        userId: string | null;
+        phone: string | null;
+        firstName: string;
+        lastName: string | null;
+    })[]>;
+    getContactById: (id: string) => Promise<({
+        user: {
+            email: string;
+            mobile: string;
+            isBlocked: boolean;
+            isDeleted: boolean;
+            isVerified: boolean;
+            isActive: boolean;
+            createdAt: Date;
+            updatedAt: Date;
+            id: string;
+            password: string;
+            roleId: string | null;
+            passwordChangeTime: Date | null;
+            passwordChanged: boolean;
+            lastLogin: Date | null;
+            subscriptionId: string | null;
+            departmentId: string | null;
+            loginCount: number;
+            loginTryCount: number;
+            loginTryTime: Date | null;
+            lastFollowUp: Date | null;
+        } | null;
+    } & {
+        email: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        id: string;
+        message: string;
+        userId: string | null;
+        phone: string | null;
+        firstName: string;
+        lastName: string | null;
+    }) | null>;
+};
+//# sourceMappingURL=contact.service.d.ts.map

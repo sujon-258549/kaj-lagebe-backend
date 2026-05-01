@@ -117,6 +117,9 @@ model User {
   imagesUpdated        Image[]              @relation("ImageUpdatedBy")
   galleriesCreated     Gallery[]            @relation("GalleryCreatedBy")
   galleriesUpdated     Gallery[]            @relation("GalleryUpdatedBy")
+  reviewsCreated       Review[]             @relation("ReviewCreatedBy")
+  reviewsUpdated       Review[]             @relation("ReviewUpdatedBy")
+  contacts             Contact[]
 
   @@map("users")
 }
@@ -449,6 +452,7 @@ model Image {
   subCategories        SubCategory[]
   projects             Project[] @relation("ProjectImage")
   galleries            Gallery[] @relation("GalleryImage")
+  reviews              Review[]  @relation("ReviewImage")
 
   createdById String?
   updatedById String?
@@ -664,4 +668,41 @@ model Gallery {
   updatedBy   User?    @relation("GalleryUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("galleries")
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  firstName String
+  lastName  String?
+  email     String?
+  phone     String?
+  message   String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contacts")
+}
+
+model Review {
+  id          String   @id @default(uuid())
+  name        String
+  role        String?
+  title       String?
+  content     String
+  image       String?
+  imageId     String?
+  imageRel    Image?   @relation("ReviewImage", fields: [imageId], references: [id])
+  status      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("ReviewCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("ReviewUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("reviews")
 }

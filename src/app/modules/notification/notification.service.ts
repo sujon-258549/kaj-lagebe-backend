@@ -5,7 +5,7 @@ import { notificationSearchableFields } from "./notification.constant.ts";
 import httpStatus from "http-status";
 import ApiError from "../../middleware/apiError.ts";
 
-import { getIO } from "../../utils/socket.js";
+import { emitToUser } from "../../utils/socket.js";
 
 const createNotification = async (payload: any) => {
   const result = await prisma.notification.create({
@@ -13,13 +13,8 @@ const createNotification = async (payload: any) => {
   });
 
   // Send real-time notification using Socket.io
-  try {
-    const io = getIO();
-    if (payload.userId) {
-      io.to(payload.userId).emit("new-notification", result);
-    }
-  } catch (error) {
-    console.error("Socket emit error:", error);
+  if (payload.userId) {
+    emitToUser(payload.userId, "new-notification", result);
   }
 
   return result;
@@ -98,12 +93,7 @@ const updateNotification = async (id: string, payload: any) => {
   });
 
   // Real-time update for a single notification
-  try {
-    const io = getIO();
-    io.to(result.userId).emit("notification-updated", result);
-  } catch (error) {
-    console.error("Socket emit error:", error);
-  }
+  emitToUser(result.userId, "notification-updated", result);
 
   return result;
 };
@@ -128,12 +118,7 @@ const markAsRead = async (userId: string) => {
   });
 
   // Real-time update to sync all tabs/devices for the user
-  try {
-    const io = getIO();
-    io.to(userId).emit("notifications-read-sync", { userId, isRead: true });
-  } catch (error) {
-    console.error("Socket emit error:", error);
-  }
+  emitToUser(userId, "notifications-read-sync", { userId, isRead: true });
 
   return { message: "All notifications marked as read" };
 };

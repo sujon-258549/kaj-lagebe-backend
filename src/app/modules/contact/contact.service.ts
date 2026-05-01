@@ -4,6 +4,7 @@ import prisma from "../../utils/prismaClient.ts";
 import { AgentService } from "../agent/agent.services.ts";
 import { NotificationServices } from "../notification/notification.service.ts";
 import { USER_ROLE } from "../users/user.constant.ts";
+import { contactAcknowledgmentTemplate, adminContactNotificationTemplate, sendEmail } from "../../utils/sendEmail.ts";
 
 const createContact = async (payload: IContact) => {
   // 1. Generate AI Response
@@ -33,11 +34,57 @@ const createContact = async (payload: IContact) => {
   });
 
   for (const admin of admins) {
+    // 3a. System Notification
     await NotificationServices.createNotification({
       userId: admin.id,
       type: "CONTACT",
-      message: `🔔 New Inquiry: ${payload.firstName} sent a message regarding "${payload.subject || "General Inquiry"}".`,
+      message: `📩 New Contact: ${payload.firstName} reached out about "${payload.subject || "General Inquiry"}". Check the message now!`,
     });
+
+    // 3b. Admin Email Notification
+    if (admin.email) {
+      const adminEmailHtml = adminContactNotificationTemplate({
+        name: `${payload.firstName} ${payload.lastName || ""}`.trim(),
+        email: payload.email || "Not provided",
+        subject: payload.subject || "No Subject",
+        message: payload.message,
+      });
+
+      try {
+        await sendEmail(admin.email, adminEmailHtml, `New Contact Alert: ${payload.subject || "General Inquiry"}`);
+      } catch (error) {
+        console.error(`Error sending contact notification email to admin ${admin.email}:`, error);
+      }
+    }
+  }
+
+  // 3b. Create Notification for the User (if logged in)
+  if (payload.userId) {
+    await NotificationServices.createNotification({
+      userId: payload.userId,
+      type: "CONTACT",
+      message: `✅ Message Sent: Hi ${payload.firstName}, we've received your message about "${payload.subject || "your inquiry"}". We'll get back to you soon!`,
+    });
+  }
+
+  // 3c. Emit Socket Event to Admins for Real-time Dashboard Update
+  const { emitToRole } = await import("../../utils/socket.js");
+  emitToRole(USER_ROLE.SUPER_ADMIN, "new-contact", result);
+  emitToRole(USER_ROLE.ADMIN, "new-contact", result);
+
+  // 4. Send Auto-Feedback Email to User
+  if (payload.email) {
+    const emailHtml = contactAcknowledgmentTemplate({
+      name: `${payload.firstName} ${payload.lastName || ""}`.trim(),
+      subject: payload.subject || "Your message to KajLagbe",
+      aiMessage: aiResponse,
+    });
+
+    try {
+      await sendEmail(payload.email, emailHtml, `Re: ${payload.subject || "Contact Inquiry"}`);
+    } catch (error) {
+      console.error("Error sending contact feedback email:", error);
+    }
   }
 
   return result;

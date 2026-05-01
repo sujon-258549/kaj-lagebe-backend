@@ -23,6 +23,7 @@ import { SiteSettingRoutes } from "../modules/siteSetting/siteSetting.routes.js"
 import { ProjectRoutes } from "../modules/project/project.routes.ts";
 import { GalleryRoutes } from "../modules/gallery/gallery.routes.ts";
 import { ContactRoutes } from "../modules/contact/contact.routes.ts";
+import { ReviewRoutes } from "../modules/review/review.routes.ts";
 
 const router = Router();
 
@@ -122,6 +123,10 @@ const allRouter = [
   {
     path: "/contact",
     router: ContactRoutes,
+  },
+  {
+    path: "/review",
+    router: ReviewRoutes,
   },
 ];
 

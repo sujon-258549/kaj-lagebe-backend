@@ -13,6 +13,8 @@ const createReview = async (payload: IReview, userId?: string) => {
     data.updatedBy = { connect: { id: userId } };
   }
 
+  //
+
   if (imageId) {
     data.imageRel = { connect: { id: imageId } };
   }

@@ -29,4 +29,5 @@ export default {
     siteUrl: process.env.YOUR_SITE_URL || "",
     siteName: process.env.YOUR_SITE_NAME || "",
   },
+  cookieDomain: process.env.COOKIE_DOMAIN,
 };

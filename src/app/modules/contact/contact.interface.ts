@@ -4,5 +4,6 @@ export type IContact = {
   email?: string;
   phone?: string;
   message: string;
+  aiResponse?: string;
   userId?: string;
 };

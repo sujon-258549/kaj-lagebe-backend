@@ -14,6 +14,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     httpOnly: true,
     sameSite: config.nodeEnv === "production" ? "none" : "lax",
     maxAge: 1000 * 60 * 60 * 24 * 365,
+    ...(config.cookieDomain ? { domain: config.cookieDomain } : {}),
   });
   sendResponse(res, {
     success: true,
@@ -74,6 +75,7 @@ const logoutUser = catchAsync(async (req: Request, res: Response) => {
     secure: config.nodeEnv === "production",
     httpOnly: true,
     sameSite: config.nodeEnv === "production" ? "none" : "lax",
+    ...(config.cookieDomain ? { domain: config.cookieDomain } : {}),
   });
   sendResponse(res, {
     success: true,

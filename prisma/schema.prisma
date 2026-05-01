@@ -676,7 +676,8 @@ model Contact {
   lastName  String?
   email     String?
   phone     String?
-  message   String
+  message    String
+  aiResponse String?
   userId    String?
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())

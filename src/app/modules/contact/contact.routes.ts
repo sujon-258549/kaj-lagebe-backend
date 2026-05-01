@@ -15,13 +15,13 @@ router.post(
 
 router.get(
   "/",
-  auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN),
+  auth(),
   ContactController.getAllContacts
 );
 
 router.get(
   "/:id",
-  auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN),
+  auth(),
   ContactController.getContactById
 );
 

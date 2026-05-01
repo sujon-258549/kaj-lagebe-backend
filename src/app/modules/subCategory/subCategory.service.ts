@@ -20,8 +20,13 @@ const createSubCategory = async (payload: any, userId?: string) => {
 
   const result = await prisma.subCategory.create({
     data,
+    include: { image: true },
   });
-  return result;
+  return {
+    ...result,
+    image: result.image?.url || null,
+    url: result.image?.url || null,
+  };
 };
 
 const getAllSubCategory = async (query: any) => {
@@ -70,7 +75,6 @@ const getAllSubCategory = async (query: any) => {
         select: {
           name: true,
           slug: true,
-          image: true,
         },
       },
       image: true,
@@ -93,7 +97,11 @@ const getAllSubCategory = async (query: any) => {
   });
 
   return {
-    data: result,
+    data: result.map((curr: any) => ({
+      ...curr,
+      image: curr.image?.url || null,
+      url: curr.image?.url || null,
+    })),
     meta: {
       page: pageNumber,
       limit: limitNumber,
@@ -120,7 +128,11 @@ const getSubCategoryById = async (id: string) => {
   });
   if (!result)
     throw new ApiError(httpStatus.NOT_FOUND, "SubCategory not found");
-  return result;
+  return {
+    ...result,
+    image: result.image?.url || null,
+    url: result.image?.url || null,
+  };
 };
 
 const getSubCategoryBySlug = async (slug: string) => {
@@ -139,7 +151,11 @@ const getSubCategoryBySlug = async (slug: string) => {
   });
   if (!result)
     throw new ApiError(httpStatus.NOT_FOUND, "SubCategory not found");
-  return result;
+  return {
+    ...result,
+    image: result.image?.url || null,
+    url: result.image?.url || null,
+  };
 };
 
 const updateSubCategory = async (id: string, payload: any, userId?: string) => {
@@ -180,8 +196,13 @@ const updateSubCategory = async (id: string, payload: any, userId?: string) => {
   const result = await prisma.subCategory.update({
     where: { id },
     data: updateData,
+    include: { image: true },
   });
-  return result;
+  return {
+    ...result,
+    image: result.image?.url || null,
+    url: result.image?.url || null,
+  };
 };
 
 const deleteSubCategory = async (id: string) => {

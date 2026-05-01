@@ -20,6 +20,8 @@ import { AgentRouter } from "../modules/agent/agent.router.ts";
 import { AutomationRoutes } from "../modules/automation/automation.router.js";
 import { SystemConfigRoutes } from "../modules/systemConfig/systemConfig.router.js";
 import { SiteSettingRoutes } from "../modules/siteSetting/siteSetting.routes.js";
+import { ProjectRoutes } from "../modules/project/project.routes.ts";
+import { GalleryRoutes } from "../modules/gallery/gallery.routes.ts";
 
 const router = Router();
 
@@ -107,6 +109,14 @@ const allRouter = [
   {
     path: "/site-setting",
     router: SiteSettingRoutes,
+  },
+  {
+    path: "/project",
+    router: ProjectRoutes,
+  },
+  {
+    path: "/gallery",
+    router: GalleryRoutes,
   },
 ];
 

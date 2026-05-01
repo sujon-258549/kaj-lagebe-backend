@@ -115,6 +115,8 @@ model User {
   foldersUpdated       Folder[]             @relation("FolderUpdatedBy")
   imagesCreated        Image[]              @relation("ImageCreatedBy")
   imagesUpdated        Image[]              @relation("ImageUpdatedBy")
+  galleriesCreated     Gallery[]            @relation("GalleryCreatedBy")
+  galleriesUpdated     Gallery[]            @relation("GalleryUpdatedBy")
 
   @@map("users")
 }
@@ -368,6 +370,7 @@ model Blog {
   cover       Image?    @relation("CoverPhoto", fields: [coverId], references: [id])
   tags        String[]  @default([])
   category    String?
+  authorName  String?
   authorId    String?
   author      User?     @relation(fields: [authorId], references: [id])
   updatedById String?
@@ -444,6 +447,8 @@ model Image {
   siteSettings         SiteSetting[]
   categories           Category[]
   subCategories        SubCategory[]
+  projects             Project[] @relation("ProjectImage")
+  galleries            Gallery[] @relation("GalleryImage")
 
   createdById String?
   updatedById String?
@@ -451,6 +456,25 @@ model Image {
   updatedBy   User?    @relation("ImageUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("images")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  category    String
+  title       String
+  slug        String   @unique
+  description String?
+  content     String?
+  image       String
+  imageId     String?
+  imageRel    Image?   @relation("ProjectImage", fields: [imageId], references: [id])
+  number      String
+  status      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("projects")
 }
 
 enum Role {
@@ -619,4 +643,25 @@ model Notification {
   updatedAt     DateTime @updatedAt
 
   @@map("notifications")
+}
+
+model Gallery {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  image       String
+  imageId     String?
+  imageRel    Image?   @relation("GalleryImage", fields: [imageId], references: [id])
+  number      String
+  status      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdById String?
+  updatedById String?
+  createdBy   User?    @relation("GalleryCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User?    @relation("GalleryUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("galleries")
 }

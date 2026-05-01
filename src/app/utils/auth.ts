@@ -14,6 +14,7 @@ const auth = (...requiredRoles: UserRoleValue[]) => {
     const token = req?.headers?.authorization;
 
     if (!token) {
+      console.log("🔍 [Auth] Unauthorized request to:", req.originalUrl);
       throw new ApiError(status.UNAUTHORIZED, "🔍❓ Unauthorized: Token missing");
     }
 

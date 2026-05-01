@@ -26,6 +26,7 @@ const createCategoryIntoDB = async (payload: any, userId?: string) => {
 
   const result = await prisma.category.create({
     data,
+    include: { image: true },
   });
 
   // History record
@@ -38,7 +39,11 @@ const createCategoryIntoDB = async (payload: any, userId?: string) => {
     },
   });
 
-  return result;
+  return {
+    ...result,
+    image: result.image?.url || null,
+    url: result.image?.url || null,
+  };
 };
 
 const getAllCategory = async (query: any) => {
@@ -109,7 +114,16 @@ const getAllCategory = async (query: any) => {
   });
 
   return {
-    data: result,
+    data: result.map((curr: any) => ({
+      ...curr,
+      image: curr.image?.url || null,
+      url: curr.image?.url || null,
+      subCategories: curr.subCategories.map((sub: any) => ({
+        ...sub,
+        image: sub.image?.url || null,
+        url: sub.image?.url || null,
+      })),
+    })),
     meta: {
       page: pageNumber,
       limit: limitNumber,
@@ -147,7 +161,16 @@ const getCategoryById = async (id: string) => {
       },
     },
   });
-  return result;
+  return result ? {
+    ...result,
+    image: result.image?.url || null,
+    url: result.image?.url || null,
+    subCategories: result.subCategories.map((sub: any) => ({
+      ...sub,
+      image: sub.image?.url || null,
+      url: sub.image?.url || null,
+    })),
+  } : null;
 };
 
 const updateCategory = async (id: string, payload: any, userId?: string) => {
@@ -179,6 +202,7 @@ const updateCategory = async (id: string, payload: any, userId?: string) => {
   const result = await prisma.category.update({
     where: { id },
     data: updateData,
+    include: { image: true },
   });
 
   // History record
@@ -191,7 +215,11 @@ const updateCategory = async (id: string, payload: any, userId?: string) => {
     },
   });
 
-  return result;
+  return {
+    ...result,
+    image: result.image?.url || null,
+    url: result.image?.url || null,
+  };
 };
 
 const updateCategoryStatus = async (id: string, userId?: string) => {

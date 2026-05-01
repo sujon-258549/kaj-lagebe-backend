@@ -11,6 +11,7 @@ const createContactZodSchema = z.object({
     message: z.string({
       message: "Message is required",
     }),
+    subject: z.string().optional(),
     userId: z.string().optional(),
   }),
 });

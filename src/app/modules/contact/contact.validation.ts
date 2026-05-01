@@ -16,6 +16,15 @@ const createContactZodSchema = z.object({
   }),
 });
 
+const feedbackZodSchema = z.object({
+  body: z.object({
+    message: z.string({
+      message: "Feedback message is required",
+    }),
+  }),
+});
+
 export const ContactValidation = {
   createContactZodSchema,
+  feedbackZodSchema,
 };

@@ -25,4 +25,11 @@ router.get(
   ContactController.getContactById
 );
 
+router.post(
+  "/feedback/:id",
+  auth(),
+  validateRequest(ContactValidation.feedbackZodSchema),
+  ContactController.sendFeedback
+);
+
 export const ContactRoutes = router;

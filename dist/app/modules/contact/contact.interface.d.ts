@@ -3,7 +3,9 @@ export type IContact = {
     lastName?: string;
     email?: string;
     phone?: string;
+    subject?: string;
     message: string;
+    aiResponse?: string;
     userId?: string;
 };
 //# sourceMappingURL=contact.interface.d.ts.map

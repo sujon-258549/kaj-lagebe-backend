@@ -1,6 +1,7 @@
 import type { IContact } from "./contact.interface.ts";
 export declare const ContactService: {
     createContact: (payload: IContact) => Promise<{
+        subject: string | null;
         email: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -10,8 +11,10 @@ export declare const ContactService: {
         phone: string | null;
         firstName: string;
         lastName: string | null;
+        aiResponse: string | null;
     }>;
-    getAllContacts: () => Promise<({
+    getAllContacts: () => Promise<{
+        name: string;
         user: {
             email: string;
             profile: {
@@ -33,7 +36,7 @@ export declare const ContactService: {
             } | null;
             id: string;
         } | null;
-    } & {
+        subject: string | null;
         email: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -43,8 +46,10 @@ export declare const ContactService: {
         phone: string | null;
         firstName: string;
         lastName: string | null;
-    })[]>;
-    getContactById: (id: string) => Promise<({
+        aiResponse: string | null;
+    }[]>;
+    getContactById: (id: string) => Promise<{
+        name: string;
         user: {
             email: string;
             mobile: string;
@@ -67,7 +72,7 @@ export declare const ContactService: {
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
         } | null;
-    } & {
+        subject: string | null;
         email: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -77,6 +82,20 @@ export declare const ContactService: {
         phone: string | null;
         firstName: string;
         lastName: string | null;
-    }) | null>;
+        aiResponse: string | null;
+    } | null>;
+    sendContactFeedback: (id: string, feedbackMessage: string, senderId: string) => Promise<{
+        subject: string | null;
+        email: string | null;
+        createdAt: Date;
+        updatedAt: Date;
+        id: string;
+        message: string;
+        userId: string | null;
+        phone: string | null;
+        firstName: string;
+        lastName: string | null;
+        aiResponse: string | null;
+    }>;
 };
 //# sourceMappingURL=contact.service.d.ts.map

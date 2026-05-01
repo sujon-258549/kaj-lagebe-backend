@@ -49,16 +49,17 @@ export const socketIO = (server: HttpServer) => {
     
     if (user?.id) {
       socket.join(user.id);
-      console.log(`📡 [Socket] User connected: ${user.email} (Room: ${user.id})`);
+      console.log(`📡 [Socket] User joined personal room: ${user.id} (${user.email})`);
     }
 
     // Role-based rooms
     if (user?.role) {
       socket.join(`role:${user.role}`);
+      console.log(`📡 [Socket] User joined role room: role:${user.role} (${user.email})`);
     }
 
-    socket.on("disconnect", () => {
-      console.log(`📡 [Socket] User disconnected: ${user?.email}`);
+    socket.on("disconnect", (reason) => {
+      console.log(`📡 [Socket] User disconnected: ${user?.email}. Reason: ${reason}`);
     });
 
     socket.on("error", (error) => {

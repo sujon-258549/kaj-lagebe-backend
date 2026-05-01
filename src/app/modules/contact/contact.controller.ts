@@ -9,7 +9,7 @@ const createContact = catchAsync(async (req: Request, res: Response) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Contact message sent successfully",
+    message: "আপনার বার্তাটি সফলভাবে পাঠানো হয়েছে! আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।",
     data: result,
   });
 });
@@ -34,8 +34,22 @@ const getContactById = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const sendFeedback = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { message } = req.body;
+  const user = (req as any).user;
+  const result = await ContactService.sendContactFeedback(id as string, message as string, user.id);
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "ইউজারের ইমেইলে ফিডব্যাক সফলভাবে পাঠানো হয়েছে",
+    data: result,
+  });
+});
+
 export const ContactController = {
   createContact,
   getAllContacts,
   getContactById,
+  sendFeedback,
 };

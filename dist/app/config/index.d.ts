@@ -24,6 +24,7 @@ declare const _default: {
         siteUrl: string;
         siteName: string;
     };
+    cookieDomain: string | undefined;
 };
 export default _default;
 //# sourceMappingURL=index.d.ts.map

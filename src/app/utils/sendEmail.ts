@@ -53,25 +53,25 @@ export const contactAcknowledgmentTemplate = (data: {
     <body>
       <div class="container">
         <div class="header">
-          <a href="#" class="logo">KajLagbe</a>
+          <a href="#" class="logo">কাজলাগবে</a>
         </div>
         <div class="content">
-          <h2 style="color: #1f2937;">Hello ${data.name},</h2>
-          <p>Thank you for reaching out to us! We have received your message regarding <strong>"${data.subject}"</strong>.</p>
+          <h2 style="color: #1f2937;">প্রিয় ${data.name},</h2>
+          <p>আমাদের সাথে যোগাযোগ করার জন্য ধন্যবাদ! আমরা আপনার বার্তাটি পেয়েছি: <strong>"${data.subject}"</strong>।</p>
           
           <div class="ai-response">
             ${data.aiMessage}
           </div>
           
-          <p>Our team has been notified and we will get back to you if further assistance is needed. In the meantime, feel free to explore our platform.</p>
+          <p>আমাদের টিম আপনার বার্তাটি পর্যালোচনা করছে এবং প্রয়োজন হলে আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব। আমাদের প্ল্যাটফর্মের সাথেই থাকুন।</p>
           
           <div style="text-align: center;">
-            <a href="https://kajlagbe.com" class="btn">Visit Website</a>
+            <a href="https://kajlagbe.com" class="btn">ওয়েবসাইট ভিজিট করুন</a>
           </div>
         </div>
         <div class="footer">
-          <p>&copy; 2026 KajLagbe. All rights reserved.</p>
-          <p>This is an automated response. Please do not reply directly to this email.</p>
+          <p>&copy; 2026 কাজলাগবে। সর্বস্বত্ব সংরক্ষিত।</p>
+          <p>এটি একটি স্বয়ংক্রিয় বার্তা। অনুগ্রহ করে এই ইমেইলের সরাসরি উত্তর দেবেন না।</p>
         </div>
       </div>
     </body>
@@ -130,6 +130,77 @@ export const adminContactNotificationTemplate = (data: {
         
         <div class="footer">
           <p>This is an automated notification from your Website Dashboard.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
+export const contactFeedbackTemplate = (data: {
+  name: string;
+  originalMessage: string;
+  feedbackMessage: string;
+}) => {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1f2937; background-color: #f8fafc; margin: 0; padding: 0; }
+        .wrapper { padding: 40px 20px; background-color: #f8fafc; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .header { background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%); padding: 40px 30px; text-align: center; color: white; }
+        .logo { font-size: 24px; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 8px; display: block; color: white; text-decoration: none; }
+        .header-title { font-size: 20px; font-weight: 600; margin: 0; opacity: 0.9; }
+        .content { padding: 40px 30px; }
+        .greeting { font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 24px; }
+        .response-box { background: #f1f5f9; border-radius: 12px; padding: 24px; margin: 24px 0; border-left: 4px solid #4F46E5; }
+        .response-text { font-size: 16px; color: #334155; margin: 0; white-space: pre-wrap; }
+        .original-context { margin-top: 32px; padding-top: 24px; border-top: 1px solid #e2e8f0; }
+        .context-title { font-size: 14px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+        .original-message { font-size: 14px; color: #94a3b8; font-style: italic; margin: 0; }
+        .footer { padding: 30px; background: #f1f5f9; text-align: center; font-size: 14px; color: #64748b; }
+        .social-links { margin-bottom: 16px; }
+        .social-link { color: #4F46E5; text-decoration: none; margin: 0 10px; font-weight: 600; }
+        .btn { display: inline-block; padding: 12px 28px; background-color: #4F46E5; color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 24px; transition: background-color 0.2s; }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <div class="container">
+          <div class="header">
+            <a href="https://kajlagbe.com" class="logo">কাজলাগবে</a>
+            <p class="header-title">অফিসিয়াল রেসপন্স</p>
+          </div>
+          <div class="content">
+            <h1 class="greeting">প্রিয় ${data.name},</h1>
+            <p>আমাদের সাথে যোগাযোগ করার জন্য ধন্যবাদ। আমরা আপনার বার্তাটি পর্যালোচনা করেছি এবং আমাদের টিমের পক্ষ থেকে নিচের উত্তরটি প্রদান করা হয়েছে:</p>
+            
+            <div class="response-box">
+              <p class="response-text">${data.feedbackMessage}</p>
+            </div>
+            
+            <p>আপনার যদি আরও কোনো প্রশ্ন থাকে বা সাহায্যের প্রয়োজন হয়, তবে নির্দ্বিধায় আমাদের সাথে পুনরায় যোগাযোগ করুন।</p>
+            
+            <div style="text-align: center;">
+              <a href="https://kajlagbe.com" class="btn">আমাদের ওয়েবসাইট ভিজিট করুন</a>
+            </div>
+
+            <div class="original-context">
+              <p class="context-title">আপনার মূল বার্তা</p>
+              <p class="original-message">"${data.originalMessage}"</p>
+            </div>
+          </div>
+          <div class="footer">
+            <div class="social-links">
+              <a href="#" class="social-link">ফেসবুক</a>
+              <a href="#" class="social-link">টুইটার</a>
+              <a href="#" class="social-link">লিঙ্কডইন</a>
+            </div>
+            <p>&copy; 2026 কাজলাগবে। সর্বস্বত্ব সংরক্ষিত।</p>
+            <p>পেশাদারিত্ব এবং আস্থার সাথে আপনার পাশে।</p>
+          </div>
         </div>
       </div>
     </body>

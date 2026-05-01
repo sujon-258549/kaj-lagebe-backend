@@ -120,6 +120,7 @@ model User {
   reviewsCreated       Review[]             @relation("ReviewCreatedBy")
   reviewsUpdated       Review[]             @relation("ReviewUpdatedBy")
   contacts             Contact[]
+  contactFeedbacks     ContactFeedback[]
 
   @@map("users")
 }
@@ -683,8 +684,21 @@ model Contact {
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  feedbacks ContactFeedback[]
 
   @@map("contacts")
+}
+
+model ContactFeedback {
+  id              String   @id @default(uuid())
+  contactId       String
+  contact         Contact  @relation(fields: [contactId], references: [id])
+  senderId        String
+  sender          User     @relation(fields: [senderId], references: [id])
+  feedbackMessage String
+  createdAt       DateTime @default(now())
+
+  @@map("contact_feedbacks")
 }
 
 model Review {

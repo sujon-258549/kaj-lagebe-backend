@@ -12,7 +12,8 @@ export declare const ContactService: {
         firstName: string;
         lastName: string | null;
         aiResponse: string | null;
-        isNurtured: boolean;
+        nurtureCount: number;
+        lastNurturedAt: Date | null;
     }>;
     getAllContacts: () => Promise<{
         name: string;
@@ -48,7 +49,8 @@ export declare const ContactService: {
         firstName: string;
         lastName: string | null;
         aiResponse: string | null;
-        isNurtured: boolean;
+        nurtureCount: number;
+        lastNurturedAt: Date | null;
     }[]>;
     getContactById: (id: string) => Promise<{
         name: string;
@@ -85,7 +87,8 @@ export declare const ContactService: {
         firstName: string;
         lastName: string | null;
         aiResponse: string | null;
-        isNurtured: boolean;
+        nurtureCount: number;
+        lastNurturedAt: Date | null;
     } | null>;
     sendContactFeedback: (id: string, feedbackMessage: string, senderId: string) => Promise<{
         subject: string | null;
@@ -99,7 +102,8 @@ export declare const ContactService: {
         firstName: string;
         lastName: string | null;
         aiResponse: string | null;
-        isNurtured: boolean;
+        nurtureCount: number;
+        lastNurturedAt: Date | null;
     }>;
 };
 //# sourceMappingURL=contact.service.d.ts.map

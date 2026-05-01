@@ -184,45 +184,69 @@ const processContactNurturingEmails = async () => {
 
   try {
     const now = new Date();
-    const currentHour = now.getHours();
-
-    // Find contacts that have not been nurtured, are at least 24 hours old
+    
+    // Find unique emails to nurture
+    // We want to send a maximum of 3 nurturing emails
+    // 1st email: 1 day after contact
+    // 2nd email: 3 days after 1st email
+    // 3rd email: 7 days after 2nd email
+    
     const unNurturedContacts = await prisma.contact.findMany({
       where: {
-        isNurtured: false,
-        createdAt: {
-          lt: new Date(now.getTime() - 24 * 60 * 60 * 1000), // older than 24 hours
-        },
+        nurtureCount: { lt: 10 }, // Max 3 emails
+        OR: [
+          {
+            // Case 1: First email (nurtureCount = 0), > 1 day since contact
+            nurtureCount: 0,
+            createdAt: { lt: new Date(now.getTime() - 24 * 60 * 60 * 1000) }
+          },
+          {
+            // Case 2: Second email (nurtureCount = 1), > 3 days since last nurture
+            nurtureCount: 1,
+            lastNurturedAt: { lt: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000) }
+          },
+          {
+            // Case 3: Third email (nurtureCount = 2), > 7 days since last nurture
+            nurtureCount: 2,
+            lastNurturedAt: { lt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) }
+          }
+        ]
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    // Filter contacts where the original contact hour matches current hour
-    // And keep only unique emails to avoid spamming the same person in one run
     const emailsToNurture = new Set<string>();
     const contactsToProcess = [];
 
     for (const contact of unNurturedContacts) {
       if (!contact.email) continue;
       
-      const contactHour = contact.createdAt.getHours();
-      
-      // If hour matches (or is within 1 hour to handle slight delays) and we haven't processed this email yet
-      if (contactHour === currentHour && !emailsToNurture.has(contact.email)) {
+      // Keep only unique emails per run
+      if (!emailsToNurture.has(contact.email)) {
         emailsToNurture.add(contact.email);
         contactsToProcess.push(contact);
       }
     }
 
-    console.log(`🔍 [Automation] Found ${contactsToProcess.length} contacts for nurturing at this hour.`);
+    console.log(`🔍 [Automation] Found ${contactsToProcess.length} contacts for nurturing at this time.`);
 
     for (const contact of contactsToProcess) {
       if (!contact.email) continue;
 
       const userName = contact.firstName || "সম্মানিত গ্রাহক";
       const userMessage = contact.message;
+      const currentNurtureStep = contact.nurtureCount + 1; // 1, 2, or 3
+
+      let promptInstructions = "";
+      if (currentNurtureStep === 1) {
+        promptInstructions = "This is our first follow-up. Gently remind them we are ready to help with their task and offer our reliable workers.";
+      } else if (currentNurtureStep === 2) {
+        promptInstructions = "This is our second follow-up after a few days. Ask if they are still struggling with their work/task, and emphasize our fast hiring process and low cost.";
+      } else {
+        promptInstructions = "This is our final follow-up after a week. Provide a final friendly reminder that KajLagbe is the best platform to hire workers for any job, anytime.";
+      }
 
       const prompt = `
         You are a persuasive business developer for "Kaj Lagbe" (কাজ লাগবে), a service platform where users can hire reliable workers very quickly.
@@ -230,12 +254,14 @@ const processContactNurturingEmails = async () => {
         
         Write a professional, warm, and highly persuasive Bengali (বাংলা) email to nurture this lead.
         
+        Context for this email: ${promptInstructions}
+        
         Instructions:
         1. Address them politely.
-        2. Acknowledge their past inquiry politely.
-        3. Explain that if they have any pending work, tasks, or projects, they can easily hire our fast and reliable workers to solve it quickly.
+        2. Acknowledge their past inquiry.
+        3. Explain how our workers can solve their specific problem quickly.
         4. Provide our company contact information (e.g., Phone: +880 1234 567890, Email: support@kajlagbe.com).
-        5. Tone must be helpful, professional, and not overly salesy, but clearly offering our workers' help.
+        5. Tone must be helpful, professional, and not overly salesy.
         6. Provide a Subject line separately at the top starting with "Subject: ".
         7. The body should be in clean HTML format (only <p>, <br>, <strong> tags).
       `;
@@ -273,13 +299,16 @@ const processContactNurturingEmails = async () => {
         subject,
       );
 
-      // Mark ALL contacts with this email as nurtured to avoid duplicate nurturing
+      // Increment nurtureCount and set lastNurturedAt for ALL contacts with this email
       await prisma.contact.updateMany({
         where: { email: contact.email },
-        data: { isNurtured: true },
+        data: { 
+          nurtureCount: { increment: 1 },
+          lastNurturedAt: now
+        },
       });
 
-      console.log(`✅ [Automation] Nurturing email sent to: ${contact.email}`);
+      console.log(`✅ [Automation] Nurturing email step ${currentNurtureStep} sent to: ${contact.email}`);
     }
   } catch (error) {
     console.error("❌ [Automation] Error in Contact Nurturing Process:", error);

@@ -5,12 +5,12 @@ export declare const SubscriptionServices: {
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
+        description: string | null;
         price: string;
         duration: string;
         discount: string;
@@ -22,17 +22,17 @@ export declare const SubscriptionServices: {
         data: ({
             createdBy: {
                 email: string;
+                id: string;
                 profile: {
                     name: string | null;
                 } | null;
-                id: string;
             } | null;
             updatedBy: {
                 email: string;
+                id: string;
                 profile: {
                     name: string | null;
                 } | null;
-                id: string;
             } | null;
         } & {
             name: string;
@@ -40,12 +40,12 @@ export declare const SubscriptionServices: {
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
-            id: string;
-            description: string | null;
-            createdById: string | null;
-            updatedById: string | null;
             slug: string;
             status: boolean;
+            id: string;
+            createdById: string | null;
+            updatedById: string | null;
+            description: string | null;
             price: string;
             duration: string;
             discount: string;
@@ -62,17 +62,17 @@ export declare const SubscriptionServices: {
     getSubscriptionById: (id: string) => Promise<{
         createdBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         updatedBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
     } & {
         name: string;
@@ -80,12 +80,12 @@ export declare const SubscriptionServices: {
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
+        description: string | null;
         price: string;
         duration: string;
         discount: string;
@@ -99,12 +99,12 @@ export declare const SubscriptionServices: {
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
+        description: string | null;
         price: string;
         duration: string;
         discount: string;
@@ -121,12 +121,12 @@ export declare const SubscriptionServices: {
         isActive: boolean;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
+        description: string | null;
         price: string;
         duration: string;
         discount: string;

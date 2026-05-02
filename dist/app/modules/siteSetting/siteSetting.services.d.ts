@@ -8,8 +8,8 @@ export declare const SiteSettingService: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
-        description: string | null;
         updatedById: string | null;
+        description: string | null;
         imageId: string | null;
         type: string;
         value: Prisma.JsonValue | null;
@@ -24,8 +24,8 @@ export declare const SiteSettingService: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
-        description: string | null;
         updatedById: string | null;
+        description: string | null;
         imageId: string | null;
         type: string;
         value: Prisma.JsonValue | null;
@@ -40,8 +40,8 @@ export declare const SiteSettingService: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
-        description: string | null;
         updatedById: string | null;
+        description: string | null;
         imageId: string | null;
         type: string;
         value: Prisma.JsonValue | null;

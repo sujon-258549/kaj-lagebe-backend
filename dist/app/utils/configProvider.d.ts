@@ -3,9 +3,9 @@ export declare const setConfig: (key: string, value: string, description?: strin
     createdAt: Date;
     updatedAt: Date;
     id: string;
-    description: string | null;
     createdById: string | null;
     updatedById: string | null;
+    description: string | null;
     value: string;
     key: string;
 }>;

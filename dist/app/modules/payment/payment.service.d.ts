@@ -4,9 +4,9 @@ export declare const PaymentServices: {
         createPayment: {
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.PaymentStatus;
             id: string;
             subscriptionId: string;
-            status: import("@prisma/client").$Enums.PaymentStatus;
             userId: string;
             transactionId: string;
             amount: number;
@@ -18,9 +18,9 @@ export declare const PaymentServices: {
         data: {
             createdAt: Date;
             updatedAt: Date;
+            status: import("@prisma/client").$Enums.PaymentStatus;
             id: string;
             subscriptionId: string;
-            status: import("@prisma/client").$Enums.PaymentStatus;
             userId: string;
             transactionId: string;
             amount: number;
@@ -31,9 +31,9 @@ export declare const PaymentServices: {
     getPaymentById: (id: string) => Promise<{
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.PaymentStatus;
         id: string;
         subscriptionId: string;
-        status: import("@prisma/client").$Enums.PaymentStatus;
         userId: string;
         transactionId: string;
         amount: number;
@@ -43,9 +43,9 @@ export declare const PaymentServices: {
     updatePayment: (id: string, payload: any) => Promise<{
         createdAt: Date;
         updatedAt: Date;
+        status: import("@prisma/client").$Enums.PaymentStatus;
         id: string;
         subscriptionId: string;
-        status: import("@prisma/client").$Enums.PaymentStatus;
         userId: string;
         transactionId: string;
         amount: number;

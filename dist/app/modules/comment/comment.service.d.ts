@@ -44,8 +44,8 @@ export declare const CommentServices: {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        comment: string;
         id: string;
+        comment: string;
         userId: string;
         applicationId: string;
     }>;
@@ -95,8 +95,8 @@ export declare const CommentServices: {
             isDeleted: boolean;
             createdAt: Date;
             updatedAt: Date;
-            comment: string;
             id: string;
+            comment: string;
             userId: string;
             applicationId: string;
         })[];
@@ -151,8 +151,8 @@ export declare const CommentServices: {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        comment: string;
         id: string;
+        comment: string;
         userId: string;
         applicationId: string;
     }>;
@@ -160,8 +160,8 @@ export declare const CommentServices: {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        comment: string;
         id: string;
+        comment: string;
         userId: string;
         applicationId: string;
     }>;

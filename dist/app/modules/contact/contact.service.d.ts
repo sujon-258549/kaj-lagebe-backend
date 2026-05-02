@@ -19,6 +19,7 @@ export declare const ContactService: {
         name: string;
         user: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
                 mobile: string;
@@ -36,7 +37,6 @@ export declare const ContactService: {
                 nidVerified: boolean;
                 serialId: string | null;
             } | null;
-            id: string;
         } | null;
         subject: string | null;
         email: string | null;

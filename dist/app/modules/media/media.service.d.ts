@@ -3,12 +3,12 @@ export declare const MediaServices: {
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
     getAllFolders: (query: any) => Promise<{
         meta: {
@@ -28,34 +28,34 @@ export declare const MediaServices: {
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
     deleteFolder: (id: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
     updateFolder: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
         parentId: string | null;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
     }>;
     createImage: (payload: {
         name: string;
@@ -66,12 +66,12 @@ export declare const MediaServices: {
         url: string;
         createdAt: Date;
         updatedAt: Date;
+        slug: string;
+        status: boolean;
         id: string;
         createdById: string | null;
         updatedById: string | null;
         folderId: string | null;
-        slug: string;
-        status: boolean;
     }>;
     getImagesByFolder: (folderId?: string | null) => Promise<{
         name: string;
@@ -83,12 +83,12 @@ export declare const MediaServices: {
         url: string;
         createdAt: Date;
         updatedAt: Date;
+        slug: string;
+        status: boolean;
         id: string;
         createdById: string | null;
         updatedById: string | null;
         folderId: string | null;
-        slug: string;
-        status: boolean;
     }>;
     updateImage: (id: string, payload: {
         name: string;
@@ -97,12 +97,12 @@ export declare const MediaServices: {
         url: string;
         createdAt: Date;
         updatedAt: Date;
+        slug: string;
+        status: boolean;
         id: string;
         createdById: string | null;
         updatedById: string | null;
         folderId: string | null;
-        slug: string;
-        status: boolean;
     }>;
 };
 //# sourceMappingURL=media.service.d.ts.map

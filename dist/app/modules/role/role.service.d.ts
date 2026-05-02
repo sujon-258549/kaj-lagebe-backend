@@ -5,25 +5,25 @@ export declare const RoleServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
-        description: string | null;
         createdById: string | null;
         updatedById: string | null;
+        description: string | null;
     }>;
     getAllRole: (query: any) => Promise<{
         data: ({
             createdBy: {
                 email: string;
+                id: string;
                 profile: {
                     name: string | null;
                 } | null;
-                id: string;
             } | null;
             updatedBy: {
                 email: string;
+                id: string;
                 profile: {
                     name: string | null;
                 } | null;
-                id: string;
             } | null;
         } & {
             role: string;
@@ -31,9 +31,9 @@ export declare const RoleServices: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
-            description: string | null;
             createdById: string | null;
             updatedById: string | null;
+            description: string | null;
         })[];
         meta: {
             page: number;
@@ -44,17 +44,17 @@ export declare const RoleServices: {
     getRoleById: (id: string) => Promise<{
         createdBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         updatedBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
     } & {
         role: string;
@@ -62,9 +62,9 @@ export declare const RoleServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
-        description: string | null;
         createdById: string | null;
         updatedById: string | null;
+        description: string | null;
     }>;
     updateRole: (id: string, payload: any, userId?: string) => Promise<{
         role: string;
@@ -72,9 +72,9 @@ export declare const RoleServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
-        description: string | null;
         createdById: string | null;
         updatedById: string | null;
+        description: string | null;
     }>;
     deleteRole: (id: string) => Promise<{
         message: string;
@@ -85,9 +85,9 @@ export declare const RoleServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
-        description: string | null;
         createdById: string | null;
         updatedById: string | null;
+        description: string | null;
     }>;
 };
 //# sourceMappingURL=role.service.d.ts.map

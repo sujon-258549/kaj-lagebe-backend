@@ -324,8 +324,93 @@ const processContactNurturingEmails = async () => {
   console.log("🏁 [Automation] Contact Nurturing Process Completed.");
 };
 
+const autoPostBlogs = async () => {
+  console.log("🚀 [Automation] Starting Auto Blog Posting Agent...");
+
+  try {
+    const adminUser = await prisma.user.findFirst({
+      where: { role: { role: "SUPER_ADMIN" } },
+    });
+
+    if (!adminUser) {
+      console.log("⚠️ [Automation] No SUPER_ADMIN found. Skipping auto-blog.");
+      return;
+    }
+
+    const categories = ["Marketplace Tips", "Worker Success", "Safety", "Technology", "Home Improvement", "Career Advice", "Business Growth"];
+    const selectedCategory = categories[Math.floor(Math.random() * categories.length)];
+
+    const prompt = `
+      You are an expert content writer for "Kaj Lagbe" (কাজ লাগবে), a service-based marketplace in Bangladesh.
+      Generate a professional, engaging, and high-quality blog post in Bengali (বাংলা).
+      
+      Topic: ${selectedCategory}
+      
+      Instructions:
+      1. Provide a catchy Title.
+      2. Provide a short SEO Excerpt (max 150 chars).
+      3. Provide a list of 3-5 tags.
+      4. The Content should be in professional Bengali, including <h3>, <ul>, <li> and <p> tags.
+      5. Make the content informative and helpful for both workers and clients.
+      6. IMPORTANT: Return the result ONLY as a valid JSON object with keys: title, excerpt, tags (array of strings), content. No other text.
+    `;
+
+    const aiResponse = await AgentService.generateResponse(prompt);
+    
+    // Attempt to parse JSON from AI response
+    let blogData;
+    try {
+      const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        blogData = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error("No JSON found in AI response");
+      }
+    } catch (e) {
+      console.error("❌ [Automation] Error parsing AI blog JSON. Response was:", aiResponse);
+      return;
+    }
+
+    // Fetch a random image from media library for cover
+    const availableImages = await prisma.image.findMany({ 
+      take: 200, 
+      select: { id: true },
+      orderBy: { createdAt: 'desc' }
+    });
+    
+    const randomImgObj = availableImages.length > 0 
+      ? availableImages[Math.floor(Math.random() * availableImages.length)]
+      : null;
+    const randomImg = randomImgObj ? randomImgObj.id : null;
+
+    const slug = (blogData.title.toLowerCase().replace(/ /g, "-") + "-" + Math.floor(Math.random() * 10000)).substring(0, 50);
+
+    await prisma.blog.create({
+      data: {
+        title: blogData.title,
+        slug: slug,
+        content: blogData.content,
+        excerpt: blogData.excerpt,
+        tags: blogData.tags || [],
+        category: selectedCategory || null,
+        authorId: adminUser.id,
+        authorName: "Kaj Lagbe Agent",
+        coverId: randomImg,
+        isPublished: true,
+        publishedAt: new Date(),
+      }
+    });
+
+    console.log(`✅ [Automation] Auto-blog posted: ${blogData.title}`);
+
+  } catch (error) {
+    console.error("❌ [Automation] Error in Auto Blog Posting:", error);
+  }
+};
+
 export const AutomationService = {
   processFollowUpEmails,
   sendIndividualFollowUp,
   processContactNurturingEmails,
+  autoPostBlogs,
 };

@@ -11,26 +11,26 @@ export declare const JobServices: {
         };
         category: {
             name: string;
-            id: string;
             slug: string;
+            id: string;
         } | null;
         subCategory: {
             name: string;
-            id: string;
             slug: string;
+            id: string;
         } | null;
     } & {
         email: string | null;
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        department: string | null;
-        address: string | null;
-        id: string;
-        description: string;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        updatedById: string | null;
+        address: string | null;
+        department: string | null;
+        description: string;
         categoryId: string | null;
         gender: string | null;
         experience: string | null;
@@ -104,34 +104,34 @@ export declare const JobServices: {
                     photo: string | null;
                 } | null;
             };
-            category: {
-                name: string;
-                id: string;
-                slug: string;
-            } | null;
-            subCategory: {
-                name: string;
-                id: string;
-                slug: string;
-            } | null;
             updatedBy: {
                 email: string;
                 profile: {
                     name: string | null;
                 } | null;
             } | null;
+            category: {
+                name: string;
+                slug: string;
+                id: string;
+            } | null;
+            subCategory: {
+                name: string;
+                slug: string;
+                id: string;
+            } | null;
         } & {
             email: string | null;
             isDeleted: boolean;
             createdAt: Date;
             updatedAt: Date;
-            department: string | null;
-            address: string | null;
-            id: string;
-            description: string;
-            updatedById: string | null;
             slug: string;
             status: boolean;
+            id: string;
+            updatedById: string | null;
+            address: string | null;
+            department: string | null;
+            description: string;
             categoryId: string | null;
             gender: string | null;
             experience: string | null;
@@ -242,16 +242,6 @@ export declare const JobServices: {
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
         };
-        category: {
-            name: string;
-            id: string;
-            slug: string;
-        } | null;
-        subCategory: {
-            name: string;
-            id: string;
-            slug: string;
-        } | null;
         applications: ({
             user: {
                 profile: {
@@ -297,8 +287,8 @@ export declare const JobServices: {
             isDeleted: boolean;
             createdAt: Date;
             updatedAt: Date;
-            id: string;
             status: boolean;
+            id: string;
             resume: string | null;
             applyStatus: string;
             applyNote: string | null;
@@ -308,18 +298,28 @@ export declare const JobServices: {
             coverLetter: string | null;
             isRead: boolean;
         })[];
+        category: {
+            name: string;
+            slug: string;
+            id: string;
+        } | null;
+        subCategory: {
+            name: string;
+            slug: string;
+            id: string;
+        } | null;
     } & {
         email: string | null;
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        department: string | null;
-        address: string | null;
-        id: string;
-        description: string;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        updatedById: string | null;
+        address: string | null;
+        department: string | null;
+        description: string;
         categoryId: string | null;
         gender: string | null;
         experience: string | null;
@@ -392,34 +392,34 @@ export declare const JobServices: {
                 photo: string | null;
             } | null;
         };
-        category: {
-            name: string;
-            id: string;
-            slug: string;
-        } | null;
-        subCategory: {
-            name: string;
-            id: string;
-            slug: string;
-        } | null;
         updatedBy: {
             email: string;
             profile: {
                 name: string | null;
             } | null;
         } | null;
+        category: {
+            name: string;
+            slug: string;
+            id: string;
+        } | null;
+        subCategory: {
+            name: string;
+            slug: string;
+            id: string;
+        } | null;
     } & {
         email: string | null;
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        department: string | null;
-        address: string | null;
-        id: string;
-        description: string;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        updatedById: string | null;
+        address: string | null;
+        department: string | null;
+        description: string;
         categoryId: string | null;
         gender: string | null;
         experience: string | null;
@@ -488,13 +488,13 @@ export declare const JobServices: {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        department: string | null;
-        address: string | null;
-        id: string;
-        description: string;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        updatedById: string | null;
+        address: string | null;
+        department: string | null;
+        description: string;
         categoryId: string | null;
         gender: string | null;
         experience: string | null;

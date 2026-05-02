@@ -8,6 +8,7 @@ declare const sendResponse: <T>(res: Response, jsonData: {
         page: number;
         limit: number;
         total: number;
+        totalPage?: number;
     } | undefined;
 }) => void;
 export default sendResponse;

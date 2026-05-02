@@ -9,16 +9,16 @@ export declare const ApplicationServices: {
             } | null;
         };
         job: {
-            id: string;
             slug: string;
+            id: string;
             title: string;
         };
     } & {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
         status: boolean;
+        id: string;
         resume: string | null;
         applyStatus: string;
         applyNote: string | null;
@@ -39,16 +39,16 @@ export declare const ApplicationServices: {
                 } | null;
             };
             job: {
-                id: string;
                 slug: string;
+                id: string;
                 title: string;
             };
         } & {
             isDeleted: boolean;
             createdAt: Date;
             updatedAt: Date;
-            id: string;
             status: boolean;
+            id: string;
             resume: string | null;
             applyStatus: string;
             applyNote: string | null;
@@ -78,8 +78,8 @@ export declare const ApplicationServices: {
             isDeleted: boolean;
             createdAt: Date;
             updatedAt: Date;
-            comment: string;
             id: string;
+            comment: string;
             userId: string;
             applicationId: string;
         })[];
@@ -92,16 +92,16 @@ export declare const ApplicationServices: {
             } | null;
         };
         job: {
-            id: string;
             slug: string;
+            id: string;
             title: string;
         };
     } & {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
         status: boolean;
+        id: string;
         resume: string | null;
         applyStatus: string;
         applyNote: string | null;
@@ -121,16 +121,16 @@ export declare const ApplicationServices: {
             } | null;
         };
         job: {
-            id: string;
             slug: string;
+            id: string;
             title: string;
         };
     } & {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
         status: boolean;
+        id: string;
         resume: string | null;
         applyStatus: string;
         applyNote: string | null;

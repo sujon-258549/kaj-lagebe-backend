@@ -14,7 +14,7 @@ router.post(
   validateRequest(SubCategoryValidation.createSubCategoryZodSchema),
   SubCategoryControllers.createSubCategory,
 );
-router.get("/", auth(), SubCategoryControllers.getAllSubCategory);
+router.get("/", SubCategoryControllers.getAllSubCategory);
 router.get("/:id", auth(), SubCategoryControllers.getSubCategoryByIdentifier);
 router.put(
   "/:id",

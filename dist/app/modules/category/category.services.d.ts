@@ -6,12 +6,12 @@ export declare const CategoryServices: {
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
+        description: string | null;
         icon: string | null;
         imageId: string | null;
     }>;
@@ -29,17 +29,17 @@ export declare const CategoryServices: {
         subCategories: any[];
         createdBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         updatedBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         histories: ({
             updatedBy: {
@@ -57,12 +57,12 @@ export declare const CategoryServices: {
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
+        description: string | null;
         icon: string | null;
         imageId: string | null;
     }>;
@@ -72,12 +72,12 @@ export declare const CategoryServices: {
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
+        description: string | null;
         icon: string | null;
         imageId: string | null;
     }>;
@@ -85,12 +85,12 @@ export declare const CategoryServices: {
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
+        description: string | null;
         icon: string | null;
         imageId: string | null;
     }>;
@@ -98,12 +98,12 @@ export declare const CategoryServices: {
         name: string;
         createdAt: Date;
         updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
         slug: string;
         status: boolean;
+        id: string;
+        createdById: string | null;
+        updatedById: string | null;
+        description: string | null;
         icon: string | null;
         imageId: string | null;
     }>;

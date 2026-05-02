@@ -1,81 +1,136 @@
 import * as argon2 from "argon2";
 import prisma from "../../utils/prismaClient.js";
 import type { Prisma } from "@prisma/client";
-import ApiError from "../../middleware/apiError.ts";
+import ApiError from "../../middleware/apiError.js";
 import status from "http-status";
-import { otpEmailTemplate, sendEmail } from "../../utils/sendEmail.ts";
-import { JwtHelpers } from "../../utils/jwtHelpers.ts";
-import config from "../../config/index.ts";
-import { userSearchableFields } from "./user.constant.ts";
-import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
-
-function normalizeCategoriesInput(raw: unknown): string[] {
-  if (Array.isArray(raw))
-    return raw
-      .map(String)
-      .map((s) => s.trim())
-      .filter(Boolean);
-  if (typeof raw === "string")
-    return raw
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean);
-  return [];
-}
+import { otpEmailTemplate, sendEmail } from "../../utils/sendEmail.js";
+import { JwtHelpers } from "../../utils/jwtHelpers.js";
+import config from "../../config/index.js";
+import { userSearchableFields } from "./user.constant.js";
+import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.js";
+import { MediaServices } from "../media/media.service.js";
+import slugCreate from "../../utils/slugCreate.js";
 
 // create user
 
+/**
+ * Create a new user with associated profile, address, and work information.
+ * This function follows a professional enterprise pattern including:
+ * 1. Transactional integrity
+ * 2. Automatic role assignment
+ * 3. Media library integration for profile and NID photos
+ * 4. Automatic JWT generation for instant login after registration
+ */
 const createUserIntoDB = async (payload: any) => {
   const { user, profile, address, workInfo } = payload;
 
+  // Hash password using argon2 for secure storage
   const hashedPassword = await argon2.hash(user.password);
 
   try {
     const result = await prisma.$transaction(async (tc) => {
-      // Check if role is provided, if not default to "USER"
+      // 1. Role Management: Resolve Role ID
       let targetRoleId = user.roleId;
 
       if (!targetRoleId) {
+        // Default to "USER" role if not explicitly provided
         const defaultRole = await tc.allRole.upsert({
           where: { role: "USER" },
           update: {},
-          create: { role: "USER" },
+          create: {
+            role: "USER",
+            description: "Default User Account",
+          },
         });
         targetRoleId = defaultRole.id;
       }
 
-      // Create User
-      const userData = {
-        ...user,
-        roleId: targetRoleId,
-        password: hashedPassword,
-      };
-
+      // 2. User Creation: Create base user record
       const newUser = await tc.user.create({
-        data: userData,
+        data: {
+          ...user,
+          roleId: targetRoleId,
+          password: hashedPassword,
+        },
       });
 
-      // Create Profile
+      // 3. Media Folder Management: Ensure destination folder exists
+      const mediaFolder = await tc.folder.upsert({
+        where: { slug: "userimage" },
+        update: {},
+        create: {
+          name: "User Images",
+          slug: "userimage",
+        },
+      });
+
+      // 4. Profile Management: Handle profile details and images
       if (profile) {
-        const { dob, age, nidPhotoIds, nidPhotoUrls, ...profileRest } = profile;
+        const {
+          dob,
+          age,
+          photo,
+          profilePhoto,
+          nidPhoto,
+          nidPhotoUrls,
+          nidPhotoIds,
+          ...profileRest
+        } = profile;
+
+        // Extract image data from multiple possible payload structures
+        const targetPhotoUrl = photo || profilePhoto;
+        const targetNidUrls = nidPhoto || nidPhotoUrls || [];
+
+        // Register Profile Photo in Media Library
+        let finalPhotoId = undefined;
+        if (targetPhotoUrl && typeof targetPhotoUrl === "string" && targetPhotoUrl.startsWith("http")) {
+          const registeredImage = await tc.image.create({
+            data: {
+              name: `${profile.name || "User"}-profile`,
+              url: targetPhotoUrl,
+              slug: slugCreate(`${profile.name || "User"}-profile-${Date.now()}`),
+              folderId: mediaFolder.id,
+            },
+          });
+          finalPhotoId = registeredImage.id;
+        }
+
+        // Register NID Photos in Media Library
+        const finalNidIds: string[] = nidPhotoIds || [];
+        if (Array.isArray(targetNidUrls)) {
+          for (const [index, url] of targetNidUrls.entries()) {
+            if (typeof url === "string" && url.startsWith("http")) {
+              const registeredNid = await tc.image.create({
+                data: {
+                  name: `${profile.name || "User"}-nid-${index + 1}`,
+                  url: url,
+                  slug: slugCreate(`${profile.name || "User"}-nid-${index + 1}-${Date.now()}`),
+                  folderId: mediaFolder.id,
+                },
+              });
+              finalNidIds.push(registeredNid.id);
+            }
+          }
+        }
+
+        // Create Profile record linked via mobile
         await tc.profile.create({
           data: {
             ...profileRest,
             dob: dob ? new Date(dob) : undefined,
             age: age ? Number(age) : undefined,
             mobile: user.mobile,
-            nidPhoto: nidPhotoUrls || [],
-            nidPhotos:
-              nidPhotoIds && nidPhotoIds.length > 0
-                ? {
-                    connect: nidPhotoIds.map((id: string) => ({ id })),
-                  }
-                : undefined,
+            photo: typeof targetPhotoUrl === "string" ? targetPhotoUrl : undefined,
+            photoId: finalPhotoId,
+            nidPhoto: targetNidUrls,
+            nidPhotos: finalNidIds.length > 0 ? {
+              connect: finalNidIds.map((id: string) => ({ id })),
+            } : undefined,
           },
         });
       }
 
-      // Create Address
+      // 5. Address Management
       if (address) {
         await tc.address.create({
           data: {
@@ -85,75 +140,40 @@ const createUserIntoDB = async (payload: any) => {
         });
       }
 
-      // Create WorkInfo
+      // 6. Work Information Management (Service Provider specific)
       if (workInfo) {
         const { subCategoryIds, workTypeIds, ...workInfoRest } = workInfo;
         await tc.workInfo.create({
           data: {
             ...workInfoRest,
             mobile: user.mobile,
-            subCategories:
-              subCategoryIds && subCategoryIds.length > 0
-                ? {
-                    connect: subCategoryIds.map((id: string) => ({ id })),
-                  }
-                : undefined,
-            workTypes:
-              workTypeIds && workTypeIds.length > 0
-                ? {
-                    connect: workTypeIds.map((id: string) => ({ id })),
-                  }
-                : undefined,
+            subCategories: subCategoryIds && subCategoryIds.length > 0 ? {
+              connect: subCategoryIds.map((id: string) => ({ id })),
+            } : undefined,
+            workTypes: workTypeIds && workTypeIds.length > 0 ? {
+              connect: workTypeIds.map((id: string) => ({ id })),
+            } : undefined,
           },
         });
       }
 
+      // 7. Final Data Retrieval: Fetch complete user object for response
       return await tc.user.findUnique({
         where: { id: newUser.id },
         include: {
-          role: {
-            select: {
-              id: true,
-              role: true,
-            },
-          },
-          department: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+          role: true,
+          department: true,
           profile: {
             include: {
-              profilePhoto: {
-                select: {
-                  id: true,
-                  url: true,
-                },
-              },
-              nidPhotos: {
-                select: {
-                  id: true,
-                  url: true,
-                },
-              },
+              profilePhoto: true,
+              nidPhotos: true,
             },
           },
           address: true,
           workInfo: {
             include: {
-              subCategories: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-              workTypes: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
+              subCategories: true,
+              workTypes: true,
             },
           },
         },
@@ -163,37 +183,30 @@ const createUserIntoDB = async (payload: any) => {
     if (result) {
       const { password, ...userWithoutPassword } = result as any;
 
-      // ---------------------------------------------------------
-      // AUTOMATIC LOGIN AFTER REGISTRATION
-      // ---------------------------------------------------------
-      // Prepare payload for JWT token
-      const payloadData = {
+      // 8. Automatic Post-Registration Login: Generate JWTs
+      const tokenPayload = {
         id: userWithoutPassword.id,
         email: userWithoutPassword.email,
         role: userWithoutPassword.role?.role,
         mobile: userWithoutPassword.mobile,
+        isActive: userWithoutPassword.isActive,
         isBlocked: userWithoutPassword.isBlocked,
         isDeleted: userWithoutPassword.isDeleted,
         isVerified: userWithoutPassword.isVerified,
-        isActive: userWithoutPassword.isActive,
-        passwordChanged: userWithoutPassword.passwordChanged,
-        passwordChangeTime: userWithoutPassword.passwordChangeTime,
-        lastLogin: userWithoutPassword.lastLogin,
       };
 
-      // Generate Access and Refresh Tokens
       const accessToken = JwtHelpers.generateToken(
-        payloadData,
+        tokenPayload,
         config.accessSecret as string,
         config.accessExpire as string,
       );
+
       const refreshToken = JwtHelpers.generateToken(
-        payloadData,
+        tokenPayload,
         config.refreshSecret as string,
         config.refreshExpire as string,
       );
 
-      // Return both user data and tokens for instant login
       return {
         accessToken,
         refreshToken,
@@ -203,17 +216,20 @@ const createUserIntoDB = async (payload: any) => {
 
     return result;
   } catch (error: any) {
+    // Standardized Error Handling for Prisma Constraints
     if (error.code === "P2002") {
       const target = error.meta?.target || [];
       if (target.includes("email")) {
-        throw new ApiError(status.CONFLICT, "A user with this email already exists.");
+        throw new ApiError(status.CONFLICT, "A user with this email address already exists.");
       }
       if (target.includes("mobile")) {
-        throw new ApiError(status.CONFLICT, "A user with this mobile number already exists.");
+        throw new ApiError(status.CONFLICT, "This mobile number is already registered.");
       }
-      throw new ApiError(status.CONFLICT, "A unique constraint failed on the user record.");
+      throw new ApiError(status.CONFLICT, "Unique data constraint failed.");
     }
-    throw new ApiError(status.BAD_REQUEST, error.message || "Failed to create user");
+    
+    console.error("Critical User Creation Failure:", error);
+    throw new ApiError(status.BAD_REQUEST, error.message || "An unexpected error occurred during user creation.");
   }
 };
 

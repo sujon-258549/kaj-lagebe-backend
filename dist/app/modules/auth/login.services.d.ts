@@ -16,8 +16,8 @@ export declare const AuthServices: {
             department: string | undefined;
             address: {
                 mobile: string;
-                address: string | null;
                 id: string;
+                address: string | null;
                 division: string | null;
                 district: string | null;
                 upazila: string | null;
@@ -28,10 +28,10 @@ export declare const AuthServices: {
                 mobile?: string;
                 isBlocked?: boolean;
                 isDeleted?: boolean;
-                workType?: string | null;
                 id?: string;
                 passwordChangeTime?: Date | null;
                 passwordChanged?: boolean;
+                workType?: string | null;
                 experience?: string | null;
                 workStartTime?: string | null;
                 workTimeLimit?: string | null;
@@ -61,8 +61,8 @@ export declare const AuthServices: {
             department: string | undefined;
             address: {
                 mobile: string;
-                address: string | null;
                 id: string;
+                address: string | null;
                 division: string | null;
                 district: string | null;
                 upazila: string | null;
@@ -73,10 +73,10 @@ export declare const AuthServices: {
                 mobile?: string;
                 isBlocked?: boolean;
                 isDeleted?: boolean;
-                workType?: string | null;
                 id?: string;
                 passwordChangeTime?: Date | null;
                 passwordChanged?: boolean;
+                workType?: string | null;
                 experience?: string | null;
                 workStartTime?: string | null;
                 workTimeLimit?: string | null;
@@ -111,8 +111,8 @@ export declare const AuthServices: {
             department: string | undefined;
             address: {
                 mobile: string;
-                address: string | null;
                 id: string;
+                address: string | null;
                 division: string | null;
                 district: string | null;
                 upazila: string | null;
@@ -123,10 +123,10 @@ export declare const AuthServices: {
                 mobile?: string;
                 isBlocked?: boolean;
                 isDeleted?: boolean;
-                workType?: string | null;
                 id?: string;
                 passwordChangeTime?: Date | null;
                 passwordChanged?: boolean;
+                workType?: string | null;
                 experience?: string | null;
                 workStartTime?: string | null;
                 workTimeLimit?: string | null;

@@ -2,15 +2,15 @@ export declare const BlogCommentServices: {
     createBlogComment: (payload: any, userId?: string) => Promise<{
         user: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
                 photo: string | null;
             } | null;
-            id: string;
         } | null;
         blog: {
-            id: string;
             slug: string;
+            id: string;
             title: string;
         };
     } & {
@@ -19,9 +19,9 @@ export declare const BlogCommentServices: {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        comment: string;
-        id: string;
         status: boolean;
+        id: string;
+        comment: string;
         userId: string | null;
         phone: string;
         blogId: string;
@@ -31,6 +31,7 @@ export declare const BlogCommentServices: {
         data: ({
             user: {
                 email: string;
+                id: string;
                 profile: {
                     name: string | null;
                     mobile: string;
@@ -48,11 +49,10 @@ export declare const BlogCommentServices: {
                     nidVerified: boolean;
                     serialId: string | null;
                 } | null;
-                id: string;
             } | null;
             blog: {
-                id: string;
                 slug: string;
+                id: string;
                 title: string;
             };
         } & {
@@ -61,9 +61,9 @@ export declare const BlogCommentServices: {
             isDeleted: boolean;
             createdAt: Date;
             updatedAt: Date;
-            comment: string;
-            id: string;
             status: boolean;
+            id: string;
+            comment: string;
             userId: string | null;
             phone: string;
             blogId: string;
@@ -78,15 +78,15 @@ export declare const BlogCommentServices: {
     getBlogCommentById: (id: string) => Promise<{
         user: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
                 photo: string | null;
             } | null;
-            id: string;
         } | null;
         blog: {
-            id: string;
             slug: string;
+            id: string;
             title: string;
         };
     } & {
@@ -95,9 +95,9 @@ export declare const BlogCommentServices: {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        comment: string;
-        id: string;
         status: boolean;
+        id: string;
+        comment: string;
         userId: string | null;
         phone: string;
         blogId: string;
@@ -109,9 +109,9 @@ export declare const BlogCommentServices: {
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;
-        comment: string;
-        id: string;
         status: boolean;
+        id: string;
+        comment: string;
         userId: string | null;
         phone: string;
         blogId: string;
@@ -124,6 +124,7 @@ export declare const BlogCommentServices: {
         data: ({
             user: {
                 email: string;
+                id: string;
                 profile: {
                     name: string | null;
                     mobile: string;
@@ -141,11 +142,10 @@ export declare const BlogCommentServices: {
                     nidVerified: boolean;
                     serialId: string | null;
                 } | null;
-                id: string;
             } | null;
             blog: {
-                id: string;
                 slug: string;
+                id: string;
                 title: string;
             };
         } & {
@@ -154,9 +154,9 @@ export declare const BlogCommentServices: {
             isDeleted: boolean;
             createdAt: Date;
             updatedAt: Date;
-            comment: string;
-            id: string;
             status: boolean;
+            id: string;
+            comment: string;
             userId: string | null;
             phone: string;
             blogId: string;

@@ -1,5 +1,9 @@
 export declare const UserServices: {
-    createUserIntoDB: (payload: any) => Promise<any>;
+    createUserIntoDB: (payload: any) => Promise<{
+        accessToken: never;
+        refreshToken: never;
+        user: any;
+    } | null>;
     getUserById: (id: string) => Promise<({
         role: ({
             permissions: {
@@ -12,13 +16,17 @@ export declare const UserServices: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
-            description: string | null;
             createdById: string | null;
             updatedById: string | null;
+            description: string | null;
         }) | null;
-        department: {
-            name: string;
+        address: {
+            mobile: string;
             id: string;
+            address: string | null;
+            division: string | null;
+            district: string | null;
+            upazila: string | null;
         } | null;
         profile: ({
             profilePhoto: {
@@ -46,13 +54,9 @@ export declare const UserServices: {
             nidVerified: boolean;
             serialId: string | null;
         }) | null;
-        address: {
-            mobile: string;
-            address: string | null;
+        department: {
+            name: string;
             id: string;
-            division: string | null;
-            district: string | null;
-            upazila: string | null;
         } | null;
         workInfo: ({
             subCategories: {
@@ -67,10 +71,10 @@ export declare const UserServices: {
             mobile: string;
             isBlocked: boolean;
             isDeleted: boolean;
-            workType: string | null;
             id: string;
             passwordChangeTime: Date | null;
             passwordChanged: boolean;
+            workType: string | null;
             experience: string | null;
             workStartTime: string | null;
             workTimeLimit: string | null;
@@ -111,13 +115,17 @@ export declare const UserServices: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
-            description: string | null;
             createdById: string | null;
             updatedById: string | null;
+            description: string | null;
         }) | null;
-        department: {
-            name: string;
+        address: {
+            mobile: string;
             id: string;
+            address: string | null;
+            division: string | null;
+            district: string | null;
+            upazila: string | null;
         } | null;
         profile: ({
             profilePhoto: {
@@ -145,13 +153,9 @@ export declare const UserServices: {
             nidVerified: boolean;
             serialId: string | null;
         }) | null;
-        address: {
-            mobile: string;
-            address: string | null;
+        department: {
+            name: string;
             id: string;
-            division: string | null;
-            district: string | null;
-            upazila: string | null;
         } | null;
         workInfo: ({
             subCategories: {
@@ -166,10 +170,10 @@ export declare const UserServices: {
             mobile: string;
             isBlocked: boolean;
             isDeleted: boolean;
-            workType: string | null;
             id: string;
             passwordChangeTime: Date | null;
             passwordChanged: boolean;
+            workType: string | null;
             experience: string | null;
             workStartTime: string | null;
             workTimeLimit: string | null;
@@ -202,9 +206,13 @@ export declare const UserServices: {
                 role: string;
                 id: string;
             } | null;
-            department: {
-                name: string;
+            address: {
+                mobile: string;
                 id: string;
+                address: string | null;
+                division: string | null;
+                district: string | null;
+                upazila: string | null;
             } | null;
             profile: ({
                 profilePhoto: {
@@ -232,13 +240,9 @@ export declare const UserServices: {
                 nidVerified: boolean;
                 serialId: string | null;
             }) | null;
-            address: {
-                mobile: string;
-                address: string | null;
+            department: {
+                name: string;
                 id: string;
-                division: string | null;
-                district: string | null;
-                upazila: string | null;
             } | null;
             workInfo: ({
                 subCategories: {
@@ -253,10 +257,10 @@ export declare const UserServices: {
                 mobile: string;
                 isBlocked: boolean;
                 isDeleted: boolean;
-                workType: string | null;
                 id: string;
                 passwordChangeTime: Date | null;
                 passwordChanged: boolean;
+                workType: string | null;
                 experience: string | null;
                 workStartTime: string | null;
                 workTimeLimit: string | null;
@@ -294,9 +298,13 @@ export declare const UserServices: {
             role: string;
             id: string;
         } | null;
-        department: {
-            name: string;
+        address: {
+            mobile: string;
             id: string;
+            address: string | null;
+            division: string | null;
+            district: string | null;
+            upazila: string | null;
         } | null;
         profile: ({
             profilePhoto: {
@@ -324,13 +332,9 @@ export declare const UserServices: {
             nidVerified: boolean;
             serialId: string | null;
         }) | null;
-        address: {
-            mobile: string;
-            address: string | null;
+        department: {
+            name: string;
             id: string;
-            division: string | null;
-            district: string | null;
-            upazila: string | null;
         } | null;
         workInfo: ({
             subCategories: {
@@ -345,10 +349,10 @@ export declare const UserServices: {
             mobile: string;
             isBlocked: boolean;
             isDeleted: boolean;
-            workType: string | null;
             id: string;
             passwordChangeTime: Date | null;
             passwordChanged: boolean;
+            workType: string | null;
             experience: string | null;
             workStartTime: string | null;
             workTimeLimit: string | null;
@@ -398,8 +402,8 @@ export declare const UserServices: {
             department: string | undefined;
             address: {
                 mobile: string;
-                address: string | null;
                 id: string;
+                address: string | null;
                 division: string | null;
                 district: string | null;
                 upazila: string | null;
@@ -410,10 +414,10 @@ export declare const UserServices: {
                 mobile?: string;
                 isBlocked?: boolean;
                 isDeleted?: boolean;
-                workType?: string | null;
                 id?: string;
                 passwordChangeTime?: Date | null;
                 passwordChanged?: boolean;
+                workType?: string | null;
                 experience?: string | null;
                 workStartTime?: string | null;
                 workTimeLimit?: string | null;

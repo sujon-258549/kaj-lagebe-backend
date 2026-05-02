@@ -13,7 +13,7 @@ router.post(
   validateRequest(WorkTypeValidation.createWorkTypeZodSchema),
   WorkTypeController.createWorkType
 );
-router.get("/", auth(), WorkTypeController.getAllWorkType);
+router.get("/", WorkTypeController.getAllWorkType);
 router.get("/:id", auth(), WorkTypeController.getWorkTypeById);
 router.put(
   "/:id",

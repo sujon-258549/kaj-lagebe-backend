@@ -2,40 +2,40 @@ export declare const GalleryServices: {
     createGallery: (payload: any, userId?: string) => Promise<{
         createdBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         updatedBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         imageRel: {
             name: string;
             url: string;
             createdAt: Date;
             updatedAt: Date;
+            slug: string;
+            status: boolean;
             id: string;
             createdById: string | null;
             updatedById: string | null;
             folderId: string | null;
-            slug: string;
-            status: boolean;
         } | null;
     } & {
         number: string;
         createdAt: Date;
         updatedAt: Date;
-        image: string;
+        status: boolean;
         id: string;
-        description: string | null;
         createdById: string | null;
         updatedById: string | null;
-        status: boolean;
+        image: string;
+        description: string | null;
         imageId: string | null;
         title: string;
         order: number;
@@ -44,40 +44,40 @@ export declare const GalleryServices: {
         data: ({
             createdBy: {
                 email: string;
+                id: string;
                 profile: {
                     name: string | null;
                 } | null;
-                id: string;
             } | null;
             updatedBy: {
                 email: string;
+                id: string;
                 profile: {
                     name: string | null;
                 } | null;
-                id: string;
             } | null;
             imageRel: {
                 name: string;
                 url: string;
                 createdAt: Date;
                 updatedAt: Date;
+                slug: string;
+                status: boolean;
                 id: string;
                 createdById: string | null;
                 updatedById: string | null;
                 folderId: string | null;
-                slug: string;
-                status: boolean;
             } | null;
         } & {
             number: string;
             createdAt: Date;
             updatedAt: Date;
-            image: string;
+            status: boolean;
             id: string;
-            description: string | null;
             createdById: string | null;
             updatedById: string | null;
-            status: boolean;
+            image: string;
+            description: string | null;
             imageId: string | null;
             title: string;
             order: number;
@@ -91,40 +91,40 @@ export declare const GalleryServices: {
     getSingleGallery: (id: string) => Promise<({
         createdBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         updatedBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         imageRel: {
             name: string;
             url: string;
             createdAt: Date;
             updatedAt: Date;
+            slug: string;
+            status: boolean;
             id: string;
             createdById: string | null;
             updatedById: string | null;
             folderId: string | null;
-            slug: string;
-            status: boolean;
         } | null;
     } & {
         number: string;
         createdAt: Date;
         updatedAt: Date;
-        image: string;
+        status: boolean;
         id: string;
-        description: string | null;
         createdById: string | null;
         updatedById: string | null;
-        status: boolean;
+        image: string;
+        description: string | null;
         imageId: string | null;
         title: string;
         order: number;
@@ -132,40 +132,40 @@ export declare const GalleryServices: {
     updateGallery: (id: string, payload: Partial<any>, userId?: string) => Promise<{
         createdBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         updatedBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         imageRel: {
             name: string;
             url: string;
             createdAt: Date;
             updatedAt: Date;
+            slug: string;
+            status: boolean;
             id: string;
             createdById: string | null;
             updatedById: string | null;
             folderId: string | null;
-            slug: string;
-            status: boolean;
         } | null;
     } & {
         number: string;
         createdAt: Date;
         updatedAt: Date;
-        image: string;
+        status: boolean;
         id: string;
-        description: string | null;
         createdById: string | null;
         updatedById: string | null;
-        status: boolean;
+        image: string;
+        description: string | null;
         imageId: string | null;
         title: string;
         order: number;
@@ -174,12 +174,12 @@ export declare const GalleryServices: {
         number: string;
         createdAt: Date;
         updatedAt: Date;
-        image: string;
+        status: boolean;
         id: string;
-        description: string | null;
         createdById: string | null;
         updatedById: string | null;
-        status: boolean;
+        image: string;
+        description: string | null;
         imageId: string | null;
         title: string;
         order: number;
@@ -187,40 +187,40 @@ export declare const GalleryServices: {
     updateStatus: (id: string, status: boolean, userId?: string) => Promise<{
         createdBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         updatedBy: {
             email: string;
+            id: string;
             profile: {
                 name: string | null;
             } | null;
-            id: string;
         } | null;
         imageRel: {
             name: string;
             url: string;
             createdAt: Date;
             updatedAt: Date;
+            slug: string;
+            status: boolean;
             id: string;
             createdById: string | null;
             updatedById: string | null;
             folderId: string | null;
-            slug: string;
-            status: boolean;
         } | null;
     } & {
         number: string;
         createdAt: Date;
         updatedAt: Date;
-        image: string;
+        status: boolean;
         id: string;
-        description: string | null;
         createdById: string | null;
         updatedById: string | null;
-        status: boolean;
+        image: string;
+        description: string | null;
         imageId: string | null;
         title: string;
         order: number;

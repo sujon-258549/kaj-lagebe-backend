@@ -4,5 +4,6 @@ export declare const AutomationService: {
         message: string;
     }>;
     processContactNurturingEmails: () => Promise<void>;
+    autoPostBlogs: () => Promise<void>;
 };
 //# sourceMappingURL=automation.services.d.ts.map

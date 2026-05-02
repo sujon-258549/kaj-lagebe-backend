@@ -24,6 +24,7 @@ import { ProjectRoutes } from "../modules/project/project.routes.ts";
 import { GalleryRoutes } from "../modules/gallery/gallery.routes.ts";
 import { ContactRoutes } from "../modules/contact/contact.routes.ts";
 import { ReviewRoutes } from "../modules/review/review.routes.ts";
+import { BlogCommentRoutes } from "../modules/blogComment/blogComment.routes.ts";
 
 const router = Router();
 
@@ -127,6 +128,10 @@ const allRouter = [
   {
     path: "/review",
     router: ReviewRoutes,
+  },
+  {
+    path: "/blog-comment",
+    router: BlogCommentRoutes,
   },
 ];
 

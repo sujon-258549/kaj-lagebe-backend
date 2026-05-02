@@ -121,6 +121,7 @@ model User {
   reviewsUpdated       Review[]             @relation("ReviewUpdatedBy")
   contacts             Contact[]
   contactFeedbacks     ContactFeedback[]
+  blogComments         BlogComment[]
 
   @@map("users")
 }
@@ -383,8 +384,28 @@ model Blog {
   publishedAt DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  comments    BlogComment[]
 
   @@map("blogs")
+}
+
+model BlogComment {
+  id        String   @id @default(uuid())
+  blogId    String
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  comment   String
+  name      String
+  email     String?
+  phone     String
+  saveInfo  Boolean  @default(false)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  isDeleted Boolean  @default(false)
+  status    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blog_comments")
 }
 
 model Subscription {

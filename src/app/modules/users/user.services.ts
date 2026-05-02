@@ -162,7 +162,43 @@ const createUserIntoDB = async (payload: any) => {
 
     if (result) {
       const { password, ...userWithoutPassword } = result as any;
-      return userWithoutPassword;
+
+      // ---------------------------------------------------------
+      // AUTOMATIC LOGIN AFTER REGISTRATION
+      // ---------------------------------------------------------
+      // Prepare payload for JWT token
+      const payloadData = {
+        id: userWithoutPassword.id,
+        email: userWithoutPassword.email,
+        role: userWithoutPassword.role?.role,
+        mobile: userWithoutPassword.mobile,
+        isBlocked: userWithoutPassword.isBlocked,
+        isDeleted: userWithoutPassword.isDeleted,
+        isVerified: userWithoutPassword.isVerified,
+        isActive: userWithoutPassword.isActive,
+        passwordChanged: userWithoutPassword.passwordChanged,
+        passwordChangeTime: userWithoutPassword.passwordChangeTime,
+        lastLogin: userWithoutPassword.lastLogin,
+      };
+
+      // Generate Access and Refresh Tokens
+      const accessToken = JwtHelpers.generateToken(
+        payloadData,
+        config.accessSecret as string,
+        config.accessExpire as string,
+      );
+      const refreshToken = JwtHelpers.generateToken(
+        payloadData,
+        config.refreshSecret as string,
+        config.refreshExpire as string,
+      );
+
+      // Return both user data and tokens for instant login
+      return {
+        accessToken,
+        refreshToken,
+        user: userWithoutPassword,
+      };
     }
 
     return result;

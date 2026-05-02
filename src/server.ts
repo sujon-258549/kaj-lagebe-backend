@@ -5,12 +5,16 @@ import { socketIO } from "./app/utils/socket.js";
 import { seedSuperAdmin } from "./app/modules/supperAdmin/supper_admin.js";
 import { seedSystemConfigs } from "./app/utils/configProvider.js";
 import { AutomationCron } from "./app/modules/automation/automation.cron.js";
+import { AutoCreateService } from "./app/modules/automation/autoCreate.services.js";
 
 const port = config.port || 3000;
 
 const bootstrap = async () => {
   try {
     const server = http.createServer(app);
+
+    // Auto Create Essential Data (Roles, etc.)
+    await AutoCreateService.init();
 
     // Seed System Configurations
     await seedSystemConfigs();

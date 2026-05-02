@@ -5,15 +5,28 @@ import status from "http-status";
 import catchAsync from "../../shared/catchAsync.js";
 import { pick } from "../../../shared/pick.ts";
 import { userFilterableFields } from "./user.constant.ts";
+import config from "../../config/index.js";
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
     const result = await UserServices.createUserIntoDB(payload);
+
+    // Set refreshToken in cookie for automatic login
+    if (result && result.refreshToken) {
+      res.cookie("refreshToken", result.refreshToken, {
+        secure: config.nodeEnv === "production",
+        httpOnly: true,
+        sameSite: config.nodeEnv === "production" ? "none" : "lax",
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        ...(config.cookieDomain ? { domain: config.cookieDomain } : {}),
+      });
+    }
+
     sendResponse(res, {
       success: true,
       statusCode: status.CREATED,
-      message: "User created successfully",
+      message: "User registered and logged in successfully",
       data: result,
       meta: undefined,
     });

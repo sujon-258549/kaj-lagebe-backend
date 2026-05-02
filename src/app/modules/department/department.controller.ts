@@ -24,7 +24,7 @@ const getAllDepartment = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: status.OK,
-      message: "Departments retrieved successfully",
+      message: "All departments retrieved successfully",
       data: result.data,
       meta: result.meta,
     });
@@ -38,7 +38,7 @@ const getDepartmentById = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: status.OK,
-      message: "Department retrieved successfully",
+      message: "Department details retrieved successfully",
       data: result,
     });
   }

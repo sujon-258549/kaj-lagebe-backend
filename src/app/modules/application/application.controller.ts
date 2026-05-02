@@ -22,7 +22,7 @@ const getAllApplications = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Applications retrieved successfully!",
+    message: "All applications retrieved successfully!",
     data: result.data,
     meta: result.meta,
   });
@@ -35,7 +35,7 @@ const getApplicationById = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Application retrieved successfully!",
+    message: "Application details retrieved successfully!",
     data: result,
   });
 });

@@ -4,6 +4,6 @@ export declare const BlogCommentControllers: {
     getBlogCommentById: (req: import("express").Request, res: import("express").Response, next: import("express").NextFunction) => Promise<void>;
     updateBlogComment: (req: import("express").Request, res: import("express").Response, next: import("express").NextFunction) => Promise<void>;
     deleteBlogComment: (req: import("express").Request, res: import("express").Response, next: import("express").NextFunction) => Promise<void>;
-    getCommentsByBlogId: (req: import("express").Request, res: import("express").Response, next: import("express").NextFunction) => Promise<void>;
+    getCommentsByBlogIdentifier: (req: import("express").Request, res: import("express").Response, next: import("express").NextFunction) => Promise<void>;
 };
 //# sourceMappingURL=blogComment.controller.d.ts.map

@@ -31,7 +31,7 @@ const getSettingsByGroup = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Settings fetched successfully",
+    message: "Group settings retrieved successfully",
     data: result,
   });
 });
@@ -51,7 +51,7 @@ const getAllSettings = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "All settings fetched successfully",
+    message: "All site settings retrieved successfully",
     data: result,
   });
 });

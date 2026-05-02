@@ -9,15 +9,22 @@ const createProject = async (payload: any) => {
   const { slug, title, ...rest } = payload;
   const projectSlug = slug || slugCreate(title);
   
-  const result = await prisma.project.create({
-    data: {
-      ...rest,
-      title,
-      slug: projectSlug,
-    },
-    include: { imageRel: true },
-  });
-  return result;
+  try {
+    const result = await prisma.project.create({
+      data: {
+        ...rest,
+        title,
+        slug: projectSlug,
+      },
+      include: { imageRel: true },
+    });
+    return result;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new Error("A project with this title already exists.");
+    }
+    throw new Error(error.message || "Failed to create project");
+  }
 };
 
 const getAllProjects = async (query: any) => {
@@ -109,12 +116,19 @@ const updateProject = async (id: string, payload: Partial<any>) => {
     updateData.slug = slug;
   }
 
-  const result = await prisma.project.update({
-    where: { id },
-    data: updateData,
-    include: { imageRel: true },
-  });
-  return result;
+  try {
+    const result = await prisma.project.update({
+      where: { id },
+      data: updateData,
+      include: { imageRel: true },
+    });
+    return result;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new Error("A project with this title already exists.");
+    }
+    throw new Error(error.message || "Failed to update project");
+  }
 };
 
 const deleteProject = async (id: string) => {

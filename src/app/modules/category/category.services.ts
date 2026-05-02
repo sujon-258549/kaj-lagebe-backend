@@ -21,29 +21,38 @@ const createCategoryIntoDB = async (payload: any, userId?: string) => {
     updatedById: userId,
   };
 
-  if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
-  if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
+  if (payload.imageId) {
+    const imageExists = await prisma.image.findUnique({ where: { id: payload.imageId } });
+    if (!imageExists) throw new ApiError(httpStatus.NOT_FOUND, "Associated Image not found");
+  }
 
-  const result = await prisma.category.create({
-    data,
-    include: { image: true },
-  });
+  try {
+    const result = await prisma.category.create({
+      data,
+      include: { image: true },
+    });
 
-  // History record
-  await prisma.categoryHistory.create({
-    data: {
-      categoryId: result.id,
-      oldData: (null as any),
-      newData: (result as any),
-      updatedById: userId ?? null,
-    },
-  });
+    // History record
+    await prisma.categoryHistory.create({
+      data: {
+        categoryId: result.id,
+        oldData: null as any,
+        newData: result as any,
+        updatedById: userId ?? null,
+      },
+    });
 
-  return {
-    ...result,
-    image: result.image?.url || null,
-    url: result.image?.url || null,
-  };
+    return {
+      ...result,
+      image: result.image?.url || null,
+      url: result.image?.url || null,
+    };
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A category with this name already exists. Please use a unique name.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to create category");
+  }
 };
 
 const getAllCategory = async (query: any) => {
@@ -132,9 +141,15 @@ const getAllCategory = async (query: any) => {
   };
 };
 
-const getCategoryById = async (id: string) => {
+const getCategoryByIdentifier = async (identifier: string) => {
   const result = await prisma.category.findFirst({
-    where: { OR: [{ id: id }, { slug: id }] },
+    where: {
+      OR: [
+        { id: identifier },
+        { slug: identifier },
+        { name: identifier },
+      ],
+    },
     include: {
       subCategories: {
         select: {
@@ -161,7 +176,10 @@ const getCategoryById = async (id: string) => {
       },
     },
   });
-  return result ? {
+
+  if (!result) throw new ApiError(httpStatus.NOT_FOUND, "Category not found");
+
+  return {
     ...result,
     image: result.image?.url || null,
     url: result.image?.url || null,
@@ -170,7 +188,7 @@ const getCategoryById = async (id: string) => {
       image: sub.image?.url || null,
       url: sub.image?.url || null,
     })),
-  } : null;
+  };
 };
 
 const updateCategory = async (id: string, payload: any, userId?: string) => {
@@ -191,7 +209,11 @@ const updateCategory = async (id: string, payload: any, userId?: string) => {
   if (payload.status !== undefined)
     updateData.status = payload.status === true || payload.status === "true";
   if (payload.description) updateData.description = payload.description;
-  if (payload.imageId) updateData.image = { connect: { id: payload.imageId } };
+  if (payload.imageId) {
+    const imageExists = await prisma.image.findUnique({ where: { id: payload.imageId } });
+    if (!imageExists) throw new ApiError(httpStatus.NOT_FOUND, "Associated Image not found");
+    updateData.image = { connect: { id: payload.imageId } };
+  }
   if (payload.createdAt) updateData.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) updateData.updatedAt = new Date(payload.updatedAt);
 
@@ -199,27 +221,34 @@ const updateCategory = async (id: string, payload: any, userId?: string) => {
     updateData.updatedBy = { connect: { id: userId } };
   }
 
-  const result = await prisma.category.update({
-    where: { id },
-    data: updateData,
-    include: { image: true },
-  });
+  try {
+    const result = await prisma.category.update({
+      where: { id },
+      data: updateData,
+      include: { image: true },
+    });
 
-  // History record
-  await prisma.categoryHistory.create({
-    data: {
-      categoryId: result.id,
-      oldData: (existingCategory as any),
-      newData: (result as any),
-      updatedById: userId ?? null,
-    },
-  });
+    // History record
+    await prisma.categoryHistory.create({
+      data: {
+        categoryId: result.id,
+        oldData: existingCategory as any,
+        newData: result as any,
+        updatedById: userId ?? null,
+      },
+    });
 
-  return {
-    ...result,
-    image: result.image?.url || null,
-    url: result.image?.url || null,
-  };
+    return {
+      ...result,
+      image: result.image?.url || null,
+      url: result.image?.url || null,
+    };
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A category with this name already exists. Please use a unique name.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to update category");
+  }
 };
 
 const updateCategoryStatus = async (id: string, userId?: string) => {
@@ -260,7 +289,7 @@ const deleteCategory = async (id: string) => {
 export const CategoryServices = {
   createCategoryIntoDB,
   getAllCategory,
-  getCategoryById,
+  getCategoryByIdentifier,
   updateCategory,
   deleteCategory,
   updateCategoryStatus,

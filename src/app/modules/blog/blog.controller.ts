@@ -24,7 +24,7 @@ const getAllBlog = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "All Blogs retrieved successfully!",
+    message: "All blogs retrieved successfully!",
     data: result.data,  
     meta: result.meta,
   });
@@ -35,7 +35,7 @@ const getBlogById = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Blog retrieved successfully!",
+    message: "Blog details retrieved successfully!",
     data: result,
   });
 });

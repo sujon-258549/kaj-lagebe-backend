@@ -23,7 +23,7 @@ export declare const CategoryServices: {
             total: number;
         };
     }>;
-    getCategoryById: (id: string) => Promise<{
+    getCategoryByIdentifier: (identifier: string) => Promise<{
         image: string | null;
         url: string | null;
         subCategories: any[];
@@ -65,7 +65,7 @@ export declare const CategoryServices: {
         status: boolean;
         icon: string | null;
         imageId: string | null;
-    } | null>;
+    }>;
     updateCategory: (id: string, payload: any, userId?: string) => Promise<{
         image: string | null;
         url: string | null;

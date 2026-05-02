@@ -18,7 +18,7 @@ router.post(
 router.get("/", auth(), BlogCommentControllers.getAllBlogComments);
 
 // Get comments for a specific blog (Public)
-router.get("/blog/:blogId", BlogCommentControllers.getCommentsByBlogId);
+router.get("/blog/:identifier", BlogCommentControllers.getCommentsByBlogIdentifier);
 
 // Get comment by ID
 router.get("/:id", BlogCommentControllers.getBlogCommentById);

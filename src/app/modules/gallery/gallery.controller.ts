@@ -23,7 +23,7 @@ const getAllGalleries = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Galleries retrieved successfully!",
+    message: "All galleries retrieved successfully!",
     data: result.data,
     meta: result.meta,
   });
@@ -34,7 +34,7 @@ const getSingleGallery = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Gallery item retrieved successfully!",
+    message: "Gallery item details retrieved successfully!",
     data: result,
   });
 });

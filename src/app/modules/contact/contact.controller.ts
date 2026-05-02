@@ -19,7 +19,7 @@ const getAllContacts = catchAsync(async (req: Request, res: Response) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Contacts fetched successfully",
+    message: "All contacts retrieved successfully",
     data: result,
   });
 });
@@ -29,7 +29,7 @@ const getContactById = catchAsync(async (req: Request, res: Response) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Contact fetched successfully",
+    message: "Contact details retrieved successfully",
     data: result,
   });
 });

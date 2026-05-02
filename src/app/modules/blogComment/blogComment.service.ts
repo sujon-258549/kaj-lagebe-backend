@@ -9,7 +9,7 @@ import { USER_ROLE } from "../users/user.constant.ts";
 import { emitToUser } from "../../utils/socket.js";
 
 const createBlogComment = async (payload: any, userId?: string) => {
-  const { blogId, ...rest } = payload;
+  const { blogId, blogSlug, ...rest } = payload;
 
   // 1. Check if blog exists
   const blog = await prisma.blog.findUnique({
@@ -21,50 +21,73 @@ const createBlogComment = async (payload: any, userId?: string) => {
   }
 
   // 2. Create Comment
-  const result = await prisma.blogComment.create({
-    data: {
-      ...rest,
-      blogId,
-      userId: userId || payload.userId,
-    },
-    include: {
-      blog: true,
-      user: {
-        select: {
-          id: true,
-          email: true,
-          profile: true,
+  try {
+    const result = await prisma.blogComment.create({
+      data: {
+        ...rest,
+        blogId,
+        userId: userId || payload.userId,
+      },
+      include: {
+        blog: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            email: true,
+            profile: {
+              select: {
+                name: true,
+                photo: true,
+              },
+            },
+          },
         },
       },
-    },
-  });
-
-  // 3. Notify Admins
-  const admins = await prisma.user.findMany({
-    where: {
-      role: {
-        role: {
-          in: [USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN],
-        },
-      },
-    },
-  });
-
-  for (const admin of admins) {
-    await NotificationServices.createNotification({
-      userId: admin.id,
-      type: "BLOG_COMMENT",
-      message: `💬 নতুন ব্লগ কমেন্ট: "${blog.title}" ব্লগে ${payload.name} কমেন্ট করেছেন।`,
     });
 
-    emitToUser(admin.id, "new-blog-comment", result);
-  }
+    // 3. Notify Admins
+    const admins = await prisma.user.findMany({
+      where: {
+        role: {
+          role: {
+            in: [USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN],
+          },
+        },
+      },
+    });
 
-  return result;
+    for (const admin of admins) {
+      await NotificationServices.createNotification({
+        userId: admin.id,
+        type: "BLOG_COMMENT",
+        message: `💬 নতুন ব্লগ কমেন্ট: "${blog.title}" ব্লগে ${payload.name} কমেন্ট করেছেন।`,
+      });
+
+      emitToUser(admin.id, "new-blog-comment", result);
+    }
+
+    return result;
+  } catch (error: any) {
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to post comment");
+  }
 };
 
 const getAllBlogComments = async (query: any) => {
-  const { searchTerm, page, limit, sortBy, sortOrder, ...queryFilter } = query;
+  const {
+    searchTerm,
+    page,
+    limit,
+    sortBy,
+    sortOrder,
+    blog,
+    ...queryFilter
+  } = query;
 
   const andCondition: Prisma.BlogCommentWhereInput[] = [];
   const { pageNumber, limitNumber, skip, sortOrderValue, sortByValue } =
@@ -81,10 +104,14 @@ const getAllBlogComments = async (query: any) => {
     });
   }
 
+
   const result = await prisma.blogComment.findMany({
     where: {
-      AND: andCondition,
-      ...queryFilter,
+      AND: [
+        ...andCondition,
+        queryFilter,
+        blog ? { blog } : {},
+      ],
       isDeleted: false,
     },
     include: {
@@ -112,8 +139,11 @@ const getAllBlogComments = async (query: any) => {
 
   const total = await prisma.blogComment.count({
     where: {
-      AND: andCondition,
-      ...queryFilter,
+      AND: [
+        ...andCondition,
+        queryFilter,
+        blog ? { blog } : {},
+      ],
       isDeleted: false,
     },
   });
@@ -132,8 +162,25 @@ const getBlogCommentById = async (id: string) => {
   const result = await prisma.blogComment.findUnique({
     where: { id },
     include: {
-      blog: true,
-      user: true,
+      blog: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+        },
+      },
+      user: {
+        select: {
+          id: true,
+          email: true,
+          profile: {
+            select: {
+              name: true,
+              photo: true,
+            },
+          },
+        },
+      },
     },
   });
   if (!result) throw new ApiError(httpStatus.NOT_FOUND, "Comment not found");
@@ -144,11 +191,15 @@ const updateBlogComment = async (id: string, payload: any) => {
   const isExist = await prisma.blogComment.findUnique({ where: { id } });
   if (!isExist) throw new ApiError(httpStatus.NOT_FOUND, "Comment not found");
 
-  const result = await prisma.blogComment.update({
-    where: { id },
-    data: payload,
-  });
-  return result;
+  try {
+    const result = await prisma.blogComment.update({
+      where: { id },
+      data: payload,
+    });
+    return result;
+  } catch (error: any) {
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to update comment");
+  }
 };
 
 const deleteBlogComment = async (id: string) => {
@@ -162,8 +213,23 @@ const deleteBlogComment = async (id: string) => {
   return { message: "Comment deleted successfully" };
 };
 
-const getCommentsByBlogId = async (blogId: string) => {
-  return await getAllBlogComments({ blogId, status: true });
+const isUUID = (str: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    str,
+  );
+
+const getCommentsByBlogIdentifier = async (identifier: string, query: any) => {
+  const isId = isUUID(identifier);
+
+  const blogFilter = isId
+    ? { blogId: identifier }
+    : { blog: { slug: identifier } };
+
+  return await getAllBlogComments({
+    ...query,
+    ...blogFilter,
+    status: query.status !== undefined ? query.status : true,
+  });
 };
 
 export const BlogCommentServices = {
@@ -172,5 +238,5 @@ export const BlogCommentServices = {
   getBlogCommentById,
   updateBlogComment,
   deleteBlogComment,
-  getCommentsByBlogId,
+  getCommentsByBlogIdentifier,
 };

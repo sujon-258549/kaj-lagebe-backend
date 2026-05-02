@@ -22,7 +22,7 @@ const getAllProjects = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Projects retrieved successfully!",
+    message: "All projects retrieved successfully!",
     data: result.data,
     meta: result.meta,
   });
@@ -33,7 +33,7 @@ const getSingleProject = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Project retrieved successfully!",
+    message: "Project details retrieved successfully!",
     data: result,
   });
 });
@@ -43,7 +43,7 @@ const getProjectBySlug = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Project retrieved successfully!",
+    message: "Project details retrieved successfully!",
     data: result,
   });
 });

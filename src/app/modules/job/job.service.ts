@@ -58,44 +58,64 @@ const createJob = async (userId: string, payload: any) => {
     payload.slug || slugCreate(payload.title + " " + (payload.location || ""));
 
   const { authorId, userId: payloadUserId, categoryId, subCategoryId, ...rest } = payload;
-  const result = await prisma.job.create({
-    data: {
-      ...rest,
-      slug,
-      authorId: userId as string,
-      updatedById: userId ?? null,
-      category: categoryId ? { connect: { id: categoryId } } : undefined,
-      subCategory: subCategoryId ? { connect: { id: subCategoryId } } : undefined,
-    },
-    include: {
-      category: {
-        select: {
-          name: true,
-          slug: true,
-        },
+
+  // 1. Validate Category and SubCategory if provided
+  if (categoryId) {
+    const categoryExists = await prisma.category.findUnique({ where: { id: categoryId } });
+    if (!categoryExists) throw new ApiError(httpStatus.NOT_FOUND, "Selected Category not found");
+  }
+  if (subCategoryId) {
+    const subCategoryExists = await prisma.subCategory.findUnique({ where: { id: subCategoryId } });
+    if (!subCategoryExists) throw new ApiError(httpStatus.NOT_FOUND, "Selected SubCategory not found");
+  }
+
+  try {
+    const result = await prisma.job.create({
+      data: {
+        ...rest,
+        slug,
+        authorId: userId as string,
+        updatedById: userId ?? null,
+        categoryId: categoryId || undefined,
+        subCategoryId: subCategoryId || undefined,
       },
-      subCategory: {
-        select: {
-          name: true,
-          slug: true,
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
         },
-      },
-      user: {
-        select: {
-          email: true,
-          mobile: true,
-          profile: {
-            select: {
-              name: true,
-              photo: true,
+        subCategory: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+        user: {
+          select: {
+            email: true,
+            mobile: true,
+            profile: {
+              select: {
+                name: true,
+                photo: true,
+              },
             },
           },
         },
       },
-    },
-  });
+    });
 
-  return result;
+    return result;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A job with this title already exists. Please use a unique title.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to create job post");
+  }
 };
 
 const getAllJobs = async (query: any) => {
@@ -148,12 +168,14 @@ const getAllJobs = async (query: any) => {
     include: {
       category: {
         select: {
+          id: true,
           name: true,
           slug: true,
         },
       },
       subCategory: {
         select: {
+          id: true,
           name: true,
           slug: true,
         },
@@ -197,15 +219,27 @@ const getAllJobs = async (query: any) => {
   };
 };
 
-const getJobById = async (id: string) => {
+const getJobByIdentifier = async (identifier: string) => {
   const result = await prisma.job.findFirst({
     where: {
-      OR: [{ id: id }, { slug: id }],
+      OR: [{ id: identifier }, { slug: identifier }],
       isDeleted: false,
     },
     include: {
-      category: true,
-      subCategory: true,
+      category: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+      subCategory: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
       user: {
         include: {
           profile: true,
@@ -285,52 +319,65 @@ const updateJob = async (id: string, payload: any, userId?: string) => {
   const { categoryId, subCategoryId, authorId, userId: payloadUserId, ...updateData } = payload;
   
   if (categoryId) {
-    updateData.category = { connect: { id: categoryId } };
+    const categoryExists = await prisma.category.findUnique({ where: { id: categoryId } });
+    if (!categoryExists) throw new ApiError(httpStatus.NOT_FOUND, "Selected Category not found");
+    updateData.categoryId = categoryId;
   }
   if (subCategoryId) {
-    updateData.subCategory = { connect: { id: subCategoryId } };
+    const subCategoryExists = await prisma.subCategory.findUnique({ where: { id: subCategoryId } });
+    if (!subCategoryExists) throw new ApiError(httpStatus.NOT_FOUND, "Selected SubCategory not found");
+    updateData.subCategoryId = subCategoryId;
   }
   if (userId) {
     updateData.updatedById = userId ?? null;
   }
 
-  const result = await prisma.job.update({
-    where: { id },
-    data: updateData,
-    include: {
-      category: {
-        select: {
-          name: true,
-          slug: true,
+  try {
+    const result = await prisma.job.update({
+      where: { id },
+      data: updateData,
+      include: {
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
         },
-      },
-      subCategory: {
-        select: {
-          name: true,
-          slug: true,
+        subCategory: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
         },
-      },
-      user: {
-        select: {
-          email: true,
-          mobile: true,
-          profile: {
-            select: {
-              name: true,
-              photo: true,
+        user: {
+          select: {
+            email: true,
+            mobile: true,
+            profile: {
+              select: {
+                name: true,
+                photo: true,
+              },
             },
           },
         },
-      },
-      updatedBy: {
-        select: {
-          email: true,
-          profile: { select: { name: true } },
+        updatedBy: {
+          select: {
+            email: true,
+            profile: { select: { name: true } },
+          },
         },
       },
-    },
-  });
-  return result;
+    });
+    return result;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A job with this title already exists. Please use a unique title.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to update job post");
+  }
 };
 
 const updateJobStatus = async (id: string, payload: any, userId?: string) => {
@@ -362,7 +409,7 @@ const deleteJob = async (id: string) => {
 export const JobServices = {
   createJob,
   getAllJobs,
-  getJobById,
+  getJobByIdentifier,
   updateJob,
   updateJobStatus,
   deleteJob,

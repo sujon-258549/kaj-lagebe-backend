@@ -23,28 +23,7 @@ export declare const SubCategoryServices: {
             total: number;
         };
     }>;
-    getSubCategoryById: (id: string) => Promise<{
-        image: string | null;
-        url: string | null;
-        category: {
-            name: string;
-            id: string;
-            slug: string;
-        };
-        name: string;
-        createdAt: Date;
-        updatedAt: Date;
-        id: string;
-        description: string | null;
-        createdById: string | null;
-        updatedById: string | null;
-        slug: string;
-        status: boolean;
-        categoryId: string;
-        icon: string | null;
-        imageId: string | null;
-    }>;
-    getSubCategoryBySlug: (slug: string) => Promise<{
+    getSubCategoryByIdentifier: (identifier: string) => Promise<{
         image: string | null;
         url: string | null;
         category: {

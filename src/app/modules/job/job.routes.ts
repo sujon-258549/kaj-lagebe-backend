@@ -13,7 +13,7 @@ router.post(
 
 router.get("/", JobControllers.getAllJobs);
 
-router.get("/:id", JobControllers.getJobById);
+router.get("/:id", JobControllers.getJobByIdentifier);
 
 router.patch(
   "/:id",

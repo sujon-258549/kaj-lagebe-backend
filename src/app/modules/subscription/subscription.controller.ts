@@ -22,7 +22,7 @@ const getAllSubscription = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "All Subscriptions retrieved successfully!",
+    message: "All subscriptions retrieved successfully!",
     data: result.data,
     meta: result.meta,
   });
@@ -34,7 +34,7 @@ const getSubscriptionById = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Subscription retrieved successfully!",
+    message: "Subscription details retrieved successfully!",
     data: result,
   });
 });

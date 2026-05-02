@@ -33,39 +33,52 @@ const createApplication = async (userId: string, payload: any) => {
   if (typeof payload.isDeleted === "string")
     payload.isDeleted = payload.isDeleted === "true";
 
-  const result = await prisma.application.create({
-    data: {
-      ...payload,
-      userId,
-    },
-    include: {
-      job: true,
-      user: {
-        select: {
-          email: true,
-          mobile: true,
-          profile: {
-            select: {
-              name: true,
-              photo: true,
+  try {
+    const result = await prisma.application.create({
+      data: {
+        ...payload,
+        userId,
+      },
+      include: {
+        job: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+          },
+        },
+        user: {
+          select: {
+            email: true,
+            mobile: true,
+            profile: {
+              select: {
+                name: true,
+                photo: true,
+              },
             },
           },
         },
       },
-    },
-  });
+    });
 
-  // Increment applicants count
-  await prisma.job.update({
-    where: { id: payload.jobId },
-    data: {
-      applicantsCount: {
-        increment: 1,
+    // Increment applicants count
+    await prisma.job.update({
+      where: { id: payload.jobId },
+      data: {
+        applicantsCount: {
+          increment: 1,
+        },
       },
-    },
-  });
+    });
 
-  return result;
+    return result;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "You have already applied for this job position.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to submit job application");
+  }
 };
 
 const getAllApplications = async (query: any) => {
@@ -98,7 +111,13 @@ const getAllApplications = async (query: any) => {
       [sortByValue]: sortOrderValue,
     },
     include: {
-      job: true,
+      job: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+        },
+      },
       user: {
         select: {
           email: true,
@@ -136,7 +155,13 @@ const getApplicationById = async (id: string) => {
   const result = await prisma.application.findUnique({
     where: { id },
     include: {
-      job: true,
+      job: {
+        select: {
+          id: true,
+          title: true,
+          slug: true,
+        },
+      },
       user: {
         select: {
           email: true,
@@ -185,26 +210,36 @@ const updateApplication = async (id: string, payload: any) => {
   if (typeof payload.isDeleted === "string")
     payload.isDeleted = payload.isDeleted === "true";
 
-  const result = await prisma.application.update({
-    where: { id },
-    data: payload,
-    include: {
-      job: true,
-      user: {
-        select: {
-          email: true,
-          mobile: true,
-          profile: {
-            select: {
-              name: true,
-              photo: true,
+  try {
+    const result = await prisma.application.update({
+      where: { id },
+      data: payload,
+      include: {
+        job: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+          },
+        },
+        user: {
+          select: {
+            email: true,
+            mobile: true,
+            profile: {
+              select: {
+                name: true,
+                photo: true,
+              },
             },
           },
         },
       },
-    },
-  });
-  return result;
+    });
+    return result;
+  } catch (error: any) {
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to update application status");
+  }
 };
 
 const deleteApplication = async (id: string) => {

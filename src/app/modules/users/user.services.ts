@@ -30,141 +30,155 @@ const createUserIntoDB = async (payload: any) => {
 
   const hashedPassword = await argon2.hash(user.password);
 
-  const result = await prisma.$transaction(async (tc) => {
-    // Check if role is provided, if not default to "USER"
-    let targetRoleId = user.roleId;
+  try {
+    const result = await prisma.$transaction(async (tc) => {
+      // Check if role is provided, if not default to "USER"
+      let targetRoleId = user.roleId;
 
-    if (!targetRoleId) {
-      const defaultRole = await tc.allRole.upsert({
-        where: { role: "USER" },
-        update: {},
-        create: { role: "USER" },
+      if (!targetRoleId) {
+        const defaultRole = await tc.allRole.upsert({
+          where: { role: "USER" },
+          update: {},
+          create: { role: "USER" },
+        });
+        targetRoleId = defaultRole.id;
+      }
+
+      // Create User
+      const userData = {
+        ...user,
+        roleId: targetRoleId,
+        password: hashedPassword,
+      };
+
+      const newUser = await tc.user.create({
+        data: userData,
       });
-      targetRoleId = defaultRole.id;
-    }
 
-    // Create User
-    const userData = {
-      ...user,
-      roleId: targetRoleId,
-      password: hashedPassword,
-    };
+      // Create Profile
+      if (profile) {
+        const { dob, age, nidPhotoIds, nidPhotoUrls, ...profileRest } = profile;
+        await tc.profile.create({
+          data: {
+            ...profileRest,
+            dob: dob ? new Date(dob) : undefined,
+            age: age ? Number(age) : undefined,
+            mobile: user.mobile,
+            nidPhoto: nidPhotoUrls || [],
+            nidPhotos:
+              nidPhotoIds && nidPhotoIds.length > 0
+                ? {
+                    connect: nidPhotoIds.map((id: string) => ({ id })),
+                  }
+                : undefined,
+          },
+        });
+      }
 
-    const newUser = await tc.user.create({
-      data: userData,
+      // Create Address
+      if (address) {
+        await tc.address.create({
+          data: {
+            ...address,
+            mobile: user.mobile,
+          },
+        });
+      }
+
+      // Create WorkInfo
+      if (workInfo) {
+        const { subCategoryIds, workTypeIds, ...workInfoRest } = workInfo;
+        await tc.workInfo.create({
+          data: {
+            ...workInfoRest,
+            mobile: user.mobile,
+            subCategories:
+              subCategoryIds && subCategoryIds.length > 0
+                ? {
+                    connect: subCategoryIds.map((id: string) => ({ id })),
+                  }
+                : undefined,
+            workTypes:
+              workTypeIds && workTypeIds.length > 0
+                ? {
+                    connect: workTypeIds.map((id: string) => ({ id })),
+                  }
+                : undefined,
+          },
+        });
+      }
+
+      return await tc.user.findUnique({
+        where: { id: newUser.id },
+        include: {
+          role: {
+            select: {
+              id: true,
+              role: true,
+            },
+          },
+          department: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          profile: {
+            include: {
+              profilePhoto: {
+                select: {
+                  id: true,
+                  url: true,
+                },
+              },
+              nidPhotos: {
+                select: {
+                  id: true,
+                  url: true,
+                },
+              },
+            },
+          },
+          address: true,
+          workInfo: {
+            include: {
+              subCategories: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+              workTypes: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      });
     });
 
-    // Create Profile
-    if (profile) {
-      const { dob, age, nidPhotoIds, nidPhotoUrls, ...profileRest } = profile;
-      await tc.profile.create({
-        data: {
-          ...profileRest,
-          dob: dob ? new Date(dob) : undefined,
-          age: age ? Number(age) : undefined,
-          mobile: user.mobile,
-          nidPhoto: nidPhotoUrls || [],
-          nidPhotos:
-            nidPhotoIds && nidPhotoIds.length > 0
-              ? {
-                  connect: nidPhotoIds.map((id: string) => ({ id })),
-                }
-              : undefined,
-        },
-      });
+    if (result) {
+      const { password, ...userWithoutPassword } = result as any;
+      return userWithoutPassword;
     }
 
-    // Create Address
-    if (address) {
-      await tc.address.create({
-        data: {
-          ...address,
-          mobile: user.mobile,
-        },
-      });
+    return result;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      const target = error.meta?.target || [];
+      if (target.includes("email")) {
+        throw new ApiError(status.CONFLICT, "A user with this email already exists.");
+      }
+      if (target.includes("mobile")) {
+        throw new ApiError(status.CONFLICT, "A user with this mobile number already exists.");
+      }
+      throw new ApiError(status.CONFLICT, "A unique constraint failed on the user record.");
     }
-
-    // Create WorkInfo
-    if (workInfo) {
-      const { subCategoryIds, workTypeIds, ...workInfoRest } = workInfo;
-      await tc.workInfo.create({
-        data: {
-          ...workInfoRest,
-          mobile: user.mobile,
-          subCategories:
-            subCategoryIds && subCategoryIds.length > 0
-              ? {
-                  connect: subCategoryIds.map((id: string) => ({ id })),
-                }
-              : undefined,
-          workTypes:
-            workTypeIds && workTypeIds.length > 0
-              ? {
-                  connect: workTypeIds.map((id: string) => ({ id })),
-                }
-              : undefined,
-        },
-      });
-    }
-
-    return await tc.user.findUnique({
-      where: { id: newUser.id },
-      include: {
-        role: {
-          select: {
-            id: true,
-            role: true,
-          },
-        },
-        department: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        profile: {
-          include: {
-            profilePhoto: {
-              select: {
-                id: true,
-                url: true,
-              },
-            },
-            nidPhotos: {
-              select: {
-                id: true,
-                url: true,
-              },
-            },
-          },
-        },
-        address: true,
-        workInfo: {
-          include: {
-            subCategories: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-            workTypes: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
-  });
-
-  if (result) {
-    const { password, ...userWithoutPassword } = result as any;
-    return userWithoutPassword;
+    throw new ApiError(status.BAD_REQUEST, error.message || "Failed to create user");
   }
-
-  return result;
 };
 
 // get all users
@@ -481,58 +495,71 @@ const updateUser = async (id: string, payload: any) => {
     (key) => finalUpdateData[key] === undefined && delete finalUpdateData[key],
   );
 
-  const result = await prisma.user.update({
-    where: { id },
-    data: finalUpdateData,
-    include: {
-      role: {
-        select: {
-          id: true,
-          role: true,
-        },
-      },
-      department: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      profile: {
-        include: {
-          profilePhoto: {
-            select: {
-              id: true,
-              url: true,
-            },
-          },
-          nidPhotos: {
-            select: {
-              id: true,
-              url: true,
-            },
+  try {
+    const result = await prisma.user.update({
+      where: { id },
+      data: finalUpdateData,
+      include: {
+        role: {
+          select: {
+            id: true,
+            role: true,
           },
         },
-      },
-      address: true,
-      workInfo: {
-        include: {
-          subCategories: {
-            select: {
-              id: true,
-              name: true,
-            },
+        department: {
+          select: {
+            id: true,
+            name: true,
           },
-          workTypes: {
-            select: {
-              id: true,
-              name: true,
+        },
+        profile: {
+          include: {
+            profilePhoto: {
+              select: {
+                id: true,
+                url: true,
+              },
+            },
+            nidPhotos: {
+              select: {
+                id: true,
+                url: true,
+              },
             },
           },
         },
+        address: true,
+        workInfo: {
+          include: {
+            subCategories: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+            workTypes: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
-    },
-  });
-  return result;
+    });
+    return result;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      const target = error.meta?.target || [];
+      if (target.includes("email")) {
+        throw new ApiError(status.CONFLICT, "Email is already taken by another user.");
+      }
+      if (target.includes("mobile")) {
+        throw new ApiError(status.CONFLICT, "Mobile number is already taken by another user.");
+      }
+    }
+    throw new ApiError(status.BAD_REQUEST, error.message || "Failed to update user profile");
+  }
 };
 
 // get my data

@@ -22,18 +22,18 @@ const getAllJobs = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Jobs retrieved successfully!",
+    message: "All jobs retrieved successfully!",
     data: result.data,
     meta: result.meta,
   });
 });
 
-const getJobById = catchAsync(async (req, res) => {
-  const result = await JobServices.getJobById(req.params.id as string);
+const getJobByIdentifier = catchAsync(async (req, res) => {
+  const result = await JobServices.getJobByIdentifier(req.params.id as string);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Job retrieved successfully!",
+    message: "Job details retrieved successfully!",
     data: result,
   });
 });
@@ -73,7 +73,7 @@ const deleteJob = catchAsync(async (req, res) => {
 export const JobControllers = {
   createJob,
   getAllJobs,
-  getJobById,
+  getJobByIdentifier,
   updateJob,
   updateJobStatus,
   deleteJob,

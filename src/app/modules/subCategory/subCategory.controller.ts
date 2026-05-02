@@ -24,33 +24,24 @@ const getAllSubCategory = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "All SubCategorys retrieved successfully!",
+    message: "All sub-categories retrieved successfully!",
     data: result.data,
     meta: result.meta,
   });
 });
 
-const getSubCategoryById = catchAsync(async (req, res) => {
+const getSubCategoryByIdentifier = catchAsync(async (req, res) => {
   const id = req.params.id;
-  const result = await SubCategoryServices.getSubCategoryById(id as string);
+  const result = await SubCategoryServices.getSubCategoryByIdentifier(id as string);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "SubCategory retrieved successfully!",
+    message: "Sub-category details retrieved successfully!",
     data: result,
   });
 });
 
-const getSubCategoryBySlug = catchAsync(async (req, res) => {
-  const slug = req.params.slug;
-  const result = await SubCategoryServices.getSubCategoryBySlug(slug as string);
-  return sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "SubCategory retrieved successfully!",
-    data: result,
-  });
-});
+
 
 const updateSubCategory = catchAsync(async (req, res) => {
   const id = req.params.id;
@@ -97,8 +88,7 @@ const updateSubCategoryStatus = catchAsync(async (req, res) => {
 export const SubCategoryControllers = {
   createSubCategory,
   getAllSubCategory,
-  getSubCategoryById,
-  getSubCategoryBySlug,
+  getSubCategoryByIdentifier,
   updateSubCategory,
   deleteSubCategory,
   updateSubCategoryStatus,

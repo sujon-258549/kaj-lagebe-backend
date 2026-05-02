@@ -20,7 +20,7 @@ const getAllReviews = catchAsync(async (req: Request, res: Response) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Reviews fetched successfully",
+    message: "All reviews retrieved successfully",
     data: result,
   });
 });
@@ -30,7 +30,7 @@ const getReviewById = catchAsync(async (req: Request, res: Response) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Review fetched successfully",
+    message: "Review details retrieved successfully",
     data: result,
   });
 });

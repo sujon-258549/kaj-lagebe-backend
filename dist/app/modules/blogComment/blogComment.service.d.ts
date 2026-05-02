@@ -4,40 +4,14 @@ export declare const BlogCommentServices: {
             email: string;
             profile: {
                 name: string | null;
-                mobile: string;
-                id: string;
-                gender: import("@prisma/client").$Enums.Gender | null;
-                age: number | null;
-                dob: Date | null;
-                bloodGroup: import("@prisma/client").$Enums.BloodGroup | null;
-                photoId: string | null;
                 photo: string | null;
-                nid: string | null;
-                nidPhoto: string[];
-                emailVerified: boolean;
-                phoneVerified: boolean;
-                nidVerified: boolean;
-                serialId: string | null;
             } | null;
             id: string;
         } | null;
         blog: {
-            createdAt: Date;
-            updatedAt: Date;
-            category: string | null;
             id: string;
-            description: string | null;
-            updatedById: string | null;
             slug: string;
             title: string;
-            excerpt: string | null;
-            isPublished: boolean;
-            authorId: string | null;
-            content: string;
-            tags: string[];
-            authorName: string | null;
-            publishedAt: Date | null;
-            coverId: string | null;
         };
     } & {
         name: string;
@@ -104,43 +78,16 @@ export declare const BlogCommentServices: {
     getBlogCommentById: (id: string) => Promise<{
         user: {
             email: string;
-            mobile: string;
-            isBlocked: boolean;
-            isDeleted: boolean;
-            isVerified: boolean;
-            isActive: boolean;
-            createdAt: Date;
-            updatedAt: Date;
+            profile: {
+                name: string | null;
+                photo: string | null;
+            } | null;
             id: string;
-            password: string;
-            roleId: string | null;
-            passwordChangeTime: Date | null;
-            passwordChanged: boolean;
-            lastLogin: Date | null;
-            subscriptionId: string | null;
-            departmentId: string | null;
-            loginCount: number;
-            loginTryCount: number;
-            loginTryTime: Date | null;
-            lastFollowUp: Date | null;
         } | null;
         blog: {
-            createdAt: Date;
-            updatedAt: Date;
-            category: string | null;
             id: string;
-            description: string | null;
-            updatedById: string | null;
             slug: string;
             title: string;
-            excerpt: string | null;
-            isPublished: boolean;
-            authorId: string | null;
-            content: string;
-            tags: string[];
-            authorName: string | null;
-            publishedAt: Date | null;
-            coverId: string | null;
         };
     } & {
         name: string;
@@ -173,7 +120,7 @@ export declare const BlogCommentServices: {
     deleteBlogComment: (id: string) => Promise<{
         message: string;
     }>;
-    getCommentsByBlogId: (blogId: string) => Promise<{
+    getCommentsByBlogIdentifier: (identifier: string, query: any) => Promise<{
         data: ({
             user: {
                 email: string;

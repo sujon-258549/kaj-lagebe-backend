@@ -42,7 +42,7 @@ const blogInclude = {
 const createBlog = async (payload: any, userId?: string) => {
   const { coverId, authorId, tags, authorName, coverImage, ...rest } = payload;
   const slug = payload.slug || slugCreate(payload.title);
-  
+
   const creatorId = userId || authorId;
 
   const data: Prisma.BlogCreateInput = {
@@ -54,16 +54,25 @@ const createBlog = async (payload: any, userId?: string) => {
   };
 
   if (coverId) {
+    const coverExists = await prisma.image.findUnique({ where: { id: coverId } });
+    if (!coverExists) throw new ApiError(httpStatus.NOT_FOUND, "Cover image not found");
     data.cover = { connect: { id: coverId } };
   }
 
   if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
 
-  return await prisma.blog.create({
-    data,
-    include: blogInclude,
-  });
+  try {
+    return await prisma.blog.create({
+      data,
+      include: blogInclude,
+    });
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A blog with this title already exists. Please use a unique title.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to create blog post");
+  }
 };
 
 const getAllBlog = async (query: any) => {
@@ -162,12 +171,19 @@ const updateBlog = async (id: string, payload: any, userId?: string) => {
   if (payload.createdAt) updateData.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) updateData.updatedAt = new Date(payload.updatedAt);
 
-  const result = await prisma.blog.update({
-    where: { id },
-    data: updateData,
-    include: blogInclude,
-  });
-  return result;
+  try {
+    const result = await prisma.blog.update({
+      where: { id },
+      data: updateData,
+      include: blogInclude,
+    });
+    return result;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A blog with this title already exists. Please use a unique title.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to update blog post");
+  }
 };
 
 const updateBlogStatus = async (id: string, userId?: string) => {
@@ -176,10 +192,12 @@ const updateBlogStatus = async (id: string, userId?: string) => {
 
   const result = await prisma.blog.update({
     where: { id },
-    data: { 
-      isPublished: !isBlogExist.isPublished, 
-      publishedAt: !isBlogExist.isPublished ? new Date() : isBlogExist.publishedAt,
-      updatedById: userId ?? null
+    data: {
+      isPublished: !isBlogExist.isPublished,
+      publishedAt: !isBlogExist.isPublished
+        ? new Date()
+        : isBlogExist.publishedAt,
+      updatedById: userId ?? null,
     },
     include: blogInclude,
   });

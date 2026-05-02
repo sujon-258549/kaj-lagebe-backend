@@ -18,7 +18,14 @@ const createSubscription = async (payload: any, userId?: string) => {
     createdById: userId ?? null,
     updatedById: userId ?? null
   };
-  return await prisma.subscription.create({ data });
+  try {
+    return await prisma.subscription.create({ data });
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A subscription plan with this name already exists.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to create subscription plan");
+  }
 };
 
 //get all subscription
@@ -119,11 +126,18 @@ const updateSubscription = async (id: string, payload: any, userId?: string) => 
     updateData.updatedById = userId;
   }
 
-  const result = await prisma.subscription.update({
-    where: { id },
-    data: updateData,
-  });
-  return result;
+  try {
+    const result = await prisma.subscription.update({
+      where: { id },
+      data: updateData,
+    });
+    return result;
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A subscription plan with this name already exists.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to update subscription plan");
+  }
 };
 
 //delete subscription

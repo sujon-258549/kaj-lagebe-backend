@@ -15,8 +15,7 @@ router.post(
   SubCategoryControllers.createSubCategory,
 );
 router.get("/", auth(), SubCategoryControllers.getAllSubCategory);
-router.get("/:id", auth(), SubCategoryControllers.getSubCategoryById);
-router.get("/:slug", auth(), SubCategoryControllers.getSubCategoryBySlug);
+router.get("/:id", auth(), SubCategoryControllers.getSubCategoryByIdentifier);
 router.put(
   "/:id",
   auth(),

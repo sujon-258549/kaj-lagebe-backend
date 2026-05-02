@@ -36,7 +36,7 @@ const getAllPayment = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "All Payments retrieved successfully!",
+    message: "All payments retrieved successfully!",
     data: result,
   });
 });
@@ -46,7 +46,7 @@ const getPaymentById = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Payment retrieved successfully!",
+    message: "Payment details retrieved successfully!",
     data: result,
   });
 });

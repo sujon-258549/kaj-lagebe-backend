@@ -7,6 +7,8 @@ import { USER_ROLE } from "../users/user.constant.ts";
 import { contactAcknowledgmentTemplate, adminContactNotificationTemplate, sendEmail, contactFeedbackTemplate } from "../../utils/sendEmail.js";
 import { emitToUser } from "../../utils/socket.js";
 import { sendWhatsAppMessage } from "../../utils/whatsapp.js";
+import ApiError from "../../middleware/apiError.ts";
+import httpStatus from "http-status";
 
 const createContact = async (payload: IContact) => {
   // 1. Generate AI Response
@@ -19,75 +21,79 @@ const createContact = async (payload: IContact) => {
   const aiResponse = await AgentService.generateResponse(prompt);
   payload.aiResponse = aiResponse;
 
-  // 2. Save Contact to DB
-  const result = await prisma.contact.create({
-    data: payload,
-  });
-
-  // 3. Create Notifications for Admins
-  const admins = await prisma.user.findMany({
-    where: {
-      role: {
-        role: {
-          in: [USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN],
-        },
-      },
-    },
-  });
-
-  for (const admin of admins) {
-    // 3a. System Notification
-    await NotificationServices.createNotification({
-      userId: admin.id,
-      type: "CONTACT",
-      message: `📩 নতুন মেসেজ: ${payload.firstName} একটি মেসেজ পাঠিয়েছেন ("${payload.subject || "সাধারণ জিজ্ঞাসা"}"). এখনই চেক করুন!`,
+  try {
+    // 2. Save Contact to DB
+    const result = await prisma.contact.create({
+      data: payload,
     });
 
-    // 3b. Real-time Dashboard Update for each admin
-    emitToUser(admin.id, "new-contact", result);
+    // 3. Create Notifications for Admins
+    const admins = await prisma.user.findMany({
+      where: {
+        role: {
+          role: {
+            in: [USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN],
+          },
+        },
+      },
+    });
 
-    // 3c. Admin Email Notification
-    if (admin.email) {
-      const adminEmailHtml = adminContactNotificationTemplate({
+    for (const admin of admins) {
+      // 3a. System Notification
+      await NotificationServices.createNotification({
+        userId: admin.id,
+        type: "CONTACT",
+        message: `📩 নতুন মেসেজ: ${payload.firstName} একটি মেসেজ পাঠিয়েছেন ("${payload.subject || "সাধারণ জিজ্ঞাসা"}"). এখনই চেক করুন!`,
+      });
+
+      // 3b. Real-time Dashboard Update for each admin
+      emitToUser(admin.id, "new-contact", result);
+
+      // 3c. Admin Email Notification
+      if (admin.email) {
+        const adminEmailHtml = adminContactNotificationTemplate({
+          name: `${payload.firstName} ${payload.lastName || ""}`.trim(),
+          email: payload.email || "Not provided",
+          subject: payload.subject || "No Subject",
+          message: payload.message,
+        });
+
+        try {
+          await sendEmail(admin.email, adminEmailHtml, `New Contact Alert: ${payload.subject || "General Inquiry"}`);
+        } catch (error) {
+          console.error(`Error sending contact notification email to admin ${admin.email}:`, error);
+        }
+      }
+    }
+
+    // 3b. Create Notification for the User (if logged in)
+    if (payload.userId) {
+      await NotificationServices.createNotification({
+        userId: payload.userId,
+        type: "CONTACT",
+        message: `✅ ধন্যবাদ ${payload.firstName}! আপনার মেসেজটি আমরা পেয়েছি। আমাদের একজন প্রতিনিধি খুব শীঘ্রই আপনার সাথে যোগাযোগ করবে।`,
+      });
+    }
+
+    // 4. Send Auto-Feedback Email to User
+    if (payload.email) {
+      const emailHtml = contactAcknowledgmentTemplate({
         name: `${payload.firstName} ${payload.lastName || ""}`.trim(),
-        email: payload.email || "Not provided",
-        subject: payload.subject || "No Subject",
-        message: payload.message,
+        subject: payload.subject || "Your message to KajLagbe",
+        aiMessage: aiResponse,
       });
 
       try {
-        await sendEmail(admin.email, adminEmailHtml, `New Contact Alert: ${payload.subject || "General Inquiry"}`);
+        await sendEmail(payload.email, emailHtml, `Re: ${payload.subject || "Contact Inquiry"}`);
       } catch (error) {
-        console.error(`Error sending contact notification email to admin ${admin.email}:`, error);
+        console.error("Error sending contact feedback email:", error);
       }
     }
+
+    return result;
+  } catch (error: any) {
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to submit contact request");
   }
-
-  // 3b. Create Notification for the User (if logged in)
-  if (payload.userId) {
-    await NotificationServices.createNotification({
-      userId: payload.userId,
-      type: "CONTACT",
-      message: `✅ ধন্যবাদ ${payload.firstName}! আপনার মেসেজটি আমরা পেয়েছি। আমাদের একজন প্রতিনিধি খুব শীঘ্রই আপনার সাথে যোগাযোগ করবে।`,
-    });
-  }
-
-  // 4. Send Auto-Feedback Email to User
-  if (payload.email) {
-    const emailHtml = contactAcknowledgmentTemplate({
-      name: `${payload.firstName} ${payload.lastName || ""}`.trim(),
-      subject: payload.subject || "Your message to KajLagbe",
-      aiMessage: aiResponse,
-    });
-
-    try {
-      await sendEmail(payload.email, emailHtml, `Re: ${payload.subject || "Contact Inquiry"}`);
-    } catch (error) {
-      console.error("Error sending contact feedback email:", error);
-    }
-  }
-
-  return result;
 };
 
 const getAllContacts = async () => {
@@ -148,36 +154,40 @@ const sendContactFeedback = async (id: string, feedbackMessage: string, senderId
 
   const polishedFeedback = await AgentService.generateResponse(prompt);
 
-  const emailHtml = contactFeedbackTemplate({
-    name: `${contact.firstName} ${contact.lastName || ""}`.trim(),
-    originalMessage: contact.message,
-    feedbackMessage: polishedFeedback,
-  });
+  try {
+    const emailHtml = contactFeedbackTemplate({
+      name: `${contact.firstName} ${contact.lastName || ""}`.trim(),
+      originalMessage: contact.message,
+      feedbackMessage: polishedFeedback,
+    });
 
-  await sendEmail(contact.email, emailHtml, `Re: ${contact.subject || "Contact Inquiry Response"}`);
+    await sendEmail(contact.email, emailHtml, `Re: ${contact.subject || "Contact Inquiry Response"}`);
 
-  if (contact.phone) {
-    await sendWhatsAppMessage(contact.phone, polishedFeedback);
+    if (contact.phone) {
+      await sendWhatsAppMessage(contact.phone, polishedFeedback);
+    }
+
+    // 2. Store the feedback record in the new model
+    await prisma.contactFeedback.create({
+      data: {
+        contactId: id,
+        senderId: senderId,
+        feedbackMessage: polishedFeedback, // Store the polished version
+      },
+    });
+
+    // 3. Update contact status or store the feedback in DB if needed
+    const result = await prisma.contact.update({
+      where: { id },
+      data: {
+        aiResponse: polishedFeedback, 
+      },
+    });
+
+    return result;
+  } catch (error: any) {
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to send feedback response");
   }
-
-  // 2. Store the feedback record in the new model
-  await prisma.contactFeedback.create({
-    data: {
-      contactId: id,
-      senderId: senderId,
-      feedbackMessage: polishedFeedback, // Store the polished version
-    },
-  });
-
-  // 3. Update contact status or store the feedback in DB if needed
-  const result = await prisma.contact.update({
-    where: { id },
-    data: {
-      aiResponse: polishedFeedback, 
-    },
-  });
-
-  return result;
 };
 
 export const ContactService = {

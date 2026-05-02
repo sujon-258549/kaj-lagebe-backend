@@ -1,2 +1,12 @@
 export const blogCommentSearchableFields = ["name", "email", "phone", "comment"];
-export const blogCommentFilterableFields = ["searchTerm", "blogId", "userId", "status", "isDeleted"];
+export const blogCommentFilterableFields = [
+  "searchTerm",
+  "blogId",
+  "userId",
+  "status",
+  "isDeleted",
+  "page",
+  "limit",
+  "sortBy",
+  "sortOrder",
+];

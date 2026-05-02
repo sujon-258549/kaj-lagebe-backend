@@ -27,7 +27,7 @@ const getUserById = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: status.OK,
-      message: "User fetched successfully",
+      message: "User details retrieved successfully",
       data: result,
     });
   },
@@ -39,7 +39,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: status.OK,
-    message: "All users fetched successfully",
+    message: "All users retrieved successfully",
     data: result.data,
     meta: result.meta,
   });

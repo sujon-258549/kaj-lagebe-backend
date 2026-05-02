@@ -11,10 +11,12 @@ export declare const JobServices: {
         };
         category: {
             name: string;
+            id: string;
             slug: string;
         } | null;
         subCategory: {
             name: string;
+            id: string;
             slug: string;
         } | null;
     } & {
@@ -104,10 +106,12 @@ export declare const JobServices: {
             };
             category: {
                 name: string;
+                id: string;
                 slug: string;
             } | null;
             subCategory: {
                 name: string;
+                id: string;
                 slug: string;
             } | null;
             updatedBy: {
@@ -197,7 +201,7 @@ export declare const JobServices: {
             total: number;
         };
     }>;
-    getJobById: (id: string) => Promise<{
+    getJobByIdentifier: (identifier: string) => Promise<{
         user: {
             profile: {
                 name: string | null;
@@ -240,30 +244,13 @@ export declare const JobServices: {
         };
         category: {
             name: string;
-            createdAt: Date;
-            updatedAt: Date;
             id: string;
-            description: string | null;
-            createdById: string | null;
-            updatedById: string | null;
             slug: string;
-            status: boolean;
-            icon: string | null;
-            imageId: string | null;
         } | null;
         subCategory: {
             name: string;
-            createdAt: Date;
-            updatedAt: Date;
             id: string;
-            description: string | null;
-            createdById: string | null;
-            updatedById: string | null;
             slug: string;
-            status: boolean;
-            categoryId: string;
-            icon: string | null;
-            imageId: string | null;
         } | null;
         applications: ({
             user: {
@@ -407,10 +394,12 @@ export declare const JobServices: {
         };
         category: {
             name: string;
+            id: string;
             slug: string;
         } | null;
         subCategory: {
             name: string;
+            id: string;
             slug: string;
         } | null;
         updatedBy: {

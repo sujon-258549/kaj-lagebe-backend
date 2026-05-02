@@ -11,7 +11,7 @@ const router = Router();
 
 router.post("/", auth(), validateRequest(CategoryValidation.createCategoryZodSchema), CategoryController.createCategory);
 router.get("/", auth(), CategoryController.getAllCategory);
-router.get("/:id", auth(), CategoryController.getCategoryById);
+router.get("/:id", auth(), CategoryController.getCategoryByIdentifier);
 router.put("/:id", auth(), validateRequest(CategoryValidation.updateCategoryZodSchema), CategoryController.updateCategory);
 router.patch("/:id/status", auth(), CategoryController.updateCategoryStatus);
 router.delete("/:id", auth(), CategoryController.deleteCategory);

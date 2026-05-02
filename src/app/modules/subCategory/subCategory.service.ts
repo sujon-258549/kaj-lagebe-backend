@@ -15,18 +15,32 @@ const createSubCategory = async (payload: any, userId?: string) => {
     updatedById: userId ?? null,
     imageId: payload.imageId ?? null
   };
-  if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
-  if (payload.updatedAt) data.updatedAt = new Date(payload.updatedAt);
+  if (payload.categoryId) {
+    const categoryExists = await prisma.category.findUnique({ where: { id: payload.categoryId } });
+    if (!categoryExists) throw new ApiError(httpStatus.NOT_FOUND, "Selected Category not found");
+  }
 
-  const result = await prisma.subCategory.create({
-    data,
-    include: { image: true },
-  });
-  return {
-    ...result,
-    image: result.image?.url || null,
-    url: result.image?.url || null,
-  };
+  if (payload.imageId) {
+    const imageExists = await prisma.image.findUnique({ where: { id: payload.imageId } });
+    if (!imageExists) throw new ApiError(httpStatus.NOT_FOUND, "Associated Image not found");
+  }
+
+  try {
+    const result = await prisma.subCategory.create({
+      data,
+      include: { image: true },
+    });
+    return {
+      ...result,
+      image: result.image?.url || null,
+      url: result.image?.url || null,
+    };
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A sub-category with this name already exists. Please use a unique name.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to create sub-category");
+  }
 };
 
 const getAllSubCategory = async (query: any) => {
@@ -73,6 +87,7 @@ const getAllSubCategory = async (query: any) => {
     include: {
       category: {
         select: {
+          id: true,
           name: true,
           slug: true,
         },
@@ -110,10 +125,14 @@ const getAllSubCategory = async (query: any) => {
   };
 };
 
-const getSubCategoryById = async (id: string) => {
+const getSubCategoryByIdentifier = async (identifier: string) => {
   const result = await prisma.subCategory.findFirst({
     where: {
-      OR: [{ id: id }, { slug: id }],
+      OR: [
+        { id: identifier },
+        { slug: identifier },
+        { name: identifier },
+      ],
     },
     include: {
       category: {
@@ -126,31 +145,9 @@ const getSubCategoryById = async (id: string) => {
       image: true,
     },
   });
-  if (!result)
-    throw new ApiError(httpStatus.NOT_FOUND, "SubCategory not found");
-  return {
-    ...result,
-    image: result.image?.url || null,
-    url: result.image?.url || null,
-  };
-};
 
-const getSubCategoryBySlug = async (slug: string) => {
-  const result = await prisma.subCategory.findUnique({
-    where: { slug },
-    include: {
-      category: {
-        select: {
-          name: true,
-          id: true,
-          slug: true,
-        },
-      },
-      image: true,
-    },
-  });
-  if (!result)
-    throw new ApiError(httpStatus.NOT_FOUND, "SubCategory not found");
+  if (!result) throw new ApiError(httpStatus.NOT_FOUND, "SubCategory not found");
+
   return {
     ...result,
     image: result.image?.url || null,
@@ -176,16 +173,20 @@ const updateSubCategory = async (id: string, payload: any, userId?: string) => {
   }
 
   if (payload.categoryId) {
-    updateData.category = {
-      connect: { id: payload.categoryId },
-    };
+    const categoryExists = await prisma.category.findUnique({ where: { id: payload.categoryId } });
+    if (!categoryExists) throw new ApiError(httpStatus.NOT_FOUND, "Selected Category not found");
+    updateData.category = { connect: { id: payload.categoryId } };
   }
   if (payload.icon) updateData.icon = payload.icon;
   if (payload.description) updateData.description = payload.description;
   if (payload.status !== undefined) {
     updateData.status = payload.status === true || payload.status === "true";
   }
-  if (payload.imageId) updateData.image = { connect: { id: payload.imageId } };
+  if (payload.imageId) {
+    const imageExists = await prisma.image.findUnique({ where: { id: payload.imageId } });
+    if (!imageExists) throw new ApiError(httpStatus.NOT_FOUND, "Associated Image not found");
+    updateData.image = { connect: { id: payload.imageId } };
+  }
   if (payload.createdAt) updateData.createdAt = new Date(payload.createdAt);
   if (payload.updatedAt) updateData.updatedAt = new Date(payload.updatedAt);
 
@@ -193,16 +194,23 @@ const updateSubCategory = async (id: string, payload: any, userId?: string) => {
     updateData.updatedBy = { connect: { id: userId } };
   }
 
-  const result = await prisma.subCategory.update({
-    where: { id },
-    data: updateData,
-    include: { image: true },
-  });
-  return {
-    ...result,
-    image: result.image?.url || null,
-    url: result.image?.url || null,
-  };
+  try {
+    const result = await prisma.subCategory.update({
+      where: { id },
+      data: updateData,
+      include: { image: true },
+    });
+    return {
+      ...result,
+      image: result.image?.url || null,
+      url: result.image?.url || null,
+    };
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      throw new ApiError(httpStatus.CONFLICT, "A sub-category with this name already exists. Please use a unique name.");
+    }
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to update sub-category");
+  }
 };
 
 const deleteSubCategory = async (id: string) => {
@@ -229,8 +237,7 @@ const updateSubCategoryStatus = async (id: string, userId?: string) => {
 export const SubCategoryServices = {
   createSubCategory,
   getAllSubCategory,
-  getSubCategoryById,
-  getSubCategoryBySlug,
+  getSubCategoryByIdentifier,
   updateSubCategory,
   deleteSubCategory,
   updateSubCategoryStatus,

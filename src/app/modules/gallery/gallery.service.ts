@@ -35,11 +35,15 @@ const createGallery = async (payload: any, userId?: string) => {
     payload.createdById = userId;
     payload.updatedById = userId;
   }
-  const result = await prisma.gallery.create({
-    data: payload,
-    include: galleryInclude,
-  });
-  return result;
+  try {
+    const result = await prisma.gallery.create({
+      data: payload,
+      include: galleryInclude,
+    });
+    return result;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to create gallery item");
+  }
 };
 
 const getAllGalleries = async (query: any) => {
@@ -106,12 +110,16 @@ const updateGallery = async (id: string, payload: Partial<any>, userId?: string)
   if (userId) {
     payload.updatedById = userId;
   }
-  const result = await prisma.gallery.update({
-    where: { id },
-    data: payload,
-    include: galleryInclude,
-  });
-  return result;
+  try {
+    const result = await prisma.gallery.update({
+      where: { id },
+      data: payload,
+      include: galleryInclude,
+    });
+    return result;
+  } catch (error: any) {
+    throw new Error(error.message || "Failed to update gallery item");
+  }
 };
 
 const deleteGallery = async (id: string) => {

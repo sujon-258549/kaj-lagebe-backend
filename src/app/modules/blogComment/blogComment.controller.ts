@@ -22,7 +22,7 @@ const getAllBlogComments = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Comments retrieved successfully!",
+    message: "All comments retrieved successfully!",
     data: result.data,
     meta: result.meta,
   });
@@ -33,7 +33,7 @@ const getBlogCommentById = catchAsync(async (req, res) => {
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Comment retrieved successfully!",
+    message: "Comment details retrieved successfully!",
     data: result,
   });
 });
@@ -61,8 +61,12 @@ const deleteBlogComment = catchAsync(async (req, res) => {
   });
 });
 
-const getCommentsByBlogId = catchAsync(async (req, res) => {
-  const result = await BlogCommentServices.getCommentsByBlogId(req.params.blogId as string);
+const getCommentsByBlogIdentifier = catchAsync(async (req, res) => {
+  const query = pick(req.query, blogCommentFilterableFields);
+  const result = await BlogCommentServices.getCommentsByBlogIdentifier(
+    req.params.identifier as string,
+    query
+  );
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -78,5 +82,5 @@ export const BlogCommentControllers = {
   getBlogCommentById,
   updateBlogComment,
   deleteBlogComment,
-  getCommentsByBlogId,
+  getCommentsByBlogIdentifier,
 };

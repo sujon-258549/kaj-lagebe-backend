@@ -327,7 +327,7 @@ const getAllUsers = async (query: any) => {
 
   const users = await prisma.user.findMany({
     where: whereCondition,
-    ...(page ? { skip, take: limitNumber } : {}),
+    ...((page || limit) ? { skip, take: limitNumber } : {}),
     orderBy: {
       [sortByValue]: sortOrderValue,
     },

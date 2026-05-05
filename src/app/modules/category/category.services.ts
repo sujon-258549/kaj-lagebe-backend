@@ -83,7 +83,7 @@ const getAllCategory = async (query: any) => {
       AND: andCondition,
       ...filter,
     },
-    ...(page ? { take: limitNumber, skip: skip } : {}),
+    ...((page || limit) ? { take: limitNumber, skip: skip } : {}),
     orderBy: {
       [sortByValue]: sortOrderValue,
     },

@@ -105,7 +105,7 @@ const getAllBlog = async (query: any) => {
       ...queryFilter,
     },
     include: blogInclude,
-    ...(page ? { take: limitNumber, skip: skip } : {}),
+    ...((page || limit) ? { take: limitNumber, skip: skip } : {}),
     orderBy: {
       [sortByValue]: sortOrderValue,
     },

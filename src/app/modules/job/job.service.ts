@@ -160,7 +160,7 @@ const getAllJobs = async (query: any) => {
       ...filteredData,
       isDeleted: false,
     },
-    ...(page ? { take: limitNumber, skip: skip } : {}),
+    ...((page || limit) ? { take: limitNumber, skip: skip } : {}),
     orderBy: {
       [sortByValue]: sortOrderValue,
     },

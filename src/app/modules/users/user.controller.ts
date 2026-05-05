@@ -9,7 +9,13 @@ import config from "../../config/index.js";
 
 const createUser = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const payload = req.body;
+    const payload = {
+      ...req.body,
+      user: {
+        ...req.body.user,
+        createdById: req.user?.id,
+      },
+    };
     const result = await UserServices.createUserIntoDB(payload);
 
     // Set refreshToken in cookie for automatic login

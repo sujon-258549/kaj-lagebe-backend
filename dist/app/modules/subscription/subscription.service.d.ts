@@ -17,6 +17,10 @@ export declare const SubscriptionServices: {
         isRecomended: boolean;
         featured: string[];
         activeDays: number;
+        maxJobs: number;
+        maxEmployees: number;
+        hasAnalytics: boolean;
+        supportLevel: string;
     }>;
     getAllSubscription: (query: any) => Promise<{
         data: ({
@@ -52,6 +56,10 @@ export declare const SubscriptionServices: {
             isRecomended: boolean;
             featured: string[];
             activeDays: number;
+            maxJobs: number;
+            maxEmployees: number;
+            hasAnalytics: boolean;
+            supportLevel: string;
         })[];
         meta: {
             page: number;
@@ -92,6 +100,10 @@ export declare const SubscriptionServices: {
         isRecomended: boolean;
         featured: string[];
         activeDays: number;
+        maxJobs: number;
+        maxEmployees: number;
+        hasAnalytics: boolean;
+        supportLevel: string;
     }>;
     updateSubscription: (id: string, payload: any, userId?: string) => Promise<{
         name: string;
@@ -111,6 +123,10 @@ export declare const SubscriptionServices: {
         isRecomended: boolean;
         featured: string[];
         activeDays: number;
+        maxJobs: number;
+        maxEmployees: number;
+        hasAnalytics: boolean;
+        supportLevel: string;
     }>;
     deleteSubscription: (id: string) => Promise<{
         message: string;
@@ -133,6 +149,10 @@ export declare const SubscriptionServices: {
         isRecomended: boolean;
         featured: string[];
         activeDays: number;
+        maxJobs: number;
+        maxEmployees: number;
+        hasAnalytics: boolean;
+        supportLevel: string;
     }>;
 };
 //# sourceMappingURL=subscription.service.d.ts.map

@@ -39,6 +39,7 @@ export declare const CommentServices: {
             loginTryCount: number;
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
+            tenantId: string | null;
         };
     } & {
         isDeleted: boolean;
@@ -90,6 +91,7 @@ export declare const CommentServices: {
                 loginTryCount: number;
                 loginTryTime: Date | null;
                 lastFollowUp: Date | null;
+                tenantId: string | null;
             };
         } & {
             isDeleted: boolean;
@@ -146,6 +148,7 @@ export declare const CommentServices: {
             loginTryCount: number;
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
+            tenantId: string | null;
         };
     } & {
         isDeleted: boolean;

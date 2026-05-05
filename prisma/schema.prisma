@@ -123,9 +123,13 @@ model User {
   contactFeedbacks     ContactFeedback[]
   blogComments         BlogComment[]
   
-  // SaaS Multi-tenancy
+  // SaaS Multi-tenancy & Audit
   tenantId             String?
   tenant               Tenant?              @relation(fields: [tenantId], references: [id])
+  
+  createdById          String?
+  createdBy            User?                @relation("UserCreatedByUser", fields: [createdById], references: [id])
+  usersCreated         User[]               @relation("UserCreatedByUser")
 
   @@map("users")
 }

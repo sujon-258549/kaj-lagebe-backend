@@ -75,6 +75,7 @@ export declare const ContactService: {
             loginTryCount: number;
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
+            tenantId: string | null;
         } | null;
         subject: string | null;
         email: string | null;

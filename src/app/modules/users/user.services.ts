@@ -51,6 +51,7 @@ const createUserIntoDB = async (payload: any) => {
           ...user,
           roleId: targetRoleId,
           password: hashedPassword,
+          createdById: user.createdById,
         },
       });
 
@@ -218,14 +219,19 @@ const createUserIntoDB = async (payload: any) => {
   } catch (error: any) {
     // Standardized Error Handling for Prisma Constraints
     if (error.code === "P2002") {
-      const target = error.meta?.target || [];
-      if (target.includes("email")) {
-        throw new ApiError(status.CONFLICT, "A user with this email address already exists.");
+      const target = error.meta?.target;
+      const targetArray = Array.isArray(target) ? target : [];
+      
+      if (targetArray.includes("email")) {
+        throw new ApiError(status.CONFLICT, "এই ইমেইলটি দিয়ে অলরেডি অ্যাকাউন্ট করা আছে।");
       }
-      if (target.includes("mobile")) {
-        throw new ApiError(status.CONFLICT, "This mobile number is already registered.");
+      if (targetArray.includes("mobile")) {
+        throw new ApiError(status.CONFLICT, "এই মোবাইল নম্বরটি দিয়ে অলরেডি অ্যাকাউন্ট করা আছে।");
       }
-      throw new ApiError(status.CONFLICT, "Unique data constraint failed.");
+      
+      // Fallback: show the actual target fields for easier debugging
+      const fields = targetArray.join(", ");
+      throw new ApiError(status.CONFLICT, `Data already exists in: ${fields || "Unique field conflict"}`);
     }
     
     console.error("Critical User Creation Failure:", error);
@@ -315,6 +321,15 @@ const getAllUsers = async (query: any) => {
           role: true,
         },
       },
+      createdBy: {
+        select: {
+          id: true,
+          email: true,
+          profile: {
+            select: { name: true }
+          }
+        }
+      },
       department: {
         select: {
           id: true,
@@ -381,6 +396,15 @@ const getUserById = async (id: string) => {
             },
           },
         },
+      },
+      createdBy: {
+        select: {
+          id: true,
+          email: true,
+          profile: {
+            select: { name: true }
+          }
+        }
       },
       department: {
         select: {

@@ -1,37 +1,36 @@
 import { Router } from "express";
 import { TenantController } from "./tenant.controller.ts";
-import auth from "../../middleware/auth.ts";
-import { ENUM_USER_ROLE } from "../../../enums/user.tsx";
+import auth from "../../utils/auth.ts";
 
 const router = Router();
 
 router.post(
   "/create",
-  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  auth(),
   TenantController.createTenant
 );
 
 router.get(
   "/",
-  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  auth(),
   TenantController.getAllTenants
 );
 
 router.get(
   "/:id",
-  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  auth(),
   TenantController.getTenantById
 );
 
 router.patch(
   "/:id",
-  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  auth(),
   TenantController.updateTenant
 );
 
 router.delete(
   "/:id",
-  auth(ENUM_USER_ROLE.SUPER_ADMIN),
+  auth(),
   TenantController.deleteTenant
 );
 

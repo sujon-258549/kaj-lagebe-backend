@@ -28,7 +28,7 @@ const getAllTenants = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getTenantById = catchAsync(async (req: Request, res: Response) => {
-  const result = await TenantServices.getTenantById(req.params.id);
+  const result = await TenantServices.getTenantById(req.params.id as string);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -38,7 +38,7 @@ const getTenantById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateTenant = catchAsync(async (req: Request, res: Response) => {
-  const result = await TenantServices.updateTenant(req.params.id, req.body);
+  const result = await TenantServices.updateTenant(req.params.id as string, req.body);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -48,7 +48,7 @@ const updateTenant = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteTenant = catchAsync(async (req: Request, res: Response) => {
-  const result = await TenantServices.deleteTenant(req.params.id);
+  const result = await TenantServices.deleteTenant(req.params.id as string);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

@@ -28,6 +28,7 @@ export declare const JobServices: {
         status: boolean;
         id: string;
         updatedById: string | null;
+        tenantId: string | null;
         address: string | null;
         department: string | null;
         description: string;
@@ -129,6 +130,7 @@ export declare const JobServices: {
             status: boolean;
             id: string;
             updatedById: string | null;
+            tenantId: string | null;
             address: string | null;
             department: string | null;
             description: string;
@@ -241,6 +243,7 @@ export declare const JobServices: {
             loginTryCount: number;
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
+            tenantId: string | null;
         };
         applications: ({
             user: {
@@ -282,6 +285,7 @@ export declare const JobServices: {
                 loginTryCount: number;
                 loginTryTime: Date | null;
                 lastFollowUp: Date | null;
+                tenantId: string | null;
             };
         } & {
             isDeleted: boolean;
@@ -317,6 +321,7 @@ export declare const JobServices: {
         status: boolean;
         id: string;
         updatedById: string | null;
+        tenantId: string | null;
         address: string | null;
         department: string | null;
         description: string;
@@ -417,6 +422,7 @@ export declare const JobServices: {
         status: boolean;
         id: string;
         updatedById: string | null;
+        tenantId: string | null;
         address: string | null;
         department: string | null;
         description: string;
@@ -492,6 +498,7 @@ export declare const JobServices: {
         status: boolean;
         id: string;
         updatedById: string | null;
+        tenantId: string | null;
         address: string | null;
         department: string | null;
         description: string;

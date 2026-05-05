@@ -487,6 +487,7 @@ const updateUser = async (id: string, payload: any) => {
     "departmentId",
     "subscriptionId",
     "tenantId",
+    "roleId",
   ] as const;
   for (const k of userScalarKeys) {
     if (rest[k] !== undefined) updateData[k] = rest[k];

@@ -142,19 +142,26 @@ const autoCreateMedia = async () => {
 
 const autoCreateCategories = async () => {
   const categories = [
-    { name: "IT & Software", slug: "it-software" },
-    { name: "Home Maintenance", slug: "home-maintenance" },
-    { name: "Health & Wellness", slug: "health-wellness" },
-    { name: "Education & Tutoring", slug: "education-tutoring" },
-    { name: "Events & Photography", slug: "events-photography" },
-    { name: "Beauty & Salon", slug: "beauty-salon" },
-    { name: "Logistics & Delivery", slug: "logistics-delivery" },
-    { name: "Business & Finance", slug: "business-finance" },
-    { name: "Automotive Services", slug: "automotive-services" },
-    { name: "Construction & Renovation", slug: "construction-renovation" },
+    { name: "IT & Software", slug: "it-software", icon: "fa-solid fa-laptop-code" },
+    { name: "Home Maintenance", slug: "home-maintenance", icon: "fa-solid fa-screwdriver-wrench" },
+    { name: "Health & Wellness", slug: "health-wellness", icon: "fa-solid fa-heart-pulse" },
+    { name: "Education & Tutoring", slug: "education-tutoring", icon: "fa-solid fa-graduation-cap" },
+    { name: "Events & Photography", slug: "events-photography", icon: "fa-solid fa-camera-retro" },
+    { name: "Beauty & Salon", slug: "beauty-salon", icon: "fa-solid fa-scissors" },
+    { name: "Logistics & Delivery", slug: "logistics-delivery", icon: "fa-solid fa-truck-fast" },
+    { name: "Business & Finance", slug: "business-finance", icon: "fa-solid fa-chart-line" },
+    { name: "Automotive Services", slug: "automotive-services", icon: "fa-solid fa-car-wrench" },
+    { name: "Construction & Renovation", slug: "construction-renovation", icon: "fa-solid fa-helmet-safety" },
   ];
 
-  console.log("🚀 [AutoCreate] Checking and ensuring categories and subcategories with images...");
+  console.log("🚀 [AutoCreate] Checking and ensuring categories and subcategories with icons...");
+
+  // Remove existing sub-categories if they exceed the desired count to reset
+  const currentSubCount = await prisma.subCategory.count();
+  if (currentSubCount > 50) {
+    console.log("🧹 [AutoCreate] Too many subcategories found. Removing existing ones to reset to 50...");
+    await prisma.subCategory.deleteMany({});
+  }
 
   // Fetch some images to use as icons/thumbnails
   const availableImages = await prisma.image.findMany({
@@ -178,21 +185,38 @@ const autoCreateCategories = async () => {
         data: {
           name: catData.name,
           slug: catData.slug,
+          icon: catData.icon,
           description: `Premium ${catData.name} services`,
           status: true,
           imageId: randomImage,
         },
       });
-      console.log(`✅ [AutoCreate] Category created with image: ${catData.name}`);
+      console.log(`✅ [AutoCreate] Category created with icon: ${catData.name}`);
+    } else {
+      // Update icon to ensure it's Font Awesome as requested
+      await prisma.category.update({
+        where: { id: category.id },
+        data: { icon: catData.icon }
+      });
+    }
 
-      // Seed 20 subcategories for each NEW category
-      console.log(`📂 [AutoCreate] Seeding 20 subcategories for ${catData.name}...`);
-      const subCount = 20;
+    // Ensure each category has 5 subcategories
+    const subCountForCat = await prisma.subCategory.count({ where: { categoryId: category.id } });
+    
+    // Always update icons for existing subcategories to ensure they match Font Awesome
+    await prisma.subCategory.updateMany({
+      where: { categoryId: category.id },
+      data: { icon: "fa-solid fa-circle-check" }
+    });
+
+    if (subCountForCat < 5) {
+      console.log(`📂 [AutoCreate] Seeding subcategories for ${catData.name}...`);
+      const subCountToCreate = 5 - subCountForCat;
       const subCategoriesToCreate = [];
 
-      for (let i = 1; i <= subCount; i++) {
-        const subName = `${catData.name} Sub ${i}`;
-        const subSlug = `${catData.slug}-sub-${i}-${Math.floor(Math.random() * 1000)}`;
+      for (let i = 1; i <= subCountToCreate; i++) {
+        const subName = `${catData.name} Sub ${subCountForCat + i}`;
+        const subSlug = `${catData.slug}-sub-${subCountForCat + i}-${Math.floor(Math.random() * 1000)}`;
         const subImgObj = availableImages.length > 0 
           ? availableImages[Math.floor(Math.random() * availableImages.length)]
           : null;
@@ -202,6 +226,7 @@ const autoCreateCategories = async () => {
           name: subName,
           slug: subSlug,
           categoryId: category.id,
+          icon: "fa-solid fa-circle-check",
           description: `Professional services for ${subName}`,
           status: true,
           imageId: subRandomImage,
@@ -212,7 +237,7 @@ const autoCreateCategories = async () => {
         data: subCategoriesToCreate,
         skipDuplicates: true,
       });
-      console.log(`✨ [AutoCreate] 20 subcategories seeded in ${catData.name}`);
+      console.log(`✨ [AutoCreate] ${subCountToCreate} subcategories seeded in ${catData.name}`);
     }
   }
 };

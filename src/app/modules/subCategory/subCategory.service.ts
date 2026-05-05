@@ -103,8 +103,7 @@ const getAllSubCategory = async (query: any) => {
     orderBy: {
       [sortByValue]: sortOrderValue,
     },
-    skip: skip,
-    take: limitNumber,
+    ...(page ? { skip: skip, take: limitNumber } : {}),
   });
 
   const total = await prisma.subCategory.count({

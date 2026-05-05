@@ -53,10 +53,12 @@ const createBlog = async (payload: any, userId?: string) => {
     updatedBy: creatorId ? { connect: { id: creatorId } } : undefined,
   };
 
-  if (coverId) {
-    const coverExists = await prisma.image.findUnique({ where: { id: coverId } });
+  const finalCoverId = coverId || coverImage;
+
+  if (finalCoverId) {
+    const coverExists = await prisma.image.findUnique({ where: { id: finalCoverId } });
     if (!coverExists) throw new ApiError(httpStatus.NOT_FOUND, "Cover image not found");
-    data.cover = { connect: { id: coverId } };
+    data.cover = { connect: { id: finalCoverId } };
   }
 
   if (payload.createdAt) data.createdAt = new Date(payload.createdAt);
@@ -103,8 +105,7 @@ const getAllBlog = async (query: any) => {
       ...queryFilter,
     },
     include: blogInclude,
-    take: limitNumber,
-    skip: skip,
+    ...(page ? { take: limitNumber, skip: skip } : {}),
     orderBy: {
       [sortByValue]: sortOrderValue,
     },
@@ -149,9 +150,10 @@ const updateBlog = async (id: string, payload: any, userId?: string) => {
     updateData.tags = Array.isArray(tags) ? tags : tags.split(",");
   }
 
-  if (coverId) {
+  const finalCoverId = coverId || coverImage;
+  if (finalCoverId) {
     updateData.cover = {
-      connect: { id: coverId },
+      connect: { id: finalCoverId },
     };
   }
 

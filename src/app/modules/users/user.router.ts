@@ -10,6 +10,7 @@ router.post("/create-employ", auth(), UserController.createUser);
 
 router.get("/", auth(), UserController.getAllUsers);
 router.get("/my-data", auth(), UserController.getMyData);
+router.get("/online-count", auth(), UserController.getOnlineUsersCount);
 router.get("/:id", auth(), UserController.getUserById);
 router.patch("/change-password", auth(), UserController.changePassword);
 router.post("/varify-otp", UserController.varifyOtp);

@@ -98,6 +98,10 @@ model User {
   // New Audit Relations
   rolesCreated         AllRole[]            @relation("AllRoleCreatedBy")
   rolesUpdated         AllRole[]            @relation("AllRoleUpdatedBy")
+  
+  // Real-time Status
+  isOnline             Boolean              @default(false)
+  lastActive           DateTime?            @default(now())
   departmentsCreated   Department[]         @relation("DepartmentCreatedBy")
   departmentsUpdated   Department[]         @relation("DepartmentUpdatedBy")
   configsCreated       SystemConfig[]       @relation("SystemConfigCreatedBy")

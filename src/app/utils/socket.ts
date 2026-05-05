@@ -44,12 +44,25 @@ export const socketIO = (server: HttpServer) => {
     }
   });
 
-  io.on("connection", (socket: Socket) => {
+  io.on("connection", async (socket: Socket) => {
     const user = socket.data.user;
     
     if (user?.id) {
       socket.join(user.id);
       console.log(`📡 [Socket] User joined personal room: ${user.id} (${user.email})`);
+
+      // Update online status in DB
+      try {
+        const { default: prisma } = await import("./prismaClient.js");
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { isOnline: true, lastActive: new Date() },
+        });
+        // Notify others if needed (optional)
+        io.emit("user-status-change", { userId: user.id, isOnline: true });
+      } catch (error) {
+        console.error("❌ [Socket] Error updating online status:", error);
+      }
     }
 
     // Role-based rooms
@@ -58,8 +71,21 @@ export const socketIO = (server: HttpServer) => {
       console.log(`📡 [Socket] User joined role room: role:${user.role} (${user.email})`);
     }
 
-    socket.on("disconnect", (reason) => {
+    socket.on("disconnect", async (reason) => {
       console.log(`📡 [Socket] User disconnected: ${user?.email}. Reason: ${reason}`);
+      
+      if (user?.id) {
+        try {
+          const { default: prisma } = await import("./prismaClient.js");
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { isOnline: false, lastActive: new Date() },
+          });
+          io.emit("user-status-change", { userId: user.id, isOnline: false });
+        } catch (error) {
+          console.error("❌ [Socket] Error updating offline status:", error);
+        }
+      }
     });
 
     socket.on("error", (error) => {

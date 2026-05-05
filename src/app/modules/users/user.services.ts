@@ -285,11 +285,11 @@ const getAllUsers = async (query: any) => {
       },
     });
   } else {
-    // If NO role is specified, exclude USER role by default (e.g. for Employee List)
+    // If NO role is specified, exclude USER and WORKER roles by default (Employee List)
     andCondition.push({
       role: {
         role: {
-          not: "USER",
+          notIn: ["USER", "WORKER"],
         },
       },
     });
@@ -467,6 +467,18 @@ const getUserById = async (id: string) => {
     },
   });
   return user?.password ? { ...user, password: undefined } : user;
+};
+
+// get online users count
+const getOnlineUsersCount = async () => {
+  const count = await prisma.user.count({
+    where: {
+      isOnline: true,
+      isActive: true,
+      isDeleted: false,
+    },
+  });
+  return count;
 };
 
 // get all users
@@ -944,4 +956,5 @@ export const UserServices = {
   deleteUser,
   softDeleteUser,
   blockUser,
+  getOnlineUsersCount,
 };

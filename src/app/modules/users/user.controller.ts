@@ -144,6 +144,16 @@ const blockUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getOnlineUsersCount = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.getOnlineUsersCount();
+  sendResponse(res, {
+    success: true,
+    statusCode: status.OK,
+    message: "Online users count fetched successfully",
+    data: result,
+  });
+});
+
 export const UserController = {
   createUser,
   getUserById,
@@ -155,4 +165,5 @@ export const UserController = {
   deleteUser,
   softDeleteUser,
   blockUser,
+  getOnlineUsersCount,
 };

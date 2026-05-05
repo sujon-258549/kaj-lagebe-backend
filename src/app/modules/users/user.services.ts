@@ -220,18 +220,27 @@ const createUserIntoDB = async (payload: any) => {
     // Standardized Error Handling for Prisma Constraints
     if (error.code === "P2002") {
       const target = error.meta?.target;
-      const targetArray = Array.isArray(target) ? target : [];
+      let fieldMessage = "";
       
-      if (targetArray.includes("email")) {
-        throw new ApiError(status.CONFLICT, "এই ইমেইলটি দিয়ে অলরেডি অ্যাকাউন্ট করা আছে।");
+      if (Array.isArray(target)) {
+        fieldMessage = `(${target.join(", ")})`;
+      } else if (typeof target === "string") {
+        fieldMessage = `(${target})`;
       }
-      if (targetArray.includes("mobile")) {
-        throw new ApiError(status.CONFLICT, "এই মোবাইল নম্বরটি দিয়ে অলরেডি অ্যাকাউন্ট করা আছে।");
+
+      // Check for common fields manually in the message if target is missing
+      const errorMessage = error.message || "";
+      if (errorMessage.includes("email")) {
+        throw new ApiError(status.CONFLICT, "এই ইমেইলটি অলরেডি ব্যবহৃত হয়েছে।");
       }
-      
-      // Fallback: show the actual target fields for easier debugging
-      const fields = targetArray.join(", ");
-      throw new ApiError(status.CONFLICT, `Data already exists in: ${fields || "Unique field conflict"}`);
+      if (errorMessage.includes("mobile")) {
+        throw new ApiError(status.CONFLICT, "এই মোবাইল নম্বরটি অলরেডি ব্যবহৃত হয়েছে।");
+      }
+
+      throw new ApiError(
+        status.CONFLICT, 
+        `Data Conflict: এই ডাটাটি অলরেডি ডাটাবেসে আছে। ${fieldMessage}`
+      );
     }
     
     console.error("Critical User Creation Failure:", error);
@@ -286,6 +295,16 @@ const getAllUsers = async (query: any) => {
     });
   }
   delete queryFilter.role;
+
+  // Brand user filter logic
+  if (queryFilter.isBrandUser) {
+    andCondition.push({
+      tenantId: {
+        not: null,
+      },
+    });
+    delete queryFilter.isBrandUser;
+  }
 
   // queryFilter
   if (Object.keys(queryFilter).length > 0) {
@@ -467,6 +486,7 @@ const updateUser = async (id: string, payload: any) => {
     "isVerified",
     "departmentId",
     "subscriptionId",
+    "tenantId",
   ] as const;
   for (const k of userScalarKeys) {
     if (rest[k] !== undefined) updateData[k] = rest[k];

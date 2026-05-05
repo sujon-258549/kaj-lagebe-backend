@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import router from "./app/router/index.js";
 import notFound from "./app/router/notFound.js";
 import globalErrorHandler from "./app/middleware/globalErrorHandler.ts";
+import activityTracker from "./app/middleware/activityTracker.ts";
 
 app.use(express.json());
 app.use(cookieParser());
@@ -15,7 +16,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Kaj lagbe bd");
 });
 
-app.use("/api",router);
+app.use("/api", activityTracker, router);
 
 // Not Found - catch all unmatched routes (must be last)
 app.use(notFound);

@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
+import { ActivityLogger } from "../utils/activityLogger.ts";
 
 const globalErrorHandler = (
   err: any,
@@ -46,6 +47,25 @@ const globalErrorHandler = (
   // 4. Handle generic Error
   else if (err instanceof Error) {
     message = err.message;
+  }
+
+  const fullUrl = `/api${req.url}`;
+  if (!ActivityLogger.isSkippedPath(fullUrl)) {
+    void ActivityLogger.logError({
+      userId: req.user?.id ?? null,
+      email: req.user?.email ?? null,
+      method: req.method,
+      route: `${req.baseUrl || ""}${req.route?.path || req.path}`,
+      url: fullUrl,
+      statusCode,
+      message,
+      stack: err?.stack ?? null,
+      body: req.body,
+      query: req.query,
+      params: req.params,
+      ip: ActivityLogger.getIp(req) ?? null,
+      userAgent: req.headers["user-agent"]?.toString() ?? null,
+    });
   }
 
   res.status(statusCode).json({

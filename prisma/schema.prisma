@@ -122,16 +122,68 @@ model User {
   contacts             Contact[]
   contactFeedbacks     ContactFeedback[]
   blogComments         BlogComment[]
-  
+  activityLogs         ActivityLog[]
+  errorLogs            ErrorLog[]
+
   // SaaS Multi-tenancy & Audit
   tenantId             String?
   tenant               Tenant?              @relation(fields: [tenantId], references: [id])
-  
+
   createdById          String?
   createdBy            User?                @relation("UserCreatedByUser", fields: [createdById], references: [id])
   usersCreated         User[]               @relation("UserCreatedByUser")
 
   @@map("users")
+}
+
+model ActivityLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email        String?
+  role         String?
+  action       String
+  method       String?
+  route        String?
+  url          String?
+  statusCode   Int?
+  durationMs   Int?
+  ip           String?
+  userAgent    String?
+  metadata     Json?
+  success      Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("activity_logs")
+}
+
+model ErrorLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email        String?
+  method       String?
+  route        String?
+  url          String?
+  statusCode   Int
+  message      String
+  stack        String?
+  body         Json?
+  query        Json?
+  params       Json?
+  ip           String?
+  userAgent    String?
+  resolved     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([statusCode])
+  @@index([resolved])
+  @@index([createdAt])
+  @@map("error_logs")
 }
 
 model FollowUpHistory {

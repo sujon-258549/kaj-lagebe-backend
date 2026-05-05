@@ -5,23 +5,61 @@ import type { NextFunction, Request, Response } from "express";
 import { AuthServices } from "./login.services.ts";
 import ApiError from "../../middleware/apiError.ts";
 import config from "../../config/index.ts";
+import { ActivityLogger } from "../../utils/activityLogger.ts";
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
-  const result = await AuthServices.loginUser(payload);
-  res.cookie("refreshToken", result.refreshToken, {
-    secure: config.nodeEnv === "production",
-    httpOnly: true,
-    sameSite: config.nodeEnv === "production" ? "none" : "lax",
-    maxAge: 1000 * 60 * 60 * 24 * 365,
-    ...(config.cookieDomain ? { domain: config.cookieDomain } : {}),
-  });
-  sendResponse(res, {
-    success: true,
-    statusCode: status.OK,
-    message: "User logged in successfully",
-    data: result,
-  });
+  const ip = ActivityLogger.getIp(req) ?? null;
+  const userAgent = req.headers["user-agent"]?.toString() ?? null;
+
+  try {
+    const result = await AuthServices.loginUser(payload);
+    res.cookie("refreshToken", result.refreshToken, {
+      secure: config.nodeEnv === "production",
+      httpOnly: true,
+      sameSite: config.nodeEnv === "production" ? "none" : "lax",
+      maxAge: 1000 * 60 * 60 * 24 * 365,
+      ...(config.cookieDomain ? { domain: config.cookieDomain } : {}),
+    });
+
+    void ActivityLogger.logActivity({
+      userId: result.user?.id ?? null,
+      email: result.user?.email ?? null,
+      role: result.user?.role ?? null,
+      action: "LOGIN_SUCCESS",
+      method: req.method,
+      route: "/auth/login",
+      url: "/api/auth/login",
+      statusCode: status.OK,
+      ip,
+      userAgent,
+      success: true,
+      metadata: { identifier: payload?.email },
+    });
+
+    sendResponse(res, {
+      success: true,
+      statusCode: status.OK,
+      message: "User logged in successfully",
+      data: result,
+    });
+  } catch (err: any) {
+    void ActivityLogger.logActivity({
+      action: "LOGIN_FAILED",
+      method: req.method,
+      route: "/auth/login",
+      url: "/api/auth/login",
+      statusCode: err?.statusCode ?? status.UNAUTHORIZED,
+      ip,
+      userAgent,
+      success: false,
+      metadata: {
+        identifier: payload?.email,
+        reason: err?.message ?? "Unknown error",
+      },
+    });
+    throw err;
+  }
 });
 const createRefreshToken = catchAsync(async (req: Request, res: Response) => {
   const payload = req.cookies.refreshToken || req.body.refreshToken;
@@ -77,6 +115,21 @@ const logoutUser = catchAsync(async (req: Request, res: Response) => {
     sameSite: config.nodeEnv === "production" ? "none" : "lax",
     ...(config.cookieDomain ? { domain: config.cookieDomain } : {}),
   });
+
+  void ActivityLogger.logActivity({
+    userId: req.user?.id ?? null,
+    email: req.user?.email ?? null,
+    role: req.user?.role ?? null,
+    action: "LOGOUT",
+    method: req.method,
+    route: "/auth/logout",
+    url: "/api/auth/logout",
+    statusCode: status.OK,
+    ip: ActivityLogger.getIp(req) ?? null,
+    userAgent: req.headers["user-agent"]?.toString() ?? null,
+    success: true,
+  });
+
   sendResponse(res, {
     success: true,
     statusCode: status.OK,

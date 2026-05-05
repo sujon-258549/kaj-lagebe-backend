@@ -26,6 +26,8 @@ import { ContactRoutes } from "../modules/contact/contact.routes.ts";
 import { ReviewRoutes } from "../modules/review/review.routes.ts";
 import { BlogCommentRoutes } from "../modules/blogComment/blogComment.routes.ts";
 import { TenantRoutes } from "../modules/tenant/tenant.routes.ts";
+import { ActivityLogRoutes } from "../modules/activityLog/activityLog.router.ts";
+import { ErrorLogRoutes } from "../modules/errorLog/errorLog.router.ts";
 
 const router = Router();
 
@@ -137,6 +139,14 @@ const allRouter = [
   {
     path: "/tenant",
     router: TenantRoutes,
+  },
+  {
+    path: "/activity-log",
+    router: ActivityLogRoutes,
+  },
+  {
+    path: "/error-log",
+    router: ErrorLogRoutes,
   },
 ];
 

@@ -324,6 +324,92 @@ const autoCreateBlogs = async () => {
   }
 };
 
+const autoCreateSubscriptions = async () => {
+  const subscriptions = [
+    {
+      name: "Starter",
+      slug: "starter-plan",
+      price: "0",
+      discount: "0",
+      duration: "Monthly",
+      activeDays: 30,
+      maxJobs: 5,
+      maxEmployees: 2,
+      description: "Ideal for individuals starting out.",
+      featured: ["5 Job Posts", "Basic Support"],
+    },
+    {
+      name: "Professional",
+      slug: "pro-plan",
+      price: "2500",
+      discount: "200",
+      duration: "Monthly",
+      activeDays: 30,
+      maxJobs: 50,
+      maxEmployees: 20,
+      hasAnalytics: true,
+      supportLevel: "Premium",
+      isRecomended: true,
+      description: "Best for growing agencies and companies.",
+      featured: ["50 Job Posts", "Premium Support", "Analytics Dashboard"],
+    },
+    {
+      name: "Enterprise",
+      slug: "enterprise-plan",
+      price: "10000",
+      discount: "1000",
+      duration: "Yearly",
+      activeDays: 365,
+      maxJobs: 9999,
+      maxEmployees: 9999,
+      hasAnalytics: true,
+      supportLevel: "24/7",
+      description: "Full power for large organizations.",
+      featured: ["Unlimited Jobs", "24/7 Priority Support", "Custom Integration"],
+    }
+  ];
+
+  console.log("🚀 [AutoCreate] Ensuring SaaS Subscription Plans...");
+
+  for (const plan of subscriptions) {
+    const existing = await prisma.subscription.findUnique({ where: { slug: plan.slug } });
+    if (!existing) {
+      await prisma.subscription.create({ data: plan });
+      console.log(`✅ [AutoCreate] Subscription created: ${plan.name}`);
+    }
+  }
+};
+
+const autoCreateTenants = async () => {
+  console.log("🚀 [AutoCreate] Ensuring Default Tenant and Data Migration...");
+
+  // 1. Create a Default Tenant if none exists
+  let defaultTenant = await prisma.tenant.findUnique({ where: { slug: "default-tenant" } });
+  if (!defaultTenant) {
+    defaultTenant = await prisma.tenant.create({
+      data: {
+        name: "KajLagbe Default Workspace",
+        slug: "default-tenant",
+        email: "support@kajlagbe.com",
+      }
+    });
+    console.log("✅ [AutoCreate] Default Tenant created.");
+  }
+
+  // 2. Link existing users and jobs to the default tenant if they don't have one
+  await prisma.user.updateMany({
+    where: { tenantId: null },
+    data: { tenantId: defaultTenant.id }
+  });
+
+  await prisma.job.updateMany({
+    where: { tenantId: null },
+    data: { tenantId: defaultTenant.id }
+  });
+  
+  console.log("✨ [AutoCreate] All orphaned records linked to Default Tenant.");
+};
+
 /**
  * Main initialization function to be called on server startup.
  * Add any new auto-creation logic here.
@@ -349,10 +435,10 @@ const init = async () => {
 
     // Create Blogs
     await autoCreateBlogs();
-    
-    // Future additions can go here:
-    // await autoCreateDepartments();
-    // await autoCreateInitialCategories();
+
+    // SaaS Specific Initializations
+    await autoCreateSubscriptions();
+    await autoCreateTenants();
     
     console.log("✨ [AutoCreate] All automated tasks completed successfully!");
   } catch (error) {

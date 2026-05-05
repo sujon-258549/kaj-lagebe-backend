@@ -122,6 +122,10 @@ model User {
   contacts             Contact[]
   contactFeedbacks     ContactFeedback[]
   blogComments         BlogComment[]
+  
+  // SaaS Multi-tenancy
+  tenantId             String?
+  tenant               Tenant?              @relation(fields: [tenantId], references: [id])
 
   @@map("users")
 }
@@ -428,6 +432,12 @@ model Subscription {
   payments          Payment[]
   subscriptionEarns SubscriptionEarn[]
 
+  // SaaS Plan Features
+  maxJobs           Int                @default(5)
+  maxEmployees      Int                @default(10)
+  hasAnalytics      Boolean            @default(false)
+  supportLevel      String             @default("Standard") // Standard, Premium, 24/7
+
   createdById String?
   updatedById String?
   createdBy   User?         @relation("SubscriptionCreatedBy", fields: [createdById], references: [id])
@@ -614,6 +624,11 @@ model Job {
   category             Category?     @relation(fields: [categoryId], references: [id])
   subCategory          SubCategory?  @relation(fields: [subCategoryId], references: [id])
   applications         Application[]
+  
+  // SaaS Multi-tenancy
+  tenantId             String?
+  tenant               Tenant?       @relation(fields: [tenantId], references: [id])
+
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
 
@@ -744,4 +759,21 @@ model Review {
   updatedBy   User?    @relation("ReviewUpdatedBy", fields: [updatedById], references: [id])
 
   @@map("reviews")
+}
+
+model Tenant {
+  id          String   @id @default(uuid())
+  name        String
+  slug        String   @unique
+  logo        String?
+  email       String?
+  phone       String?
+  address     String?
+  isActive    Boolean  @default(true)
+  users       User[]
+  jobs        Job[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("tenants")
 }

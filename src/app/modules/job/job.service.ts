@@ -198,6 +198,11 @@ const getAllJobs = async (query: any) => {
         },
       },
       thumbnail: true,
+      _count: {
+        select: {
+          applications: true,
+        },
+      },
     },
   });
 

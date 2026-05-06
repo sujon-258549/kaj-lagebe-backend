@@ -4,6 +4,7 @@ import ApiError from "../../middleware/apiError.ts";
 import type { Prisma } from "@prisma/client";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 import { applicationSearchableFields } from "./application.constant.ts";
+import { emitToUser } from "../../utils/socket.ts";
 
 const createApplication = async (userId: string, payload: any) => {
   const isJobExist = await prisma.job.findUnique({
@@ -61,6 +62,20 @@ const createApplication = async (userId: string, payload: any) => {
         },
       },
     });
+
+    // Create Notification for the Job Author (Employer)
+    const notification = await prisma.notification.create({
+      data: {
+        userId: isJobExist.authorId,
+        type: "NEW_APPLICATION",
+        message: `${(result as any).user?.profile?.name || "A candidate"} applied for "${isJobExist.title}". ${payload.applyNote ? `Note: ${payload.applyNote}` : "Check the application for more details."}`,
+        jobId: isJobExist.id,
+        applicationId: result.id,
+      },
+    });
+
+    // Real-time Notification via Socket.io
+    emitToUser(isJobExist.authorId, "new-notification", notification);
 
     // Increment applicants count
     await prisma.job.update({

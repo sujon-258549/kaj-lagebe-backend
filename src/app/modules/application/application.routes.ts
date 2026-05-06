@@ -7,37 +7,31 @@ const router = express.Router();
 
 router.post(
   "/",
-  auth(USER_ROLE.USER, USER_ROLE.WORKER, USER_ROLE.EMPLOYEE),
+  auth(),
   ApplicationControllers.createApplication,
 );
 
 router.get(
   "/",
-  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN),
+  auth(),
   ApplicationControllers.getAllApplications,
 );
 
 router.get(
   "/:id",
-  auth(
-    USER_ROLE.USER,
-    USER_ROLE.WORKER,
-    USER_ROLE.EMPLOYEE,
-    USER_ROLE.ADMIN,
-    USER_ROLE.SUPER_ADMIN,
-  ),
+  auth(),
   ApplicationControllers.getApplicationById,
 );
 
 router.patch(
   "/:id",
-  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN),
+  auth(),
   ApplicationControllers.updateApplication,
 );
 
 router.delete(
   "/:id",
-  auth(USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN),
+  auth(),
   ApplicationControllers.deleteApplication,
 );
 

@@ -66,6 +66,7 @@ export declare const TenantServices: {
             salaryMax: number | null;
             negotiable: boolean | null;
             logo: string | null;
+            thumbnailId: string | null;
             subCategoryId: string | null;
             categoryName: string | null;
             shortDescription: string | null;

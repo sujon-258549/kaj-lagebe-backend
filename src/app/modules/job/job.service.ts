@@ -197,6 +197,7 @@ const getAllJobs = async (query: any) => {
           profile: { select: { name: true } },
         },
       },
+      thumbnail: true,
     },
   });
 
@@ -253,6 +254,7 @@ const getJobByIdentifier = async (identifier: string) => {
           },
         },
       },
+      thumbnail: true,
     },
   });
 
@@ -261,8 +263,15 @@ const getJobByIdentifier = async (identifier: string) => {
 };
 
 const updateJob = async (id: string, payload: any, userId?: string) => {
-  const isExist = await prisma.job.findUnique({ where: { id } });
+  const isExist = await prisma.job.findFirst({
+    where: {
+      OR: [{ id }, { slug: id }],
+      isDeleted: false,
+    },
+  });
   if (!isExist) throw new ApiError(httpStatus.NOT_FOUND, "Job not found");
+
+  const actualId = isExist.id;
 
   // Parse fields if they are strings (JSON, Arrays, Booleans)
   if (typeof payload.isUrgent === "string")
@@ -333,7 +342,7 @@ const updateJob = async (id: string, payload: any, userId?: string) => {
 
   try {
     const result = await prisma.job.update({
-      where: { id },
+      where: { id: actualId },
       data: updateData,
       include: {
         category: {
@@ -368,6 +377,7 @@ const updateJob = async (id: string, payload: any, userId?: string) => {
             profile: { select: { name: true } },
           },
         },
+        thumbnail: true,
       },
     });
     return result;

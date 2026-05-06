@@ -49,6 +49,7 @@ export declare const JobServices: {
         salaryMax: number | null;
         negotiable: boolean | null;
         logo: string | null;
+        thumbnailId: string | null;
         subCategoryId: string | null;
         categoryName: string | null;
         shortDescription: string | null;
@@ -121,6 +122,18 @@ export declare const JobServices: {
                 slug: string;
                 id: string;
             } | null;
+            thumbnail: {
+                name: string;
+                url: string;
+                createdAt: Date;
+                updatedAt: Date;
+                slug: string;
+                status: boolean;
+                id: string;
+                createdById: string | null;
+                updatedById: string | null;
+                folderId: string | null;
+            } | null;
         } & {
             email: string | null;
             isDeleted: boolean;
@@ -151,6 +164,7 @@ export declare const JobServices: {
             salaryMax: number | null;
             negotiable: boolean | null;
             logo: string | null;
+            thumbnailId: string | null;
             subCategoryId: string | null;
             categoryName: string | null;
             shortDescription: string | null;
@@ -318,6 +332,18 @@ export declare const JobServices: {
             slug: string;
             id: string;
         } | null;
+        thumbnail: {
+            name: string;
+            url: string;
+            createdAt: Date;
+            updatedAt: Date;
+            slug: string;
+            status: boolean;
+            id: string;
+            createdById: string | null;
+            updatedById: string | null;
+            folderId: string | null;
+        } | null;
     } & {
         email: string | null;
         isDeleted: boolean;
@@ -348,6 +374,7 @@ export declare const JobServices: {
         salaryMax: number | null;
         negotiable: boolean | null;
         logo: string | null;
+        thumbnailId: string | null;
         subCategoryId: string | null;
         categoryName: string | null;
         shortDescription: string | null;
@@ -419,6 +446,18 @@ export declare const JobServices: {
             slug: string;
             id: string;
         } | null;
+        thumbnail: {
+            name: string;
+            url: string;
+            createdAt: Date;
+            updatedAt: Date;
+            slug: string;
+            status: boolean;
+            id: string;
+            createdById: string | null;
+            updatedById: string | null;
+            folderId: string | null;
+        } | null;
     } & {
         email: string | null;
         isDeleted: boolean;
@@ -449,6 +488,7 @@ export declare const JobServices: {
         salaryMax: number | null;
         negotiable: boolean | null;
         logo: string | null;
+        thumbnailId: string | null;
         subCategoryId: string | null;
         categoryName: string | null;
         shortDescription: string | null;
@@ -525,6 +565,7 @@ export declare const JobServices: {
         salaryMax: number | null;
         negotiable: boolean | null;
         logo: string | null;
+        thumbnailId: string | null;
         subCategoryId: string | null;
         categoryName: string | null;
         shortDescription: string | null;

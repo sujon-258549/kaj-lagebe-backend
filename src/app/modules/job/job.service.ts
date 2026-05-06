@@ -214,8 +214,13 @@ const getAllJobs = async (query: any) => {
     },
   });
 
+  const dataWithCount = result.map(job => ({
+    ...job,
+    applicantsCount: job._count?.applications || 0
+  }));
+
   return {
-    data: result,
+    data: dataWithCount,
     meta: {
       page: pageNumber,
       limit: limitNumber,

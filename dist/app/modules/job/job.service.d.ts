@@ -32,8 +32,8 @@ export declare const JobServices: {
         address: string | null;
         department: string | null;
         description: string;
-        categoryId: string | null;
         gender: string | null;
+        categoryId: string | null;
         experience: string | null;
         workStartTime: string | null;
         workTimeLimit: string | null;
@@ -134,8 +134,8 @@ export declare const JobServices: {
             address: string | null;
             department: string | null;
             description: string;
-            categoryId: string | null;
             gender: string | null;
+            categoryId: string | null;
             experience: string | null;
             workStartTime: string | null;
             workTimeLimit: string | null;
@@ -232,6 +232,7 @@ export declare const JobServices: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
+            createdById: string | null;
             password: string;
             roleId: string | null;
             passwordChangeTime: Date | null;
@@ -243,6 +244,8 @@ export declare const JobServices: {
             loginTryCount: number;
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
+            isOnline: boolean;
+            lastActive: Date | null;
             tenantId: string | null;
         };
         applications: ({
@@ -274,6 +277,7 @@ export declare const JobServices: {
                 createdAt: Date;
                 updatedAt: Date;
                 id: string;
+                createdById: string | null;
                 password: string;
                 roleId: string | null;
                 passwordChangeTime: Date | null;
@@ -285,6 +289,8 @@ export declare const JobServices: {
                 loginTryCount: number;
                 loginTryTime: Date | null;
                 lastFollowUp: Date | null;
+                isOnline: boolean;
+                lastActive: Date | null;
                 tenantId: string | null;
             };
         } & {
@@ -294,11 +300,11 @@ export declare const JobServices: {
             status: boolean;
             id: string;
             resume: string | null;
+            userId: string;
             applyStatus: string;
             applyNote: string | null;
             applyComment: string | null;
             jobId: string;
-            userId: string;
             coverLetter: string | null;
             isRead: boolean;
         })[];
@@ -325,8 +331,8 @@ export declare const JobServices: {
         address: string | null;
         department: string | null;
         description: string;
-        categoryId: string | null;
         gender: string | null;
+        categoryId: string | null;
         experience: string | null;
         workStartTime: string | null;
         workTimeLimit: string | null;
@@ -426,8 +432,8 @@ export declare const JobServices: {
         address: string | null;
         department: string | null;
         description: string;
-        categoryId: string | null;
         gender: string | null;
+        categoryId: string | null;
         experience: string | null;
         workStartTime: string | null;
         workTimeLimit: string | null;
@@ -502,8 +508,8 @@ export declare const JobServices: {
         address: string | null;
         department: string | null;
         description: string;
-        categoryId: string | null;
         gender: string | null;
+        categoryId: string | null;
         experience: string | null;
         workStartTime: string | null;
         workTimeLimit: string | null;

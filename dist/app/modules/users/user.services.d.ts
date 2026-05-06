@@ -20,6 +20,13 @@ export declare const UserServices: {
             updatedById: string | null;
             description: string | null;
         }) | null;
+        createdBy: {
+            email: string;
+            id: string;
+            profile: {
+                name: string | null;
+            } | null;
+        } | null;
         address: {
             mobile: string;
             id: string;
@@ -91,6 +98,7 @@ export declare const UserServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
         password: string;
         roleId: string | null;
         passwordChangeTime: Date | null;
@@ -102,6 +110,8 @@ export declare const UserServices: {
         loginTryCount: number;
         loginTryTime: Date | null;
         lastFollowUp: Date | null;
+        isOnline: boolean;
+        lastActive: Date | null;
         tenantId: string | null;
     }) | {
         password: undefined;
@@ -120,6 +130,13 @@ export declare const UserServices: {
             updatedById: string | null;
             description: string | null;
         }) | null;
+        createdBy: {
+            email: string;
+            id: string;
+            profile: {
+                name: string | null;
+            } | null;
+        } | null;
         address: {
             mobile: string;
             id: string;
@@ -190,6 +207,7 @@ export declare const UserServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
         roleId: string | null;
         passwordChangeTime: Date | null;
         passwordChanged: boolean;
@@ -200,6 +218,8 @@ export declare const UserServices: {
         loginTryCount: number;
         loginTryTime: Date | null;
         lastFollowUp: Date | null;
+        isOnline: boolean;
+        lastActive: Date | null;
         tenantId: string | null;
     } | null>;
     getAllUsers: (query: any) => Promise<{
@@ -207,6 +227,13 @@ export declare const UserServices: {
             role: {
                 role: string;
                 id: string;
+            } | null;
+            createdBy: {
+                email: string;
+                id: string;
+                profile: {
+                    name: string | null;
+                } | null;
             } | null;
             address: {
                 mobile: string;
@@ -278,6 +305,7 @@ export declare const UserServices: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
+            createdById: string | null;
             roleId: string | null;
             passwordChangeTime: Date | null;
             passwordChanged: boolean;
@@ -288,6 +316,8 @@ export declare const UserServices: {
             loginTryCount: number;
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
+            isOnline: boolean;
+            lastActive: Date | null;
             tenantId: string | null;
         }[];
         meta: {
@@ -372,6 +402,7 @@ export declare const UserServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
         password: string;
         roleId: string | null;
         passwordChangeTime: Date | null;
@@ -383,6 +414,8 @@ export declare const UserServices: {
         loginTryCount: number;
         loginTryTime: Date | null;
         lastFollowUp: Date | null;
+        isOnline: boolean;
+        lastActive: Date | null;
         tenantId: string | null;
     }>;
     getMyData: (id: string) => Promise<any>;
@@ -445,6 +478,7 @@ export declare const UserServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
         password: string;
         roleId: string | null;
         passwordChangeTime: Date | null;
@@ -456,6 +490,8 @@ export declare const UserServices: {
         loginTryCount: number;
         loginTryTime: Date | null;
         lastFollowUp: Date | null;
+        isOnline: boolean;
+        lastActive: Date | null;
         tenantId: string | null;
     }>;
     deleteUser: (id: string) => Promise<never[]>;
@@ -469,6 +505,7 @@ export declare const UserServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
         password: string;
         roleId: string | null;
         passwordChangeTime: Date | null;
@@ -480,6 +517,8 @@ export declare const UserServices: {
         loginTryCount: number;
         loginTryTime: Date | null;
         lastFollowUp: Date | null;
+        isOnline: boolean;
+        lastActive: Date | null;
         tenantId: string | null;
     }>;
     blockUser: (id: string) => Promise<{
@@ -492,6 +531,7 @@ export declare const UserServices: {
         createdAt: Date;
         updatedAt: Date;
         id: string;
+        createdById: string | null;
         password: string;
         roleId: string | null;
         passwordChangeTime: Date | null;
@@ -503,7 +543,10 @@ export declare const UserServices: {
         loginTryCount: number;
         loginTryTime: Date | null;
         lastFollowUp: Date | null;
+        isOnline: boolean;
+        lastActive: Date | null;
         tenantId: string | null;
     }>;
+    getOnlineUsersCount: () => Promise<number>;
 };
 //# sourceMappingURL=user.services.d.ts.map

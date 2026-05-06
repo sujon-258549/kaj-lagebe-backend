@@ -410,6 +410,139 @@ const autoCreateTenants = async () => {
   console.log("✨ [AutoCreate] All orphaned records linked to Default Tenant.");
 };
 
+const autoCreateJobs = async () => {
+  console.log("🚀 [AutoCreate] Checking and ensuring sample jobs...");
+
+  // 1. Find an author (Super Admin)
+  const adminUser = await prisma.user.findFirst({
+    where: { role: { role: "SUPER_ADMIN" } },
+  });
+
+  if (!adminUser) {
+    console.log("⚠️ [AutoCreate] Skipping job seeding: No SUPER_ADMIN user found.");
+    return;
+  }
+
+  // 2. Find default tenant
+  const defaultTenant = await prisma.tenant.findUnique({ where: { slug: "default-tenant" } });
+  if (!defaultTenant) {
+    console.log("⚠️ [AutoCreate] Skipping job seeding: No default tenant found.");
+    return;
+  }
+
+  // 3. Clear existing jobs to reset and re-seed (as requested)
+  console.log("🧹 [AutoCreate] Removing existing jobs for a clean reset...");
+  await prisma.job.deleteMany({});
+
+  console.log("💼 [AutoCreate] Seeding 20 fresh sample jobs...");
+
+    const titles = [
+      "Frontend Developer",
+      "Backend Developer",
+      "Full Stack Engineer",
+      "UI/UX Designer",
+      "DevOps Engineer",
+      "Project Manager",
+      "Software Architect",
+      "Data Scientist",
+      "Mobile App Developer",
+      "QA Engineer",
+      "Product Designer",
+      "Cloud Architect",
+      "Security Analyst",
+      "Network Engineer",
+      "Database Administrator",
+      "Business Analyst",
+      "Technical Writer",
+      "Scrum Master",
+      "Systems Administrator",
+      "Support Engineer",
+    ];
+
+    const locations = ["Dhaka", "Chittagong", "Sylhet", "Remote"];
+    const jobTypes = ["Full-time", "Part-time", "Contract", "Remote"];
+
+    // Get some categories to link
+    const categories = await prisma.category.findMany({ take: 5 });
+
+    for (let i = 0; i < 20; i++) {
+      const title = `${titles[i % titles.length] || "Job Post"} (Sample ${i + 1})`;
+      const slug = `sample-job-${i + 1}-${Math.floor(Math.random() * 10000)}`;
+      const category = categories[i % categories.length];
+
+      await prisma.job.create({
+        data: {
+          title,
+          slug,
+          company: "KajLagbe Sample Corp",
+          location: locations[i % locations.length] || "Remote",
+          type: jobTypes[i % jobTypes.length] || "Full-time",
+          salary: "40k - 80k BDT",
+          salaryMin: 40000,
+          salaryMax: 80000,
+          negotiable: true,
+          logo: `https://picsum.photos/seed/${slug}/200/200`,
+          tags: ["Professional", "Tech", "Hiring"],
+          categoryId: category?.id || null,
+          categoryName: category?.name || "General",
+          shortDescription: `A great opportunity for a talented ${title} to join our growing team.`,
+          description: `<h3>Role Overview</h3><p>We are seeking a highly motivated <strong>${title}</strong>. The ideal candidate will have strong problem-solving skills and a passion for excellence.</p><h4>About the Company</h4><p>KajLagbe Sample Corp is a leader in innovation and technology, providing a dynamic work environment for all employees.</p>`,
+          responsibilities: [
+            "Develop and maintain high-quality software solutions",
+            "Collaborate with cross-functional teams to define and ship new features",
+            "Identify and resolve performance bottlenecks and bugs",
+            "Participate in code reviews and contribute to architectural discussions",
+          ],
+          requirements: [
+            "Proven experience in the relevant field",
+            "Strong understanding of modern development practices",
+            "Excellent communication and teamwork skills",
+            "Bachelor's degree in Computer Science or related field",
+          ],
+          benefits: [
+            "Competitive salary and performance bonuses",
+            "Flexible working hours and remote options",
+            "Health and life insurance",
+            "Professional development and learning opportunities",
+          ],
+          education: "Bachelor of Science in CS/Engineering",
+          experience: "2-4 Years",
+          vacancy: Math.floor(Math.random() * 5) + 1,
+          deadline: "2026-12-31",
+          jobNature: "Permanent",
+          gender: "Both",
+          ageRange: "22-35",
+          salaryReview: "Yearly",
+          lunchFacility: "Full Subsidized",
+          festivalBonus: "2 (Yearly)",
+          workingHours: "9:00 AM - 6:00 PM",
+          weekend: "Friday & Saturday",
+          address: "Road 12, Banani, Dhaka",
+          website: "https://kajlagbe.com",
+          email: "hr@kajlagbe.com",
+          phone: "+8801700000000",
+          industry: "IT & Software",
+          skills: ["JavaScript", "TypeScript", "Node.js", "React"],
+          tools: ["VS Code", "Git", "Docker", "Jira"],
+          languages: ["English", "Bangla"],
+          visaSponsorship: false,
+          relocationAssistance: true,
+          remotePolicy: "Hybrid",
+          department: "Engineering",
+          teamSize: 10,
+          performanceBonus: true,
+          healthInsurance: true,
+          isUrgent: i % 5 === 0, // Mark every 5th job as urgent
+          authorId: adminUser.id,
+          tenantId: defaultTenant.id,
+          isPublished: true,
+          status: true,
+        },
+      });
+    }
+    console.log("✨ [AutoCreate] 20 sample jobs seeded successfully!");
+};
+
 /**
  * Main initialization function to be called on server startup.
  * Add any new auto-creation logic here.
@@ -417,7 +550,7 @@ const autoCreateTenants = async () => {
 const init = async () => {
   try {
     console.log("🛠️ [AutoCreate] Starting automated initialization...");
-    
+
     // Create Roles
     await autoCreateRoles();
 
@@ -439,7 +572,10 @@ const init = async () => {
     // SaaS Specific Initializations
     await autoCreateSubscriptions();
     await autoCreateTenants();
-    
+
+    // Seed Jobs
+    await autoCreateJobs();
+
     console.log("✨ [AutoCreate] All automated tasks completed successfully!");
   } catch (error) {
     console.error("❌ [AutoCreate] Critical error during initialization:", error);

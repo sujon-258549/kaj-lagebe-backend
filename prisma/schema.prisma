@@ -545,6 +545,7 @@ model Image {
   projects             Project[] @relation("ProjectImage")
   galleries            Gallery[] @relation("GalleryImage")
   reviews              Review[]  @relation("ReviewImage")
+  jobs                 Job[]     @relation("JobThumbnail")
 
   createdById String?
   updatedById String?
@@ -619,6 +620,8 @@ model Job {
   salaryMax            Float?
   negotiable           Boolean?      @default(false)
   logo                 String?
+  thumbnailId          String?
+  thumbnail            Image?        @relation("JobThumbnail", fields: [thumbnailId], references: [id])
   tags                 String[]      @default([])
   categoryId           String?
   subCategoryId        String?

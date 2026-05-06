@@ -49,8 +49,8 @@ export declare const TenantServices: {
             address: string | null;
             department: string | null;
             description: string;
-            categoryId: string | null;
             gender: string | null;
+            categoryId: string | null;
             experience: string | null;
             workStartTime: string | null;
             workTimeLimit: string | null;

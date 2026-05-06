@@ -6,8 +6,8 @@ export declare const NotificationServices: {
         id: string;
         type: string;
         message: string;
-        jobId: string | null;
         userId: string;
+        jobId: string | null;
         isRead: boolean;
         applicationId: string | null;
     }>;
@@ -19,8 +19,8 @@ export declare const NotificationServices: {
             id: string;
             type: string;
             message: string;
-            jobId: string | null;
             userId: string;
+            jobId: string | null;
             isRead: boolean;
             applicationId: string | null;
         }[];
@@ -37,8 +37,8 @@ export declare const NotificationServices: {
         id: string;
         type: string;
         message: string;
-        jobId: string | null;
         userId: string;
+        jobId: string | null;
         isRead: boolean;
         applicationId: string | null;
     }>;
@@ -49,8 +49,8 @@ export declare const NotificationServices: {
         id: string;
         type: string;
         message: string;
-        jobId: string | null;
         userId: string;
+        jobId: string | null;
         isRead: boolean;
         applicationId: string | null;
     }>;

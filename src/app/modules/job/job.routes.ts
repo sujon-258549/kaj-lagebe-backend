@@ -1,13 +1,15 @@
 import express from "express";
 import { JobControllers } from "./job.controller.ts";
 import auth from "../../utils/auth.ts";
-import { USER_ROLE } from "../users/user.constant.ts";
+import validateRequest from "../../middleware/validateRequest.ts";
+import { JobValidation } from "./job.validation.ts";
 
 const router = express.Router();
 
 router.post(
   "/",
   auth(),
+  validateRequest(JobValidation.createJobZodSchema),
   JobControllers.createJob,
 );
 
@@ -18,6 +20,7 @@ router.get("/:id", JobControllers.getJobByIdentifier);
 router.patch(
   "/:id",
   auth(),
+  validateRequest(JobValidation.updateJobZodSchema),
   JobControllers.updateJob,
 );
 
@@ -34,3 +37,4 @@ router.delete(
 );
 
 export const JobRoutes = router;
+

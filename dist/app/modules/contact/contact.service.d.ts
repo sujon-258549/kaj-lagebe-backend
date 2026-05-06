@@ -64,6 +64,7 @@ export declare const ContactService: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
+            createdById: string | null;
             password: string;
             roleId: string | null;
             passwordChangeTime: Date | null;
@@ -75,6 +76,8 @@ export declare const ContactService: {
             loginTryCount: number;
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
+            isOnline: boolean;
+            lastActive: Date | null;
             tenantId: string | null;
         } | null;
         subject: string | null;

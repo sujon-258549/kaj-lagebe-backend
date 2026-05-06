@@ -10,5 +10,6 @@ export declare const UserController: {
     deleteUser: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     softDeleteUser: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     blockUser: (req: Request, res: Response, next: NextFunction) => Promise<void>;
+    getOnlineUsersCount: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 //# sourceMappingURL=user.controller.d.ts.map

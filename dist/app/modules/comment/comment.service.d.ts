@@ -28,6 +28,7 @@ export declare const CommentServices: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
+            createdById: string | null;
             password: string;
             roleId: string | null;
             passwordChangeTime: Date | null;
@@ -39,6 +40,8 @@ export declare const CommentServices: {
             loginTryCount: number;
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
+            isOnline: boolean;
+            lastActive: Date | null;
             tenantId: string | null;
         };
     } & {
@@ -80,6 +83,7 @@ export declare const CommentServices: {
                 createdAt: Date;
                 updatedAt: Date;
                 id: string;
+                createdById: string | null;
                 password: string;
                 roleId: string | null;
                 passwordChangeTime: Date | null;
@@ -91,6 +95,8 @@ export declare const CommentServices: {
                 loginTryCount: number;
                 loginTryTime: Date | null;
                 lastFollowUp: Date | null;
+                isOnline: boolean;
+                lastActive: Date | null;
                 tenantId: string | null;
             };
         } & {
@@ -137,6 +143,7 @@ export declare const CommentServices: {
             createdAt: Date;
             updatedAt: Date;
             id: string;
+            createdById: string | null;
             password: string;
             roleId: string | null;
             passwordChangeTime: Date | null;
@@ -148,6 +155,8 @@ export declare const CommentServices: {
             loginTryCount: number;
             loginTryTime: Date | null;
             lastFollowUp: Date | null;
+            isOnline: boolean;
+            lastActive: Date | null;
             tenantId: string | null;
         };
     } & {

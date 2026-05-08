@@ -71,7 +71,7 @@ const liveActivityFeed = async (limit = 15) => {
     type: "signup" | "application" | "contact";
     id: string;
     label: string;
-    detail?: string;
+    detail: string;
     createdAt: Date;
   };
 
@@ -94,7 +94,7 @@ const liveActivityFeed = async (limit = 15) => {
       type: "contact" as const,
       id: c.id,
       label: `${c.firstName || "Someone"} sent a message`,
-      detail: c.subject ?? undefined,
+      detail: c.subject ?? "",
       createdAt: c.createdAt,
     })),
   ];

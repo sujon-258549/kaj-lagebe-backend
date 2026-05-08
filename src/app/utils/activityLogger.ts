@@ -5,6 +5,8 @@ const SKIP_PATHS = [
   "/api/activity-log",
   "/api/error-log",
   "/api/notification",
+  "/api/analytics/track",
+  "/api/analytics/live",
 ];
 
 const isSkippedPath = (url: string) =>

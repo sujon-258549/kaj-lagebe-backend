@@ -39,6 +39,42 @@ const blogInclude = {
   },
 };
 
+const isUrl = (s: unknown): s is string =>
+  typeof s === "string" && /^https?:\/\//i.test(s);
+
+const resolveCoverId = async (
+  coverId: string | undefined,
+  coverImage: string | undefined,
+  blogTitle: string | undefined,
+  creatorId?: string,
+): Promise<string | undefined> => {
+  if (coverId) {
+    const exists = await prisma.image.findUnique({ where: { id: coverId } });
+    if (!exists) throw new ApiError(httpStatus.NOT_FOUND, "Cover image not found");
+    return coverId;
+  }
+  if (isUrl(coverImage)) {
+    const name = `${blogTitle || "blog"}-cover`;
+    const created = await prisma.image.create({
+      data: {
+        name,
+        url: coverImage,
+        slug: slugCreate(`${name}-${Date.now()}`),
+        createdById: creatorId ?? null,
+        updatedById: creatorId ?? null,
+      },
+    });
+    return created.id;
+  }
+  if (coverImage) {
+    // Treat non-URL string as an existing image id
+    const exists = await prisma.image.findUnique({ where: { id: coverImage } });
+    if (!exists) throw new ApiError(httpStatus.NOT_FOUND, "Cover image not found");
+    return coverImage;
+  }
+  return undefined;
+};
+
 const createBlog = async (payload: any, userId?: string) => {
   const { coverId, authorId, tags, authorName, coverImage, ...rest } = payload;
   const slug = payload.slug || slugCreate(payload.title);
@@ -49,15 +85,19 @@ const createBlog = async (payload: any, userId?: string) => {
     ...rest,
     slug,
     tags: tags ? (Array.isArray(tags) ? tags : tags.split(",")) : [],
+    authorName: authorName ?? undefined,
     author: creatorId ? { connect: { id: creatorId } } : undefined,
     updatedBy: creatorId ? { connect: { id: creatorId } } : undefined,
   };
 
-  const finalCoverId = coverId || coverImage;
+  const finalCoverId = await resolveCoverId(
+    coverId,
+    coverImage,
+    payload.title,
+    creatorId,
+  );
 
   if (finalCoverId) {
-    const coverExists = await prisma.image.findUnique({ where: { id: finalCoverId } });
-    if (!coverExists) throw new ApiError(httpStatus.NOT_FOUND, "Cover image not found");
     data.cover = { connect: { id: finalCoverId } };
   }
 
@@ -150,7 +190,16 @@ const updateBlog = async (id: string, payload: any, userId?: string) => {
     updateData.tags = Array.isArray(tags) ? tags : tags.split(",");
   }
 
-  const finalCoverId = coverId || coverImage;
+  if (authorName !== undefined) {
+    updateData.authorName = authorName;
+  }
+
+  const finalCoverId = await resolveCoverId(
+    coverId,
+    coverImage,
+    payload.title || existingBlog.title,
+    userId || authorId,
+  );
   if (finalCoverId) {
     updateData.cover = {
       connect: { id: finalCoverId },

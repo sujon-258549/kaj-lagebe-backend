@@ -741,6 +741,7 @@ model Notification {
   jobId         String?
   applicationId String?
   isRead        Boolean  @default(false)
+  authorIsRead  Boolean  @default(false)
   isDeleted     Boolean  @default(false)
   user          User     @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now())

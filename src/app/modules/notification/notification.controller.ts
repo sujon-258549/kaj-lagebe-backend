@@ -75,6 +75,31 @@ const markAsRead = catchAsync(async (req, res) => {
   });
 });
 
+const markAuthorAllAsRead = catchAsync(async (req, res) => {
+  const user = (req as any).user;
+  const result = await NotificationServices.markAuthorAllAsRead(user?.id);
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Notifications marked as read!",
+    data: result,
+  });
+});
+
+const markAuthorAsRead = catchAsync(async (req, res) => {
+  const user = (req as any).user;
+  const result = await NotificationServices.markAuthorAsRead(
+    req.params.id as string,
+    user?.id,
+  );
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Notification marked as read!",
+    data: result,
+  });
+});
+
 export const NotificationControllers = {
   createNotification,
   getAllNotifications,
@@ -82,4 +107,6 @@ export const NotificationControllers = {
   updateNotification,
   deleteNotification,
   markAsRead,
+  markAuthorAllAsRead,
+  markAuthorAsRead,
 };

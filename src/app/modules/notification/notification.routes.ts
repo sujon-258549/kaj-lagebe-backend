@@ -29,6 +29,31 @@ router.patch(
   NotificationControllers.markAsRead,
 );
 
+// Recipient (frontend user) read tracking — independent from admin's isRead.
+router.patch(
+  "/author/mark-all-as-read",
+  auth(
+    USER_ROLE.USER,
+    USER_ROLE.WORKER,
+    USER_ROLE.EMPLOYEE,
+    USER_ROLE.ADMIN,
+    USER_ROLE.SUPER_ADMIN,
+  ),
+  NotificationControllers.markAuthorAllAsRead,
+);
+
+router.patch(
+  "/author/:id/read",
+  auth(
+    USER_ROLE.USER,
+    USER_ROLE.WORKER,
+    USER_ROLE.EMPLOYEE,
+    USER_ROLE.ADMIN,
+    USER_ROLE.SUPER_ADMIN,
+  ),
+  NotificationControllers.markAuthorAsRead,
+);
+
 router.get(
   "/:id",
   auth(

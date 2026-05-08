@@ -123,6 +123,47 @@ const markAsRead = async (userId: string) => {
   return { message: "All notifications marked as read" };
 };
 
+/**
+ * User-side (recipient) read tracking — independent of admin's `isRead` flag.
+ * The recipient marks all their notifications via this method.
+ */
+const markAuthorAllAsRead = async (userId: string) => {
+  await prisma.notification.updateMany({
+    where: { userId, authorIsRead: false },
+    data: { authorIsRead: true },
+  });
+
+  emitToUser(userId, "notifications-read-sync", {
+    userId,
+    authorIsRead: true,
+  });
+
+  return { message: "All notifications marked as read" };
+};
+
+/**
+ * User-side (recipient) read tracking — single notification.
+ * Only allows the owner of the notification to flip their own authorIsRead.
+ */
+const markAuthorAsRead = async (id: string, userId: string) => {
+  const isExist = await prisma.notification.findUnique({ where: { id } });
+  if (!isExist)
+    throw new ApiError(httpStatus.NOT_FOUND, "Notification not found");
+
+  if (isExist.userId !== userId) {
+    throw new ApiError(httpStatus.FORBIDDEN, "You cannot mark this notification");
+  }
+
+  const result = await prisma.notification.update({
+    where: { id },
+    data: { authorIsRead: true },
+  });
+
+  emitToUser(userId, "notification-updated", result);
+
+  return result;
+};
+
 export const NotificationServices = {
   createNotification,
   getAllNotifications,
@@ -130,4 +171,6 @@ export const NotificationServices = {
   updateNotification,
   deleteNotification,
   markAsRead,
+  markAuthorAllAsRead,
+  markAuthorAsRead,
 };

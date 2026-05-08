@@ -217,8 +217,56 @@ const getApplicationById = async (id: string) => {
   return result;
 };
 
+const generateDecisionMessage = async (
+  decision: "ACCEPTED" | "REJECTED",
+  applicantName: string,
+  jobTitle: string,
+  reason?: string,
+): Promise<string> => {
+  const tone =
+    decision === "ACCEPTED"
+      ? "warm, congratulatory, encouraging"
+      : "kind, respectful, encouraging despite the rejection";
+
+  const prompt = `You are writing a single short paragraph (3-4 sentences) for an email to a job applicant.
+Decision: ${decision === "ACCEPTED" ? "their application has been ACCEPTED" : "their application has been REJECTED"}.
+Applicant name: ${applicantName || "the applicant"}
+Job title: ${jobTitle}
+${reason ? `Employer's note: ${reason}` : ""}
+Tone: ${tone}.
+Do NOT include a salutation (no "Dear ..."), do NOT include a sign-off (no "Best regards"), do NOT include any subject line.
+Just return the paragraph text, plain English, no markdown, no quotes.`;
+
+  try {
+    const result = await AgentService.generateResponse(prompt);
+    if (result && !result.startsWith("Service Error")) {
+      return result.trim().replace(/^"|"$/g, "");
+    }
+  } catch (err) {
+    console.error("AI message generation failed:", err);
+  }
+
+  // Fallback static message if AI fails
+  if (decision === "ACCEPTED") {
+    return `We are pleased to inform you that your application for "${jobTitle}" has been accepted. Thank you for your interest and effort — we look forward to the next steps and will be in touch shortly.`;
+  }
+  return `Thank you for taking the time to apply for "${jobTitle}". After careful consideration we have decided to move forward with other candidates at this time. We genuinely appreciate your interest and wish you the best in your job search.`;
+};
+
 const updateApplication = async (id: string, payload: any) => {
-  const isExist = await prisma.application.findUnique({ where: { id } });
+  const isExist = await prisma.application.findUnique({
+    where: { id },
+    include: {
+      job: { select: { id: true, title: true, authorId: true } },
+      user: {
+        select: {
+          id: true,
+          email: true,
+          profile: { select: { name: true } },
+        },
+      },
+    },
+  });
   if (!isExist)
     throw new ApiError(httpStatus.NOT_FOUND, "Application not found");
 
@@ -229,6 +277,25 @@ const updateApplication = async (id: string, payload: any) => {
     payload.status = payload.status === "true";
   if (typeof payload.isDeleted === "string")
     payload.isDeleted = payload.isDeleted === "true";
+
+  // Lock decided applications (cannot be changed once ACCEPTED or REJECTED)
+  const currentStatus = (isExist.applyStatus || "PENDING").toUpperCase();
+  const nextStatus = payload.applyStatus
+    ? String(payload.applyStatus).toUpperCase()
+    : currentStatus;
+
+  if (
+    (currentStatus === "ACCEPTED" || currentStatus === "REJECTED") &&
+    nextStatus !== currentStatus &&
+    payload.applyStatus !== undefined
+  ) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      "This application has already been decided and cannot be changed.",
+    );
+  }
+
+  if (payload.applyStatus) payload.applyStatus = nextStatus;
 
   try {
     const result = await prisma.application.update({
@@ -256,8 +323,76 @@ const updateApplication = async (id: string, payload: any) => {
         },
       },
     });
+
+    // Side effects: only when transitioning to a final decision
+    const isDecision =
+      (nextStatus === "ACCEPTED" || nextStatus === "REJECTED") &&
+      nextStatus !== currentStatus;
+
+    if (isDecision) {
+      const applicantName = isExist.user?.profile?.name || "there";
+      const applicantEmail = isExist.user?.email;
+      const applicantUserId = isExist.user?.id;
+      const jobTitle = isExist.job?.title || "the job";
+      const reason: string | undefined = payload.applyComment || undefined;
+
+      // 1) AI message + email (fail-soft)
+      try {
+        const aiMessage = await generateDecisionMessage(
+          nextStatus,
+          applicantName,
+          jobTitle,
+          reason,
+        );
+
+        if (applicantEmail) {
+          const html = applicationDecisionTemplate({
+            name: applicantName,
+            jobTitle,
+            decision: nextStatus,
+            aiMessage,
+            reason,
+          });
+          const subject =
+            nextStatus === "ACCEPTED"
+              ? `🎉 Your application for "${jobTitle}" has been accepted`
+              : `Update on your application for "${jobTitle}"`;
+          await sendEmail(applicantEmail, html, subject).catch((err) => {
+            console.error("Failed to send decision email:", err);
+          });
+        }
+      } catch (err) {
+        console.error("Decision email pipeline failed:", err);
+      }
+
+      // 2) In-app notification + socket (fail-soft)
+      try {
+        if (applicantUserId) {
+          const notification = await prisma.notification.create({
+            data: {
+              userId: applicantUserId,
+              type:
+                nextStatus === "ACCEPTED"
+                  ? "APPLICATION_ACCEPTED"
+                  : "APPLICATION_REJECTED",
+              message:
+                nextStatus === "ACCEPTED"
+                  ? `Your application for "${jobTitle}" has been accepted.`
+                  : `Your application for "${jobTitle}" was not selected this time.`,
+              jobId: isExist.job?.id,
+              applicationId: id,
+            },
+          });
+          emitToUser(applicantUserId, "new-notification", notification);
+        }
+      } catch (err) {
+        console.error("Failed to create decision notification:", err);
+      }
+    }
+
     return result;
   } catch (error: any) {
+    if (error instanceof ApiError) throw error;
     throw new ApiError(httpStatus.BAD_REQUEST, error.message || "Failed to update application status");
   }
 };

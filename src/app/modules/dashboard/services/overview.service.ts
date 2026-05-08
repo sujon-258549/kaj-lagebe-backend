@@ -1,13 +1,13 @@
 import prisma from "../../../utils/prismaClient.ts";
 
-interface TimePoint {
+export interface TimePoint {
   date: string;
   applications?: number;
   jobs?: number;
   applicants?: number;
 }
 
-interface DashboardOverview {
+export interface DashboardOverview {
   role: string;
   myApplicationsCount?: number;
   pendingApplications?: number;

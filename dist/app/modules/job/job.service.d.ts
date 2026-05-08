@@ -97,7 +97,8 @@ export declare const JobServices: {
         applicantsCount: number;
     }>;
     getAllJobs: (query: any) => Promise<{
-        data: ({
+        data: {
+            applicantsCount: number;
             user: {
                 email: string;
                 mobile: string;
@@ -112,6 +113,9 @@ export declare const JobServices: {
                     name: string | null;
                 } | null;
             } | null;
+            _count: {
+                applications: number;
+            };
             category: {
                 name: string;
                 slug: string;
@@ -134,7 +138,6 @@ export declare const JobServices: {
                 updatedById: string | null;
                 folderId: string | null;
             } | null;
-        } & {
             email: string | null;
             isDeleted: boolean;
             createdAt: Date;
@@ -209,8 +212,7 @@ export declare const JobServices: {
             isUrgent: boolean;
             jobAmount: string | null;
             jobLocation: Prisma.JsonValue | null;
-            applicantsCount: number;
-        })[];
+        }[];
         meta: {
             page: number;
             limit: number;

@@ -67,7 +67,12 @@ const updateBlogStatus = catchAsync(async (req, res) => {
 });
 
 const deleteBlog = catchAsync(async (req, res) => {
-  const result = await BlogServices.deleteBlog(req.params.id as string);
+  const user = (req as any).user;
+  const result = await BlogServices.deleteBlog(
+    req.params.id as string,
+    user?.id,
+    user?.role,
+  );
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

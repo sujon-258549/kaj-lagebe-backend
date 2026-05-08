@@ -206,9 +206,25 @@ const updateBlogStatus = async (id: string, userId?: string) => {
   return result;
 };
 
-const deleteBlog = async (id: string) => {
+const RESTRICTED_ROLES = new Set(["USER", "WORKER"]);
+
+const deleteBlog = async (
+  id: string,
+  userId?: string,
+  userRole?: string,
+) => {
   const isBlogExist = await prisma.blog.findUnique({ where: { id } });
   if (!isBlogExist) throw new ApiError(httpStatus.NOT_FOUND, "Blog not found");
+
+  // USER/WORKER can only delete their own posts; everyone else can delete any.
+  if (userRole && RESTRICTED_ROLES.has(userRole)) {
+    if (!userId || isBlogExist.authorId !== userId) {
+      throw new ApiError(
+        httpStatus.FORBIDDEN,
+        "You can only delete your own blog posts",
+      );
+    }
+  }
 
   await prisma.blog.delete({ where: { id } });
   return { message: "Blog deleted successfully" };

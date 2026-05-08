@@ -158,7 +158,7 @@ export declare const BlogServices: {
         publishedAt: Date | null;
         coverId: string | null;
     }>;
-    deleteBlog: (id: string) => Promise<{
+    deleteBlog: (id: string, userId?: string, userRole?: string) => Promise<{
         message: string;
     }>;
     updateBlogStatus: (id: string, userId?: string) => Promise<{

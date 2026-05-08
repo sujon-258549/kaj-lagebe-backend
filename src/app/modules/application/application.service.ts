@@ -5,6 +5,11 @@ import type { Prisma } from "@prisma/client";
 import { calculatePaginationOrSort } from "../../../shared/calculatePaginationOrSort.tsx";
 import { applicationSearchableFields } from "./application.constant.ts";
 import { emitToUser } from "../../utils/socket.ts";
+import { AgentService } from "../agent/agent.services.ts";
+import {
+  applicationDecisionTemplate,
+  sendEmail,
+} from "../../utils/sendEmail.ts";
 
 const createApplication = async (userId: string, payload: any) => {
   const isJobExist = await prisma.job.findUnique({

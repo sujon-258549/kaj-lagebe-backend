@@ -208,6 +208,70 @@ export const contactFeedbackTemplate = (data: {
   `;
 };
 
+export const applicationDecisionTemplate = (data: {
+  name: string;
+  jobTitle: string;
+  decision: "ACCEPTED" | "REJECTED";
+  aiMessage: string;
+  reason?: string;
+}) => {
+  const isAccepted = data.decision === "ACCEPTED";
+  const accent = isAccepted ? "#16a34a" : "#dc2626";
+  const accentSoft = isAccepted ? "#dcfce7" : "#fee2e2";
+  const heading = isAccepted ? "🎉 Congratulations!" : "Application Update";
+  const subHeading = isAccepted
+    ? "Your application has been accepted"
+    : "An update on your application";
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1f2937; background-color: #f8fafc; margin: 0; padding: 0; }
+        .wrapper { padding: 40px 20px; background-color: #f8fafc; }
+        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.08); }
+        .header { background: ${accent}; padding: 36px 30px; text-align: center; color: #fff; }
+        .header h1 { margin: 0 0 6px; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+        .header p { margin: 0; opacity: 0.9; font-size: 14px; }
+        .content { padding: 36px 32px; }
+        .greeting { font-size: 18px; font-weight: 700; color: #111827; margin: 0 0 18px; }
+        .job-pill { display: inline-block; padding: 6px 14px; background: ${accentSoft}; color: ${accent}; border-radius: 999px; font-weight: 700; font-size: 13px; margin-bottom: 18px; }
+        .body-text { font-size: 15px; color: #4b5563; margin: 0 0 18px; white-space: pre-wrap; }
+        .reason-box { background: #f8fafc; border-left: 4px solid ${accent}; border-radius: 8px; padding: 16px 18px; margin: 18px 0; font-size: 14px; color: #334155; }
+        .reason-label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; margin-bottom: 6px; }
+        .footer { padding: 22px 30px 28px; background: #f8fafc; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; }
+      </style>
+    </head>
+    <body>
+      <div class="wrapper">
+        <div class="container">
+          <div class="header">
+            <h1>${heading}</h1>
+            <p>${subHeading}</p>
+          </div>
+          <div class="content">
+            <p class="greeting">Hi ${data.name || "there"},</p>
+            <span class="job-pill">${data.jobTitle}</span>
+            <p class="body-text">${data.aiMessage}</p>
+            ${
+              data.reason
+                ? `<div class="reason-box"><span class="reason-label">Note from the employer</span>${data.reason}</div>`
+                : ""
+            }
+            <p class="body-text" style="margin-top:18px;">Wishing you the very best in your journey ahead.</p>
+            <p class="body-text" style="margin-bottom:0;">— The Kajlagbe Team</p>
+          </div>
+          <div class="footer">
+            <p>&copy; 2026 Kajlagbe. All rights reserved.</p>
+            <p>This is an automated message — please do not reply directly.</p>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
 export const sendEmail = async (to: string, html: string, subject?: string) => {
   const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',

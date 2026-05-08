@@ -128,6 +128,7 @@ model User {
   blogComments         BlogComment[]
   activityLogs         ActivityLog[]
   errorLogs            ErrorLog[]
+  pageViews            PageView[]
 
   // SaaS Multi-tenancy & Audit
   tenantId             String?
@@ -840,4 +841,39 @@ model Tenant {
   updatedAt   DateTime @updatedAt
 
   @@map("tenants")
+}
+
+model PageView {
+  id          String   @id @default(uuid())
+  sessionId   String
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  path        String
+  fullUrl     String?
+  title       String?
+  referrer    String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  ip          String?
+  country     String?
+  city        String?
+  region      String?
+  device      String?
+  browser     String?
+  os          String?
+  userAgent   String?
+  durationMs  Int?
+  isBot       Boolean  @default(false)
+  isUnique    Boolean  @default(false)
+  source      String   @default("admin")
+  createdAt   DateTime @default(now())
+
+  @@index([sessionId])
+  @@index([userId])
+  @@index([path])
+  @@index([country])
+  @@index([source])
+  @@index([createdAt])
+  @@map("page_views")
 }

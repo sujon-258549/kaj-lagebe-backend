@@ -28,6 +28,7 @@ import { BlogCommentRoutes } from "../modules/blogComment/blogComment.routes.ts"
 import { TenantRoutes } from "../modules/tenant/tenant.routes.ts";
 import { ActivityLogRoutes } from "../modules/activityLog/activityLog.router.ts";
 import { ErrorLogRoutes } from "../modules/errorLog/errorLog.router.ts";
+import { DashboardRoutes } from "../modules/dashboard/dashboard.routes.ts";
 
 const router = Router();
 
@@ -147,6 +148,10 @@ const allRouter = [
   {
     path: "/error-log",
     router: ErrorLogRoutes,
+  },
+  {
+    path: "/dashboard",
+    router: DashboardRoutes,
   },
 ];
 

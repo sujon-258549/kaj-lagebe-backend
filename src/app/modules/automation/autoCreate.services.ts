@@ -430,9 +430,14 @@ const autoCreateJobs = async () => {
     return;
   }
 
-  // 3. Clear existing jobs to reset and re-seed (as requested)
-  console.log("🧹 [AutoCreate] Removing existing jobs for a clean reset...");
-  await prisma.job.deleteMany({});
+  // 3. Skip seeding entirely if jobs already exist — never destroy user data.
+  const existingJobsCount = await prisma.job.count();
+  if (existingJobsCount > 0) {
+    console.log(
+      `✅ [AutoCreate] ${existingJobsCount} job(s) already exist, skipping sample job seed.`,
+    );
+    return;
+  }
 
   console.log("💼 [AutoCreate] Seeding 20 fresh sample jobs...");
 

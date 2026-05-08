@@ -213,7 +213,7 @@ export const applicationDecisionTemplate = (data: {
   jobTitle: string;
   decision: "ACCEPTED" | "REJECTED";
   aiMessage: string;
-  reason?: string;
+  reason?: string | undefined;
 }) => {
   const isAccepted = data.decision === "ACCEPTED";
   const accent = isAccepted ? "#16a34a" : "#dc2626";
